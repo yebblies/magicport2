@@ -1,0 +1,922 @@
+
+import std.conv;
+import std.algorithm;
+import std.stdio;
+
+import tokens;
+import ast;
+import visitor;
+
+class CppPrinter : Visitor
+{
+    File target;
+    this(File target)
+    {
+        this.target = target;
+    }
+    
+    Expression E;
+
+    void print(T...)(T args)
+    {
+        target.write(args);
+    }
+    void println(T...)(T args)
+    {
+        target.writeln(args);
+    }
+    void printArgs(Expression[] args)
+    {
+        foreach(i, a; args)
+        {
+            visit(a);
+            if (i != args.length - 1)
+                print(", ");
+        }
+    }
+    void printParams(Param[] args)
+    {
+        foreach(i, a; args)
+        {
+            visit(a);
+            if (i != args.length - 1)
+                print(", ");
+        }
+    }
+    void visit()(int stc)
+    {
+        static immutable names = ["static", "const", "extern", "extern \"C\"", "virtual", "__cdecl", "abstract", "__inline", "register"];
+        bool one;
+        assert(!(stc & STCabstract));
+        foreach(i, n; names)
+        {
+            if (stc & (1 << i))
+            {
+                print(names[i], ' ');
+                one = true;
+            }
+        }
+    }
+    void visit(int line = __LINE__)(Ast ast)
+    {
+        if (!ast)
+            writeln(line);
+        assert(ast);
+
+        auto saveE = E;
+        if (cast(Expression)ast) E = cast(Expression)ast;
+        if (cast(StructDeclaration)ast) E = null;
+        if (cast(AnonStructDeclaration)ast) E = null;
+
+        ast.visit(this);
+        
+        E = saveE;
+    }
+    void visit(int line = __LINE__)(string ast)
+    {
+        if (!ast)
+            writeln(line);
+        assert(ast);
+        print(ast);
+    }
+    void visit(T)(T[] arr) if (is(typeof(visit(arr[0]))) && !is(T[] : string))
+    {
+        foreach(v; arr)
+            visit(v);
+    }
+
+    /////////////////////////////////////////////////////////////////////
+
+    void visitModule(Module ast)
+    {
+        visit(ast.decls);
+    }
+
+    void visitImportDeclaration(ImportDeclaration ast)
+    {
+        print("#include \"");
+        visit(ast.fn);
+        println("\"");
+    }
+
+    void visitFuncDeclaration(FuncDeclaration ast)
+    {
+        visit(ast.stc & ~(STCabstract | STCcdecl));
+        if (ast.type.id == ast.id || ast.id[0] == '~')
+        {
+        } else {
+            visit(ast.type);
+            print(' ');
+        }
+        if (ast.stc & STCcdecl)
+            print("__cdecl ");
+        visit(ast.id);
+        print('(');
+        printParams(ast.params);
+        print(')');
+        if (ast.superargs)
+        {
+            print(" : ");
+            visit(ast.supertype);
+            print("(");
+            printArgs(ast.superargs);
+            print(")");
+        }
+        if (ast.stc & STCabstract)
+        {
+            print(" = 0");
+            assert(!ast.fbody && !ast.superargs);
+        }
+        if (ast.fbody)
+        {
+            println("");
+            visit(ast.fbody);
+        } else {
+            println(";");
+        }
+    }
+
+    void visitFuncBodyDeclaration(FuncBodyDeclaration ast)
+    {
+        visit(ast.stc);
+        if (ast.type.id == ast.id2 || ast.id2[0] == '~')
+        {
+        } else {
+            visit(ast.type);
+            print(' ');
+        }
+        visit(ast.id ? ast.id : (ast.id2[0] == '~' ? ast.id2[1..$] : ast.id2));
+        print("::");
+        visit(ast.id2);
+        print('(');
+        printParams(ast.params);
+        print(')');
+        if (ast.superargs)
+        {
+            print(" : ");
+            visit(ast.supertype);
+            print("(");
+            printArgs(ast.superargs);
+            print(")");
+        }
+        if (ast.fbody)
+        {
+            println("");
+            visit(ast.fbody);
+        } else {
+            println(";");
+        }
+    }
+
+    void visitStaticMemberVarDeclaration(StaticMemberVarDeclaration ast)
+    {
+        if (auto at = cast(ArrayType)ast.type)
+        {
+            visit(at.next);
+            print(' ');
+            visit(ast.id);
+            print("::");
+            visit(ast.id2);
+            print('[');
+            if (at.dim)
+                visit(at.dim);
+            print(']');
+        } else {
+            visit(ast.type);
+            print(' ');
+            visit(ast.id);
+            print("::");
+            visit(ast.id2);
+        }
+        if (ast.init)
+        {
+            print(" = ");
+            visit(ast.init);
+        }
+        println(";");
+    }
+
+    void visitVarDeclaration(VarDeclaration ast)
+    {
+        foreach(i; 0..ast.types.length)
+        {
+            if (ast.types[i])
+            {
+                visit(ast.stc & ~STCcdecl);
+                if (auto at = cast(ArrayType)ast.types[i])
+                {
+                    if (auto at2 = cast(ArrayType)at.next)
+                    {
+                        visit(at2.next);
+                        print(' ');
+                        visit(ast.ids[i]);
+                        print('[');
+                        if (at2.dim)
+                            visit(at2.dim);
+                        print(']');
+                    }
+                    else 
+                    {
+                        visit(at.next);
+                        print(' ');
+                        visit(ast.ids[i]);
+                    }
+                    print('[');
+                    if (at.dim)
+                        visit(at.dim);
+                    print(']');
+                } else {
+                    visit(ast.types[i]);
+                    print(' ');
+                    if (ast.stc & STCcdecl)
+                        print("__cdecl ");
+                    visit(ast.ids[i]);
+                }
+                if (ast.inits[i])
+                {
+                    print(" = ");
+                    visit(ast.inits[i]);
+                }
+                if (!E || i != ast.types.length - 1)
+                    println(";");
+            } else {
+                assert(ast.stc & STCconst);
+                print("#define");
+                print(' ');
+                visit(ast.ids[i]);
+                if (ast.inits[i])
+                {
+                    print(' ');
+                    visit(ast.inits[i]);
+                }
+                println();
+            }
+        }
+    }
+
+    void visitConstructDeclaration(ConstructDeclaration ast)
+    {
+        visit(ast.type);
+        print(" ");
+        visit(ast.id);
+        print("(");
+        printArgs(ast.args);
+        print(")");
+        if (!E)
+            println(";");
+    }
+
+    void visitVersionDeclaration(VersionDeclaration ast)
+    {
+        foreach(i; 0..ast.es.length)
+        {
+            if (i == 0)
+                print("#if ");
+            else if (ast.es[i])
+                print("#elif ");
+            else
+                print("#else");
+            if (ast.es[i])
+                visit(ast.es[i]);
+            println();
+            visit(ast.ds[i]);
+        }
+        println("#endif");
+    }
+
+    void visitTypedefDeclaration(TypedefDeclaration ast)
+    {
+        print("typedef ");
+        if (auto tf = cast(FunctionType)ast.t)
+        {
+            visit(tf.next);
+            print("(*");
+            visit(ast.id);
+            print(")(");
+            printParams(tf.params);
+            print(")");
+        } else {
+            visit(ast.t);
+            print(" ");
+            visit(ast.id);
+        }
+        println(";");
+    }
+
+    void visitMacroDeclaration(MacroDeclaration ast)
+    {
+        print("#define ");
+        visit(ast.id);
+        print("(");
+        foreach(i, s; ast.params)
+        {
+            print(s);
+            if (i != ast.params.length - 1)
+                print(", ");
+        }
+        print(")");
+        print(" ");
+        visit(ast.e);
+        /*foreach(t; ast.toks)
+        {
+            print(t.text);
+            print(' ');
+            if (t.text == "\\")
+                println();
+        }
+        println();*/
+    }
+
+    void visitMacroUnDeclaration(MacroUnDeclaration ast)
+    {
+        print("#undef ");
+        visit(ast.id);
+        println();
+    }
+
+    void visitMacroCallDeclaration(MacroCallDeclaration ast)
+    {
+        visit(ast.id);
+        print("(");
+        foreach(i, s; ast.args)
+        {
+            visit(s);
+            if (i != ast.args.length - 1)
+                print(", ");
+        }
+        print(")\n");
+    }
+
+    void visitStructDeclaration(StructDeclaration ast)
+    {
+        print(ast.kind);
+        print(' ');
+        visit(ast.id);
+        if (ast.superid)
+        {
+            print(" : ");
+            visit(ast.superid);
+        }
+        println();
+        println("{");
+        foreach(d; ast.decls)
+            visit(d);
+        println("};");
+    }
+
+    void visitAnonStructDeclaration(AnonStructDeclaration ast)
+    {
+        print(ast.kind);
+        println();
+        println("{");
+        foreach(d; ast.decls)
+            visit(d);
+        print("} ");
+        if (ast.id)
+            visit(ast.id);
+        if (!E)
+            println(";");
+    }
+
+    void visitExternCDeclaration(ExternCDeclaration ast)
+    {
+        if (ast.block)
+        {
+            println("extern \"C\" {");
+            foreach(d; ast.decls)
+                visit(d);
+            println("}");
+        } else {
+            print("extern \"C\" ");
+            assert(ast.decls.length == 1);
+            visit(ast.decls[0]);
+        }
+    }
+
+    void visitEnumDeclaration(EnumDeclaration ast)
+    {
+        print("enum ");
+        visit(ast.id);
+        println("{");
+        foreach(i; 0..ast.members.length)
+        {
+            visit(ast.members[i]);
+            if (ast.vals[i])
+            {
+                print(" = ");
+                visit(ast.vals[i]);
+            }
+            println(",");
+        }
+        println("}");
+        if (!E)
+            println(";");
+    }
+
+    void visitDummyDeclaration(DummyDeclaration ast)
+    {
+        if (ast.s)
+            visit(ast.s);
+    }
+
+    void visitBitfieldDeclaration(BitfieldDeclaration ast)
+    {
+        visit(ast.type);
+        print(" ");
+        visit(ast.id);
+        print(" : ");
+        visit(ast.width);
+        println(";");
+    }
+
+    void visitProtDeclaration(ProtDeclaration ast)
+    {
+        visit(ast.id);
+        println(":");
+    }
+
+    void visitAlignDeclaration(AlignDeclaration ast)
+    {
+        print("#pragma pack(");
+        if (ast.id)
+            print(ast.id);
+        println(")");
+    }
+
+    void visitLitExpr(LitExpr ast)
+    {
+        visit(ast.val);
+    }
+
+    void visitIdentExpr(IdentExpr ast)
+    {
+        visit(ast.id);
+    }
+
+    void visitDotIdExpr(DotIdExpr ast)
+    {
+        visit(ast.e);
+        print(ast.op);
+        visit(ast.id);
+    }
+
+    void visitCallExpr(CallExpr ast)
+    {
+        auto id = cast(IdentExpr)ast.func;
+        if (id && id.id == "operatornew")
+        {
+            print("operator new");
+        }
+        else
+            visit(ast.func);
+        print("(");
+        printArgs(ast.args);
+        print(")");
+    }
+
+    void visitCmpExpr(CmpExpr ast)
+    {
+        print("(");
+        visit(ast.e1);
+        print(" ", ast.op, " ");
+        visit(ast.e2);
+        print(")");
+    }
+
+    void visitMulExpr(MulExpr ast)
+    {
+        print("(");
+        visit(ast.e1);
+        print(" ", ast.op, " ");
+        visit(ast.e2);
+        print(")");
+    }
+
+    void visitAddExpr(AddExpr ast)
+    {
+        print("(");
+        visit(ast.e1);
+        print(" ", ast.op, " ");
+        visit(ast.e2);
+        print(")");
+    }
+
+    void visitOrOrExpr(OrOrExpr ast)
+    {
+        print("(");
+        visit(ast.e1);
+        print(" ", ast.op, " ");
+        visit(ast.e2);
+        print(")");
+    }
+
+    void visitAndAndExpr(AndAndExpr ast)
+    {
+        print("(");
+        visit(ast.e1);
+        print(" ", ast.op, " ");
+        visit(ast.e2);
+        print(")");
+    }
+
+    void visitOrExpr(OrExpr ast)
+    {
+        print("(");
+        visit(ast.e1);
+        print(" ", ast.op, " ");
+        visit(ast.e2);
+        print(")");
+    }
+
+    void visitXorExpr(XorExpr ast)
+    {
+        print("(");
+        visit(ast.e1);
+        print(" ", ast.op, " ");
+        visit(ast.e2);
+        print(")");
+    }
+
+    void visitAndExpr(AndExpr ast)
+    {
+        print("(");
+        visit(ast.e1);
+        print(" ", ast.op, " ");
+        visit(ast.e2);
+        print(")");
+    }
+
+    void visitAssignExpr(AssignExpr ast)
+    {
+        print("(");
+        visit(ast.e1);
+        print(" ", ast.op, " ");
+        visit(ast.e2);
+        print(")");
+    }
+
+    void visitDeclarationExpr(DeclarationExpr ast)
+    {
+        visit(ast.d);
+    }
+
+    void visitPostExpr(PostExpr ast)
+    {
+        print("(");
+        visit(ast.e);
+        print(ast.op, ")");
+    }
+
+    void visitPreExpr(PreExpr ast)
+    {
+        print("(");
+        visit(ast.op);
+        visit(ast.e);
+        print(")");
+    }
+
+    void visitPtrExpr(PtrExpr ast)
+    {
+        print("(*");
+        visit(ast.e);
+        print(")");
+    }
+
+    void visitAddrExpr(AddrExpr ast)
+    {
+        print("(&");
+        visit(ast.e);
+        print(")");
+    }
+
+    void visitNegExpr(NegExpr ast)
+    {
+        print("(-");
+        visit(ast.e);
+        print(")");
+    }
+
+    void visitComExpr(ComExpr ast)
+    {
+        print("(~");
+        visit(ast.e);
+        print(")");
+    }
+
+    void visitDeleteExpr(DeleteExpr ast)
+    {
+        print("(delete ");
+        visit(ast.e);
+        print(")");
+    }
+
+    void visitNotExpr(NotExpr ast)
+    {
+        print("(!");
+        visit(ast.e);
+        print(")");
+    }
+
+    void visitIndexExpr(IndexExpr ast)
+    {
+        visit(ast.e);
+        print("[");
+        printArgs(ast.args);
+        print("]");
+    }
+
+    void visitCondExpr(CondExpr ast)
+    {
+        print("(");
+        visit(ast.cond);
+        print("?");
+        visit(ast.e1);
+        print(":");
+        visit(ast.e2);
+        print(")");
+    }
+
+    void visitCastExpr(CastExpr ast)
+    {
+        print("((");
+        visit(ast.t);
+        print(")");
+        visit(ast.e);
+        print(")");
+    }
+
+    void visitNewExpr(NewExpr ast)
+    {
+        assert(!ast.dim);
+        print("(new ");
+        visit(ast.t);
+        print("(");
+        printArgs(ast.args);
+        print("))");
+    }
+
+    void visitOuterScopeExpr(OuterScopeExpr ast)
+    {
+        print("::");
+        visit(ast.e);
+    }
+
+    void visitCommaExpr(CommaExpr ast)
+    {
+        print("(");
+        visit(ast.e1);
+        print(", ");
+        visit(ast.e2);
+        print(")");
+    }
+
+    void visitSizeofExpr(SizeofExpr ast)
+    {
+        print("sizeof(");
+        if (ast.e)
+            visit(ast.e);
+        else
+            visit(ast.t);
+        print(")");
+    }
+
+    void visitExprInit(ExprInit ast)
+    {
+        visit(ast.e);
+    }
+
+    void visitArrayInit(ArrayInit ast)
+    {
+        println("{");
+        foreach(v; ast.init)
+        {
+            visit(v);
+            println(",");
+        }
+        println("}");
+    }
+
+    void visitBasicType(BasicType ast)
+    {
+        if (ast.isConst)
+            print("const ");
+        visit(ast.id);
+    }
+
+    void visitClassType(ClassType ast)
+    {
+        if (ast.isConst)
+            print("const ");
+        visit(ast.id);
+    }
+
+    void visitEnumType(EnumType ast)
+    {
+        visit(ast.id);
+    }
+
+    void visitPointerType(PointerType ast)
+    {
+        visit(ast.next);
+        print('*');
+    }
+
+    void visitRefType(RefType ast)
+    {
+        visit(ast.next);
+        print('&');
+    }
+
+    void visitArrayType(ArrayType ast)
+    {
+        visit(ast.next);
+        print("[");
+        if (ast.dim)
+            visit(ast.dim);
+        print("]");
+    }
+
+    void visitFunctionType(FunctionType ast)
+    {
+        assert(0);
+    }
+
+    void visitTemplateType(TemplateType ast)
+    {
+        visit(ast.next);
+        print("<");
+        visit(ast.param);
+        print(">");
+    }
+
+    void visitParam(Param ast)
+    {
+        if (ast.id == "...")
+            visit(ast.id);
+        else
+        {
+            if (auto at = cast(ArrayType)ast.t)
+            {
+                assert(ast.id);
+                visit(at.next);
+                print(' ');
+                visit(ast.id);
+                print('[');
+                if (at.dim)
+                    visit(at.dim);
+                print(']');
+            } else {
+                visit(ast.t);
+                print(' ');
+                if (ast.id)
+                    visit(ast.id);
+                else
+                    assert(!ast.def);
+            }
+            if (ast.def)
+            {
+                print(" = ");
+                visit(ast.def);
+            }
+        }
+    }
+
+    void visitCompoundStatement(CompoundStatement ast)
+    {
+        println("{");
+        visit(ast.s);
+        println("}");
+    }
+
+    void visitReturnStatement(ReturnStatement ast)
+    {
+        print("return ");
+        if (ast.e)
+            visit(ast.e);
+        println(";");
+    }
+
+    void visitExpressionStatement(ExpressionStatement ast)
+    {
+        if (ast.e)
+            visit(ast.e);
+        println(";");
+    }
+
+    void visitVersionStatement(VersionStatement ast)
+    {
+        foreach(i; 0..ast.cond.length)
+        {
+            if (i == 0)
+                print("#if ");
+            else if (ast.cond[i])
+                print("#elif ");
+            else
+                print("#else");
+            if (ast.cond[i])
+                visit(ast.cond[i]);
+            println();
+            visit(ast.s[i]);
+        }
+        assert(ast.s.length == ast.cond.length);
+        println("#endif");
+        if (ast.selse)
+            visit(ast.selse);
+    }
+
+    void visitIfStatement(IfStatement ast)
+    {
+        print("if (");
+        visit(ast.e);
+        println(")");
+        visit(ast.sbody);
+        if (ast.selse)
+        {
+            print(" else ");
+            visit(ast.selse);
+        }
+    }
+
+    void visitForStatement(ForStatement ast)
+    {
+        print("for (");
+        if (ast.init)
+            visit(ast.init);
+        print("; ");
+        if (ast.cond)
+            visit(ast.cond);
+        print("; ");
+        if (ast.inc)
+            visit(ast.inc);
+        println(")");
+        visit(ast.sbody);
+    }
+
+    void visitSwitchStatement(SwitchStatement ast)
+    {
+        print("switch (");
+        visit(ast.e);
+        println(")");
+        visit(ast.sbody);
+    }
+
+    void visitCaseStatement(CaseStatement ast)
+    {
+        print("case ");
+        visit(ast.e);
+        println(":");
+    }
+
+    void visitBreakStatement(BreakStatement ast)
+    {
+        println("break;");
+    }
+
+    void visitContinueStatement(ContinueStatement ast)
+    {
+        println("continue;");
+    }
+
+    void visitDefaultStatement(DefaultStatement ast)
+    {
+        println("default:");
+    }
+
+    void visitWhileStatement(WhileStatement ast)
+    {
+        print("while (");
+        visit(ast.e);
+        println(")");
+        visit(ast.sbody);
+    }
+
+    void visitDoWhileStatement(DoWhileStatement ast)
+    {
+        println("do");
+        visit(ast.sbody);
+        println();
+        print("while (");
+        visit(ast.e);
+        println(")");
+    }
+
+    void visitGotoStatement(GotoStatement ast)
+    {
+        print("goto ");
+        visit(ast.id);
+        println(";");
+    }
+
+    void visitLabelStatement(LabelStatement ast)
+    {
+        visit(ast.id);
+        println(":");
+    }
+
+    void visitDanglingElseStatement(DanglingElseStatement ast)
+    {
+        print(" else ");
+        visit(ast.sbody);
+    }
+
+};

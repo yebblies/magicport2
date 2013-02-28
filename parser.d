@@ -1,0 +1,1351 @@
+
+import std.conv;
+import std.algorithm;
+import std.stdio;
+
+import tokens;
+import ast;
+
+Lexer tx;
+Token t;
+void fail(size_t line = __LINE__) { assert(0, to!string(line) ~ ": " ~ to!string(t.line) ~ ": " ~ t.text); }
+string check(string s, size_t line = __LINE__) { if (t.text != s) fail(line); return nextToken(); }
+string nextToken() { auto l = t.text; t = tx.front; tx.popFront(); return l; }
+
+int level;
+string[] marker;
+void enter(string s, size_t line = __LINE__) { check(s, line); level++; marker ~= s; }
+void exit(string s, size_t line = __LINE__) { check(s, line); level--; marker = marker[0..$-1]; }
+
+int inFunc;
+
+Module parse(Lexer tokens)
+{
+    tx = tokens;
+    Declaration[] decls;
+    
+    nextToken();
+
+    while (1)
+    {
+        auto lastt = t;
+        switch(t.text)
+        {
+        case "":
+            assert(t.type == TOKeof);
+            return new Module(tokens.file, decls);
+        default:
+            decls ~= parseDecl();
+            break;
+        };
+        assert(lastt.text.ptr != t.text.ptr);
+    }
+    fail();
+}
+
+/********************************************************/
+
+Declaration parsePreprocessor()
+{
+    check("#");
+    if (t.type != TOKid)
+        fail();
+    switch(t.text)
+    {
+    case "include":
+        nextToken();
+        string fn;
+        if (t.text == "<")
+        {
+            nextToken();
+            while (t.text != ">")
+            {
+                fn ~= t.text;
+                nextToken();
+            }
+            nextToken();
+        } else if (t.type == TOKstring)
+        {
+            fn = t.text[1..$-1];
+            nextToken();
+        }
+        return new ImportDeclaration(fn);
+        break;
+    case "define":
+        nextToken();
+        if (t.type != TOKid)
+            fail();
+        auto flag = t.flag;
+        auto xline = t.line;
+        auto id = parseIdent();
+        if (isIncludeGuard(id))
+        {
+            while (t.line == xline)
+                nextToken();
+            return new VarDeclaration(null, id, new ExprInit(new LitExpr("1")), STCconst);
+        } else if (t.text == "(" && flag)
+        {
+            enter("(");
+            string[] params;
+            if (t.text != ")")
+            do
+            {
+                params ~= parseIdent();
+                if (t.text != ")")
+                    check(",");
+            } while (t.text != ")");
+            auto line = t.line;
+            exit(")");
+            if (t.line != line)
+                fail();
+            auto e = parseExpr();
+            /*Token[] mbody;
+            while (line == t.line)
+            {
+                if (t.text == "\\")
+                    line++;
+                else
+                    mbody ~= t;
+                nextToken();
+            }*/
+            return new MacroDeclaration(id, params, e);
+        } else {
+            Expression e;
+            if (t.line == xline)
+                e = parseExpr();
+            return new VarDeclaration(null, id, e ? new ExprInit(e) : null, STCconst);
+        }
+    case "undef":
+        nextToken();
+        return new MacroUnDeclaration(parseIdent());
+    case "pragma":
+        nextToken();
+        if (t.text == "SC")
+        {
+            check("SC");
+            check("noreturn");
+            check("(");
+            check("asmerr");
+            check(")");
+            return new DummyDeclaration();
+        } else if (t.text == "pack")
+        {
+            nextToken();
+            check("(");
+            int v = 0;
+            if (t.text == "1")
+            {
+                nextToken();
+                v = 1;
+            }
+            check(")");
+            return new AlignDeclaration(v);
+        }
+    case "error":
+        auto line = t.line;
+        while(t.line == line)
+            nextToken();
+        return new DummyDeclaration();
+    default:
+        fail();
+        assert(0);
+    }
+}
+
+/********************************************************/
+
+Expression parseExpr()
+{
+    return parseCommaExpr();
+}
+
+Expression parseCommaExpr()
+{
+    auto e = parseAssignExpr();
+    while (t.text == ",")
+    {
+        nextToken();
+        e = new CommaExpr(e, parseAssignExpr());
+    }
+    return e;
+}
+
+auto assignOps = ["=", "|=", "&=", "+=", ">>=", "*=", "-=", "/=", "^=", "%=", "<<="];
+
+Expression parseAssignExpr()
+{
+    auto e = parseCondExpr();
+    if (assignOps.canFind(t.text))
+    {
+        auto op = nextToken();
+        e = new AssignExpr(op, e, parseAssignExpr());
+    }
+    return e;
+}
+
+Expression parseCondExpr()
+{
+    auto ec = parseOrOrExpr();
+    if (t.text == "?")
+    {
+        nextToken();
+        auto e1 = parseExpr();
+        check(":");
+        auto e2 = parseCondExpr();
+        ec = new CondExpr(ec, e1, e2);
+    }
+    return ec;
+}
+
+Expression parseOrOrExpr()
+{
+    auto e = parseAndAndExpr();
+    while (t.text == "||")
+    {
+        nextToken();
+        e = new OrOrExpr(e, parseAndAndExpr());
+    }
+    return e;
+}
+
+Expression parseAndAndExpr()
+{
+    auto e = parseOrExpr();
+    while (t.text == "&&")
+    {
+        nextToken();
+        e = new AndAndExpr(e, parseOrExpr());
+    }
+    return e;
+}
+
+Expression parseOrExpr()
+{
+    auto e = parseXorExpr();
+    while (t.text == "|")
+    {
+        nextToken();
+        e = new OrExpr(e, parseXorExpr());
+    }
+    return e;
+}
+
+Expression parseXorExpr()
+{
+    auto e = parseAndExpr();
+    while (t.text == "^")
+    {
+        nextToken();
+        e = new XorExpr(e, parseAndExpr());
+    }
+    return e;
+}
+
+Expression parseAndExpr()
+{
+    auto e = parseCmpExpr();
+    while (t.text == "&")
+    {
+        nextToken();
+        e = new AndExpr(e, parseCmpExpr());
+    }
+    return e;
+}
+
+auto cmpOps = ["==", "!=", "<", ">", "<=", ">=", "<>=", "<>", "!<>=", "!<>", "!<=", "!<", "!>=", "!>"];
+
+Expression parseCmpExpr()
+{
+    auto e = parseShiftExpr();
+    while (cmpOps.canFind(t.text))
+    {
+        auto op = nextToken();
+        e = new CmpExpr(op, e, parseShiftExpr());
+    }
+    return e;
+}
+
+Expression parseShiftExpr()
+{
+    auto e = parseAddExpr();
+    while (t.text == "<<" || t.text == ">>")
+    {
+        auto op = nextToken();
+        e = new AddExpr(op, e, parseAddExpr());
+    }
+    return e;
+}
+
+Expression parseAddExpr()
+{
+    auto e = parseMulExpr();
+    while (t.text == "+" || t.text == "-")
+    {
+        auto op = nextToken();
+        e = new AddExpr(op, e, parseMulExpr());
+    }
+    return e;
+}
+
+Expression parseMulExpr()
+{
+    auto e = parseUnaryExpr();
+    while (t.text == "*" || t.text == "/" || t.text == "%")
+    {
+        auto op = nextToken();
+        e = new MulExpr(op, e, parseUnaryExpr());
+    }
+    return e;
+}
+
+Expression parseUnaryExpr()
+{
+    switch(t.text)
+    {
+    case "*":
+        nextToken();
+        return new PtrExpr(parseUnaryExpr());
+    case "!":
+        nextToken();
+        return new NotExpr(parseUnaryExpr());
+    case "new":
+        nextToken();
+        auto type = parseType();
+        Expression dim;
+        if (t.text == "[")
+        {
+            enter("[");
+            dim = parseExpr();
+            exit("]");
+            type = new ArrayType(type, null);
+        }
+        Expression[] args;
+        if (t.text == "(")
+            args = parseArgs();
+        return new NewExpr(type, args, dim);
+    case "&":
+        nextToken();
+        return new AddrExpr(parseUnaryExpr());
+    case "-":
+        nextToken();
+        return new NegExpr(parseUnaryExpr());
+    case "~":
+        nextToken();
+        return new ComExpr(parseUnaryExpr());
+    case "--", "++":
+        auto op = nextToken();
+        return new PreExpr(op, parseUnaryExpr());
+    case "delete":
+        nextToken();
+        if (t.text == "[")
+        {
+            nextToken();
+            check("]");
+        }
+        return new DeleteExpr(parseUnaryExpr());
+    case "#":
+        nextToken();
+        return new StringofExpr(parseUnaryExpr());
+    default:
+        return parsePostfixExpr();
+    }
+}
+
+Expression parsePostfixExpr()
+{
+    Expression e = parsePrimaryExpr();
+    while (true)
+    {
+        if (t.text == "." || t.text == "->" || t.text == "::")
+        {
+            auto op = nextToken();
+            auto id = parseIdent();
+            e = new DotIdExpr(op, e, id);
+        }
+        else if (t.text == "(")
+        {
+            auto args = parseArgs();
+            e = new CallExpr(e, args);
+        }
+        else if (t.text == "++" || t.text == "--")
+        {
+            e = new PostExpr(nextToken(), e);
+        }
+        else if (t.text == "[")
+        {
+            e = new IndexExpr(e, parseArgs("["));
+        }
+        else
+        {
+            return e;
+        }
+    }
+}
+
+Expression parsePrimaryExpr()
+{
+    switch(t.type)
+    {
+    case TOKnum:
+    case TOKchar:
+        auto e = t.text;
+        nextToken();
+        return new LitExpr(e);
+    case TOKstring:
+        string e;
+        e ~= nextToken()[0..$-1];
+        while(t.type == TOKstring)
+            e ~= nextToken()[1..$-1];
+        e ~= "\"";
+        return new LitExpr(e);
+    case TOKid:
+        if (t.text == "sizeof")
+        {
+            Expression e;
+            nextToken();
+            enter("(");
+            if (isType())
+                e = new SizeofExpr(parseType());
+            else
+                e = new SizeofExpr(parseExpr());
+            exit(")");
+            return e;
+        }
+        else if (t.text == "static" || t.text == "STATIC" || t.text == "struct" || t.text == "const" || t.text == "union" || t.text == "class" || t.text == "enum" || t.text == "typedef" || t.text == "register")
+        {
+            return new DeclarationExpr(parseDecl(null, true));
+        }
+        else if (isType())
+        {
+            auto type = parseType();
+            if (t.type == TOKid)
+                return new DeclarationExpr(parseDecl(type, true));
+            return new IdentExpr(type.id);
+        }
+        return new IdentExpr(parseIdent());
+    case TOKop:
+        if (t.text == "#")
+            goto case TOKid;
+    default:
+        switch (t.text)
+        {
+        case "(":
+            auto save = tx;
+            nextToken();
+            if (!isType())
+            {
+notCast:
+                auto e = parseExpr();
+                check(")");
+                return e;
+            }
+            auto type = parseType();
+            if (t.text != ")")
+            {
+                tx = save;
+                nextToken();
+                goto notCast;
+            }
+            check(")");
+            return new CastExpr(type, parseUnaryExpr());
+        case "::":
+            nextToken();
+            return new OuterScopeExpr(parseExpr());
+        default:
+            break;
+        }
+    }
+    fail();
+    assert(0);
+}
+
+Expression[] parseArgs(string delim = "(")
+{
+    auto map = ["(" : ")", "[" : "]", "{" : "}"];
+    Expression[] e;
+    enter(delim);
+    if (t.text != map[delim])
+    {
+        do
+        {
+            e ~= parseAssignExpr();
+            if (t.text != map[delim])
+                check(",");
+        } while (t.text != map[delim]);
+    }
+    exit(map[delim]);
+    return e;
+}
+
+Init parseInit()
+{
+    if (t.text == "{")
+    {
+        Init[] e;
+        enter("{");
+        while (t.text != "}")
+        {
+            e ~= parseInit();
+            if (t.text != "}")
+                check(",");
+        }
+        exit("}");
+        return new ArrayInit(e);
+    } else {
+        return new ExprInit(parseAssignExpr());
+    }
+}
+
+/********************************************************/
+
+STC parseStorageClasses()
+{
+    STC stc;
+    while(true)
+    {
+        switch (t.text)
+        {
+        case "inline":
+            nextToken();
+            break;
+        case "static":
+        case "STATIC":
+            nextToken();
+            stc |= STCstatic;
+            break;
+        case "virtual":
+            nextToken();
+            stc |= STCvirtual;
+            break;
+        case "__inline":
+            nextToken();
+            stc |= STCinline;
+            break;
+        case "register":
+            nextToken();
+            stc |= STCregister;
+            break;
+        case "extern":
+            nextToken();
+            if (t.text == "\"C\"")
+            {
+                stc |= STCexternc;
+                nextToken();
+            } else
+                stc |= STCextern;
+            break;
+        default:
+            return stc;
+        }
+    }
+}
+
+auto macroList =
+[
+    "X", "BIN_INTERPRET", "BIN_INTERPRET2", "UNA_INTERPRET", "BIN_ASSIGN_INTERPRET",
+    "BIN_ASSIGN_INTERPRET_CTFE", "ASSIGNEXP"
+];
+
+Declaration parseDecl(Type tx = null, bool inExpr = false)
+{
+    bool destructor;
+    if (t.text == "template")
+    {
+        string s = nextToken();
+        s ~= " ";
+        s ~= check("<");
+        s ~= check("typename");
+        s ~= " ";
+        s ~= check("TYPE");
+        s ~= check(">");
+        s ~= " ";
+        s ~= check("struct");
+        s ~= " ";
+        s ~= check("ArrayBase");
+        s ~= check(";");
+        s ~= "\n";
+        return new DummyDeclaration(s);
+    }
+    else if (t.text == "~")
+    {
+        destructor = true;
+        nextToken();
+        tx = new ClassType(t.text);
+        goto getid;
+    } else if (t.text == "private" || t.text == "public")
+    {
+        auto p = nextToken();
+        check(":");
+        return new ProtDeclaration(p);
+    } else if (t.text == "#")
+    {
+        return parsePreprocessor();
+    } else if ((t.text == "#if" || t.text == "#ifdef" || t.text == "#ifndef") && !inExpr)
+    {
+        auto ndef = (t.text == "#ifndef");
+        nextToken();
+        auto e = parseExpr();
+        if (ndef)
+            e = new NotExpr(e);
+        auto l = level;
+        Expression[] es = [e];
+        Declaration[][] d;
+        d.length = 1;
+        while (t.text != "#endif")
+        {
+            if (t.text == "#else")
+            {
+                nextToken();
+                ++es.length;
+                ++d.length;
+                continue;
+            } else if (t.text == "#elif")
+            {
+                nextToken();
+                ++d.length;
+                es ~= parseExpr();
+            }
+            d[$-1] ~= parseDecl();
+        }
+        assert(l == level);
+        check("#endif");
+        return new VersionDeclaration(es, d);
+    } else if (macroList.canFind(t.text) && !inExpr)
+    {
+        auto id = parseIdent();
+        enter("(");
+        string[] args;
+        do
+        {
+            args ~= parseIdent();
+            if (t.text != ")")
+                check(",");
+        } while (t.text != ")");
+        exit(")");
+        assert(0, "No macros!");
+        return new MacroCallDeclaration(id, args);
+    } else if (t.text == "typedef")
+    {
+        nextToken();
+        auto type = parseType();
+        string id;
+        if (t.text == "(")
+        {
+            enter("(");
+            if (t.text == "__cdecl")
+                nextToken();
+            check("*");
+            id = parseIdent();
+            exit(")");
+            assert(t.text == "(");
+            auto params = parseParams();
+            type = new FunctionType(type, params);
+        }
+        else
+            id = parseIdent();
+        if (!inExpr)
+            check(";");
+        return new TypedefDeclaration(type, id);
+    } else if (t.text == "struct" || t.text == "union" || t.text == "class")
+    {
+        auto kind = nextToken();
+        if (t.text == "{")
+        {
+            enter("{");
+            Declaration[] d;
+            auto save = inFunc;
+            inFunc = 0;
+            while(t.text != "}")
+            {
+                d ~= parseDecl();
+            }
+            inFunc = save;
+            exit("}");
+            string id;
+            if (t.text != ";")
+                id = parseIdent();
+            if (!inExpr)
+                check(";");
+            return new AnonStructDeclaration(kind, id, d);
+        }
+        auto id = parseIdent();
+        string s;
+        if (t.text == ":")
+        {
+            nextToken();
+            if (t.text == "public")
+                nextToken();
+            s = parseIdent();
+        }
+        if (t.text == "{")
+        {
+            enter("{");
+            Declaration[] d;
+            auto save = inFunc;
+            inFunc = 0;
+            while(t.text != "}")
+            {
+                d ~= parseDecl();
+            }
+            inFunc = save;
+            exit("}");
+            if (!inExpr)
+                check(";");
+            return new StructDeclaration(kind, id, d, s);
+        } else
+        {
+            assert(!s);
+            tx = new ClassType(kind ~ " " ~ id);
+            if (t.text == ";")
+            {
+                nextToken();
+                return new DummyDeclaration(kind ~ " " ~ id ~ ";\n");
+            }
+        }
+    } else if (t.text == "enum")
+    {
+        nextToken();
+        string id;
+        if (t.type == TOKid)
+            id = parseIdent();
+        if (t.text == "{")
+        {
+            enter("{");
+            string[] members;
+            Expression[] vals;
+            while (t.text != "}")
+            {
+                members ~= parseIdent();
+                ++vals.length;
+                if (t.text == "=")
+                {
+                    nextToken();
+                    vals[$-1] = parseAssignExpr();
+                }
+                if (t.text != "}")
+                    check(",");
+            }
+            exit("}");
+            if (!inExpr)
+                check(";");
+            return new EnumDeclaration(id, members, vals);
+        } else
+        {
+            tx = new EnumType("enum " ~ id);
+        }
+    }
+
+    auto stc = parseStorageClasses();
+    if (stc & STCexternc)
+    {
+        if (t.text == "{")
+        {
+            enter("{");
+            Declaration[] d;
+            while (t.text != "}")
+                d ~= parseDecl();
+            exit("}");
+            return new ExternCDeclaration(d);
+        } else {
+            return new ExternCDeclaration(parseDecl);
+        }
+    }
+getid:
+    auto type = tx ? tx : parseType();
+    
+    while (t.text == "*")
+    {
+        nextToken();
+        type = new PointerType(type);
+    }
+    
+    string id;
+    bool constructor;
+    if (t.text == "(")
+    {
+        constructor = true;
+        id = (cast(ClassType)type).id;
+        goto func;
+    } else if (t.text == "::")
+    {
+        constructor = true;
+        goto memberfunc;
+    }
+    else if (t.text == ";")
+    {
+        nextToken();
+        assert(cast(EnumType)type);
+        return new DummyDeclaration(type.id ~ ";\n");
+    }
+    else
+    {
+        if (t.type != TOKid)
+            fail();
+    }
+
+    if (t.text == "__cdecl")
+    {
+        nextToken();
+        stc |= STCcdecl;
+    }
+    
+    id = parseIdent();
+    while (true)
+    {
+        if (t.text == "[")
+        {
+            nextToken();
+            Expression dim;
+            if (t.text != "]")
+                dim = parseExpr();
+            check("]");
+            type = new ArrayType(type, dim);
+        } else 
+            break;
+    }
+    
+    if (t.text == ":")
+    {
+        assert(0, "No bitfields!");
+        nextToken();
+        auto w = parseAssignExpr();
+        check(";");
+        return new BitfieldDeclaration(type, id, w);
+    }
+    else if (t.text == "(")
+    {
+        if (!inFunc)
+        {
+func:
+            if (destructor)
+                id = "~" ~ id;
+            auto params = parseParams();
+            Statement fbody;
+            if (t.text == "__attribute__")
+            {
+                nextToken();
+                check("(");
+                check("(");
+                check("analyzer_noreturn");
+                check(")");
+                check(")");
+            }
+            Expression[] superargs;
+            Type supertype;
+            if (t.text == ":" && constructor)
+            {
+                nextToken();
+                supertype = parseType();
+                superargs = parseArgs();
+            }
+            if (t.text == "=")
+            {
+                assert(stc & STCvirtual);
+                nextToken();
+                if (t.text == "0")
+                    nextToken();
+                else
+                    check("NULL");
+                check(";");
+                stc |= STCabstract;
+            }
+            else if (t.text == ";")
+            {
+                nextToken();
+            } else if (t.text == "{") {
+                inFunc++;
+                fbody = parseCompoundStatement();
+                inFunc--;
+            } else
+                fail();
+            return new FuncDeclaration(type, id, params, fbody, stc, supertype, superargs);
+        } else {
+            auto args = parseArgs();
+            return new ConstructDeclaration(type, id, args);
+        }
+    } else if (t.text == "::")
+    {
+memberfunc:
+        nextToken();
+        if (t.text == "~")
+        {
+            nextToken();
+            destructor = true;
+        }
+        auto id2 = parseIdent();
+        if (destructor)
+            id2 = "~" ~ id2;
+        while (t.text == "[")
+        {
+            nextToken();
+            Expression dim;
+            if (t.text != "]")
+                dim = parseExpr();
+            check("]");
+            type = new ArrayType(type, dim);
+        }
+
+        if (t.text == "=")
+        {
+            nextToken();
+            auto init = parseInit();
+            check(";");
+            return new StaticMemberVarDeclaration(type, id, id2, init);
+        }
+        if (t.text == ";")
+        {
+            nextToken();
+            return new StaticMemberVarDeclaration(type, id, id2);
+        }
+        auto params = parseParams();
+        Statement fbody;
+        Expression[] superargs;
+        Type supertype;
+        if ((constructor || destructor) && t.text == ":")
+        {
+            nextToken();
+            supertype = parseType();
+            superargs = parseArgs();
+        }
+        if (t.text == "{") {
+            inFunc++;
+            fbody = parseCompoundStatement();
+            inFunc--;
+        } else
+            fail();
+        return new FuncBodyDeclaration(type, id, id2, params, fbody, stc, supertype, superargs);
+    } else if (t.text == "," || t.text == "=" || t.text == ";")
+    {
+        auto ids = [id];
+        auto types = [type];
+        if (auto pt = cast(PointerType)type)
+            type = pt.next;
+        Init[] inits;
+        if (t.text == "=")
+        {
+            nextToken();
+            inits = [parseInit()];
+        } else
+            inits = [null];
+        while (t.text == ",")
+        {
+            nextToken();
+            auto txx = type;
+            while (t.text == "*")
+            {
+                nextToken();
+                txx = new PointerType(txx);
+            }
+            ids ~= parseIdent();
+            types ~= txx;
+            if (t.text == "=")
+            {
+                nextToken();
+                inits ~= parseInit();
+            } else
+                ++inits.length;
+        }
+        if (!inExpr)
+            check(";");
+        return new VarDeclaration(types, ids, inits, stc);
+    } else {
+        fail();
+        assert(0);
+    }
+}
+
+/********************************************************/
+
+string parseIdent()
+{
+    string[string] idents;
+    if (t.type != TOKid)
+        fail();
+    if (t.text == "operator")
+    {
+        nextToken();
+        return "operator " ~ nextToken();
+    }
+    if (auto p = (t.text in idents))
+        return *p;
+    auto x = nextToken().idup;
+    return idents[x] = x;
+}
+
+/********************************************************/
+
+Type parseType()
+{
+    bool isConst;
+    if (t.text == "const")
+    {
+        nextToken();
+        isConst = true;
+    }
+    auto tx = parseBasicType();
+    tx.isConst = isConst;
+    while (true)
+    {
+        if (t.text == "*")
+        {
+            nextToken();
+            tx = new PointerType(tx);
+        } else if (t.text == "&")
+        {
+            nextToken();
+            tx = new RefType(tx);
+        } else if (t.text == "<")
+        {
+            nextToken();
+            auto p = parseType();
+            tx = new TemplateType(tx, p);
+            check(">");
+        } else
+            break;
+    }
+    return tx;
+}
+
+import typenames;
+
+Type parseBasicType()
+{
+    if (t.text == "unsigned" || t.text == "signed" || t.text == "volatile" || t.text == "long" || t.text == "_Complex")
+    {
+        auto id = parseIdent();
+        if (t.text == "char" || t.text == "short" || t.text == "int" || t.text == "float" || t.text == "long" || t.text == "double")
+        {
+            id ~= " ";
+            id ~= parseIdent();
+            if (t.text == "long" || t.text == "double")
+            {
+                id ~= " ";
+                id ~= parseIdent();
+            }
+        }
+        return new BasicType(id);
+    }
+    if (basicTypes.canFind(t.text))
+        return new BasicType(parseIdent());
+    else if (classTypes.canFind(t.text))
+        return new ClassType(parseIdent());
+    else
+    {
+        switch(t.text)
+        {
+        case "enum":
+            auto kind = nextToken();
+            return new EnumType(kind ~ ' ' ~ parseIdent());
+        case "class", "struct", "union":
+            auto kind = nextToken();
+            return new ClassType(kind ~ ' ' ~ parseIdent());
+        default:
+            break;
+        }
+    }
+    fail();
+    assert(0);
+}
+
+bool isType()
+{
+    if (basicTypes.canFind(t.text))
+        return true;
+    else if (classTypes.canFind(t.text))
+        return true;
+    else
+    {
+        switch(t.text)
+        {
+        case "enum", "const", "struct":
+            return true;
+        default:
+            break;
+        }
+    }
+    return false;
+}
+
+/********************************************************/
+
+Param[] parseParams()
+{
+    Param[] p;
+    enter("(");
+    
+    while(t.text != ")")
+        p ~= parseParam();
+    
+    exit(")");
+    return p;
+}
+
+Param parseParam()
+{
+    if (t.text == "...")
+    {
+        return new Param(null, nextToken(), null);
+    }
+    auto tx = parseType();
+    string id;
+    if (t.text != "," && t.text != ")")
+        id = parseIdent();
+    while (t.text == "[")
+    {
+        nextToken();
+        Expression dim;
+        if (t.text != "]")
+            dim = parseAssignExpr();
+        check("]");
+        tx = new ArrayType(tx, dim);
+    }
+    Expression def;
+    if (t.text == "=")
+    {
+        nextToken();
+        def = parseAssignExpr();
+    }
+    if (t.text == ",")
+        nextToken();
+    return new Param(tx, id, def);
+}
+
+/********************************************************/
+
+Statement parseCompoundStatement()
+{
+    enter("{");
+    auto s = parseStatements();
+    exit("}");
+    return new CompoundStatement(s);
+}
+
+Statement[] parseStatements()
+{
+    Statement[] s;
+    while (t.text != "}")
+        s ~= parseStatement();
+    return s;
+}
+
+Statement parseStatement()
+{
+    switch (t.text)
+    {
+    case "{":
+        return parseCompoundStatement();
+    case "return":
+        return parseReturnStatement();
+    case "if":
+        return parseIfStatement();
+    case "for":
+        return parseForStatement();
+    case "switch":
+        return parseSwitchStatement();
+    case "case":
+        return parseCaseStatement();
+    case "continue":
+        return parseContinueStatement();
+    case "break":
+        return parseBreakStatement();
+    case "default":
+        return parseDefaultStatement();
+    case "while":
+        return parseWhileStatement();
+    case "goto":
+        return parseGotoStatement();
+    case "else":
+        return parseDanglingElseStatement();
+    case "do":
+        return parseDoWhileStatement();
+    case "#if", "#ifdef", "#ifndef":
+        auto ndef = (t.text == "#ifndef");
+        nextToken();
+        auto e = parseExpr();
+        if (ndef)
+            e = new NotExpr(e);
+        auto l = level;
+        if (marker[$-1] == "{")
+        {
+            Statement[][] s;
+            s.length = 1;
+            Expression[] cond = [e];
+            while (true)
+            {
+                if (t.text == "#else")
+                {
+                    nextToken();
+                    ++cond.length;
+                    ++s.length;
+                }
+                else if (t.text == "#elif")
+                {
+                    nextToken();
+                    cond ~= parseExpr();
+                    ++s.length;
+                }
+                else if (t.text == "#endif")
+                {
+                    nextToken();
+                    break;
+                }
+                else
+                    s[$-1] ~= parseStatement();
+            }
+            assert(l == level);
+            Statement selse;
+            if (t.text == "else")
+                selse = parseStatement();
+            return new VersionStatement(cond, s, selse);
+        }
+        else
+            fail();
+    case "#":
+        return new ExpressionStatement(new DeclarationExpr(parseDecl(null, true)));
+    default:
+        return parseExpressionStatement();
+    }
+}
+
+Statement parseReturnStatement()
+{
+    check("return");
+    Expression e;
+    if (t.text != ";")
+        e = parseExpr();
+    if (t.text == "DUMP")
+        nextToken();
+    check(";");
+    return new ReturnStatement(e);
+}
+
+Statement parseForStatement()
+{
+    check("for");
+    enter("(");
+    Expression init, cond, inc;
+    if (t.text != ";")
+        init = parseExpr();
+    check(";");
+    if (t.text != ";")
+        cond = parseExpr();
+    check(";");
+    if (t.text != ")")
+        inc = parseExpr();
+    exit(")");
+    auto sbody = parseStatement();
+    return new ForStatement(init, cond, inc, sbody);
+}
+
+Statement parseIfStatement()
+{
+    check("if");
+    enter("(");
+    auto e = parseExpr();
+    exit(")");
+    auto sbody = parseStatement();
+    Statement selse;
+    if (t.text == "else")
+    {
+        nextToken();
+        selse = parseStatement();
+    }
+    return new IfStatement(e, sbody, selse);
+}
+
+Statement parseDoWhileStatement()
+{
+    check("do");
+    auto sbody = parseStatement();
+    check("while");
+    enter("(");
+    auto e = parseExpr();
+    exit(")");
+    return new DoWhileStatement(sbody, e);
+}
+
+Statement parseExpressionStatement()
+{
+    Expression e;
+    if (t.text != ";")
+        e = parseExpr();
+    if (t.text == ":")
+    {
+        nextToken();
+        auto id = cast(IdentExpr)e;
+        if (!id)
+            fail();
+        return new LabelStatement(id.id);
+    }
+    if (t.text == "DUMP")
+        nextToken();
+    check(";");
+    return new ExpressionStatement(e);
+}
+
+Statement parseSwitchStatement()
+{
+    check("switch");
+    enter("(");
+    auto e = parseExpr();
+    exit(")");
+    auto sbody = parseCompoundStatement();
+    return new SwitchStatement(e, sbody);
+}
+
+Statement parseWhileStatement()
+{
+    check("while");
+    enter("(");
+    auto e = parseExpr();
+    exit(")");
+    auto sbody = parseStatement();
+    return new WhileStatement(e, sbody);
+}
+
+Statement parseCaseStatement()
+{
+    check("case");
+    auto e = parseExpr();
+    check(":");
+    return new CaseStatement(e);
+}
+
+Statement parseBreakStatement()
+{
+    check("break");
+    check(";");
+    return new BreakStatement();
+}
+
+Statement parseContinueStatement()
+{
+    check("continue");
+    check(";");
+    return new ContinueStatement();
+}
+
+Statement parseDefaultStatement()
+{
+    check("default");
+    check(":");
+    return new DefaultStatement();
+}
+
+Statement parseGotoStatement()
+{
+    check("goto");
+    auto id = parseIdent();
+    check(";");
+    return new GotoStatement(id);
+}
+
+Statement parseDanglingElseStatement()
+{
+    check("else");
+    auto sbody = parseStatement();
+    return new DanglingElseStatement(sbody);
+}
+
+
+/********************************************************/

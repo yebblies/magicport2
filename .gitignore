@@ -1,0 +1,7 @@
+*.exe
+*.obj
+*.txt
+/dmd
+/port
+/port2
+start.bat
