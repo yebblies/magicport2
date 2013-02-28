@@ -87,19 +87,19 @@ class CppPrinter : Visitor
 
     /////////////////////////////////////////////////////////////////////
 
-    void visitModule(Module ast)
+    override void visitModule(Module ast)
     {
         visit(ast.decls);
     }
 
-    void visitImportDeclaration(ImportDeclaration ast)
+    override void visitImportDeclaration(ImportDeclaration ast)
     {
         print("#include \"");
         visit(ast.fn);
         println("\"");
     }
 
-    void visitFuncDeclaration(FuncDeclaration ast)
+    override void visitFuncDeclaration(FuncDeclaration ast)
     {
         visit(ast.stc & ~(STCabstract | STCcdecl));
         if (ast.type.id == ast.id || ast.id[0] == '~')
@@ -136,7 +136,7 @@ class CppPrinter : Visitor
         }
     }
 
-    void visitFuncBodyDeclaration(FuncBodyDeclaration ast)
+    override void visitFuncBodyDeclaration(FuncBodyDeclaration ast)
     {
         visit(ast.stc);
         if (ast.type.id == ast.id2 || ast.id2[0] == '~')
@@ -168,7 +168,7 @@ class CppPrinter : Visitor
         }
     }
 
-    void visitStaticMemberVarDeclaration(StaticMemberVarDeclaration ast)
+    override void visitStaticMemberVarDeclaration(StaticMemberVarDeclaration ast)
     {
         if (auto at = cast(ArrayType)ast.type)
         {
@@ -196,7 +196,7 @@ class CppPrinter : Visitor
         println(";");
     }
 
-    void visitVarDeclaration(VarDeclaration ast)
+    override void visitVarDeclaration(VarDeclaration ast)
     {
         foreach(i; 0..ast.types.length)
         {
@@ -254,7 +254,7 @@ class CppPrinter : Visitor
         }
     }
 
-    void visitConstructDeclaration(ConstructDeclaration ast)
+    override void visitConstructDeclaration(ConstructDeclaration ast)
     {
         visit(ast.type);
         print(" ");
@@ -266,7 +266,7 @@ class CppPrinter : Visitor
             println(";");
     }
 
-    void visitVersionDeclaration(VersionDeclaration ast)
+    override void visitVersionDeclaration(VersionDeclaration ast)
     {
         foreach(i; 0..ast.es.length)
         {
@@ -284,7 +284,7 @@ class CppPrinter : Visitor
         println("#endif");
     }
 
-    void visitTypedefDeclaration(TypedefDeclaration ast)
+    override void visitTypedefDeclaration(TypedefDeclaration ast)
     {
         print("typedef ");
         if (auto tf = cast(FunctionType)ast.t)
@@ -303,7 +303,7 @@ class CppPrinter : Visitor
         println(";");
     }
 
-    void visitMacroDeclaration(MacroDeclaration ast)
+    override void visitMacroDeclaration(MacroDeclaration ast)
     {
         print("#define ");
         visit(ast.id);
@@ -327,14 +327,14 @@ class CppPrinter : Visitor
         println();*/
     }
 
-    void visitMacroUnDeclaration(MacroUnDeclaration ast)
+    override void visitMacroUnDeclaration(MacroUnDeclaration ast)
     {
         print("#undef ");
         visit(ast.id);
         println();
     }
 
-    void visitMacroCallDeclaration(MacroCallDeclaration ast)
+    override void visitMacroCallDeclaration(MacroCallDeclaration ast)
     {
         visit(ast.id);
         print("(");
@@ -347,7 +347,7 @@ class CppPrinter : Visitor
         print(")\n");
     }
 
-    void visitStructDeclaration(StructDeclaration ast)
+    override void visitStructDeclaration(StructDeclaration ast)
     {
         print(ast.kind);
         print(' ');
@@ -364,7 +364,7 @@ class CppPrinter : Visitor
         println("};");
     }
 
-    void visitAnonStructDeclaration(AnonStructDeclaration ast)
+    override void visitAnonStructDeclaration(AnonStructDeclaration ast)
     {
         print(ast.kind);
         println();
@@ -378,7 +378,7 @@ class CppPrinter : Visitor
             println(";");
     }
 
-    void visitExternCDeclaration(ExternCDeclaration ast)
+    override void visitExternCDeclaration(ExternCDeclaration ast)
     {
         if (ast.block)
         {
@@ -393,7 +393,7 @@ class CppPrinter : Visitor
         }
     }
 
-    void visitEnumDeclaration(EnumDeclaration ast)
+    override void visitEnumDeclaration(EnumDeclaration ast)
     {
         print("enum ");
         visit(ast.id);
@@ -413,13 +413,13 @@ class CppPrinter : Visitor
             println(";");
     }
 
-    void visitDummyDeclaration(DummyDeclaration ast)
+    override void visitDummyDeclaration(DummyDeclaration ast)
     {
         if (ast.s)
             visit(ast.s);
     }
 
-    void visitBitfieldDeclaration(BitfieldDeclaration ast)
+    override void visitBitfieldDeclaration(BitfieldDeclaration ast)
     {
         visit(ast.type);
         print(" ");
@@ -429,13 +429,13 @@ class CppPrinter : Visitor
         println(";");
     }
 
-    void visitProtDeclaration(ProtDeclaration ast)
+    override void visitProtDeclaration(ProtDeclaration ast)
     {
         visit(ast.id);
         println(":");
     }
 
-    void visitAlignDeclaration(AlignDeclaration ast)
+    override void visitAlignDeclaration(AlignDeclaration ast)
     {
         print("#pragma pack(");
         if (ast.id)
@@ -443,24 +443,24 @@ class CppPrinter : Visitor
         println(")");
     }
 
-    void visitLitExpr(LitExpr ast)
+    override void visitLitExpr(LitExpr ast)
     {
         visit(ast.val);
     }
 
-    void visitIdentExpr(IdentExpr ast)
+    override void visitIdentExpr(IdentExpr ast)
     {
         visit(ast.id);
     }
 
-    void visitDotIdExpr(DotIdExpr ast)
+    override void visitDotIdExpr(DotIdExpr ast)
     {
         visit(ast.e);
         print(ast.op);
         visit(ast.id);
     }
 
-    void visitCallExpr(CallExpr ast)
+    override void visitCallExpr(CallExpr ast)
     {
         auto id = cast(IdentExpr)ast.func;
         if (id && id.id == "operatornew")
@@ -474,7 +474,7 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitCmpExpr(CmpExpr ast)
+    override void visitCmpExpr(CmpExpr ast)
     {
         print("(");
         visit(ast.e1);
@@ -483,7 +483,7 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitMulExpr(MulExpr ast)
+    override void visitMulExpr(MulExpr ast)
     {
         print("(");
         visit(ast.e1);
@@ -492,7 +492,7 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitAddExpr(AddExpr ast)
+    override void visitAddExpr(AddExpr ast)
     {
         print("(");
         visit(ast.e1);
@@ -501,7 +501,7 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitOrOrExpr(OrOrExpr ast)
+    override void visitOrOrExpr(OrOrExpr ast)
     {
         print("(");
         visit(ast.e1);
@@ -510,7 +510,7 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitAndAndExpr(AndAndExpr ast)
+    override void visitAndAndExpr(AndAndExpr ast)
     {
         print("(");
         visit(ast.e1);
@@ -519,7 +519,7 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitOrExpr(OrExpr ast)
+    override void visitOrExpr(OrExpr ast)
     {
         print("(");
         visit(ast.e1);
@@ -528,7 +528,7 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitXorExpr(XorExpr ast)
+    override void visitXorExpr(XorExpr ast)
     {
         print("(");
         visit(ast.e1);
@@ -537,7 +537,7 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitAndExpr(AndExpr ast)
+    override void visitAndExpr(AndExpr ast)
     {
         print("(");
         visit(ast.e1);
@@ -546,7 +546,7 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitAssignExpr(AssignExpr ast)
+    override void visitAssignExpr(AssignExpr ast)
     {
         print("(");
         visit(ast.e1);
@@ -555,19 +555,19 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitDeclarationExpr(DeclarationExpr ast)
+    override void visitDeclarationExpr(DeclarationExpr ast)
     {
         visit(ast.d);
     }
 
-    void visitPostExpr(PostExpr ast)
+    override void visitPostExpr(PostExpr ast)
     {
         print("(");
         visit(ast.e);
         print(ast.op, ")");
     }
 
-    void visitPreExpr(PreExpr ast)
+    override void visitPreExpr(PreExpr ast)
     {
         print("(");
         visit(ast.op);
@@ -575,49 +575,49 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitPtrExpr(PtrExpr ast)
+    override void visitPtrExpr(PtrExpr ast)
     {
         print("(*");
         visit(ast.e);
         print(")");
     }
 
-    void visitAddrExpr(AddrExpr ast)
+    override void visitAddrExpr(AddrExpr ast)
     {
         print("(&");
         visit(ast.e);
         print(")");
     }
 
-    void visitNegExpr(NegExpr ast)
+    override void visitNegExpr(NegExpr ast)
     {
         print("(-");
         visit(ast.e);
         print(")");
     }
 
-    void visitComExpr(ComExpr ast)
+    override void visitComExpr(ComExpr ast)
     {
         print("(~");
         visit(ast.e);
         print(")");
     }
 
-    void visitDeleteExpr(DeleteExpr ast)
+    override void visitDeleteExpr(DeleteExpr ast)
     {
         print("(delete ");
         visit(ast.e);
         print(")");
     }
 
-    void visitNotExpr(NotExpr ast)
+    override void visitNotExpr(NotExpr ast)
     {
         print("(!");
         visit(ast.e);
         print(")");
     }
 
-    void visitIndexExpr(IndexExpr ast)
+    override void visitIndexExpr(IndexExpr ast)
     {
         visit(ast.e);
         print("[");
@@ -625,7 +625,7 @@ class CppPrinter : Visitor
         print("]");
     }
 
-    void visitCondExpr(CondExpr ast)
+    override void visitCondExpr(CondExpr ast)
     {
         print("(");
         visit(ast.cond);
@@ -636,7 +636,7 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitCastExpr(CastExpr ast)
+    override void visitCastExpr(CastExpr ast)
     {
         print("((");
         visit(ast.t);
@@ -645,7 +645,7 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitNewExpr(NewExpr ast)
+    override void visitNewExpr(NewExpr ast)
     {
         assert(!ast.dim);
         print("(new ");
@@ -655,13 +655,13 @@ class CppPrinter : Visitor
         print("))");
     }
 
-    void visitOuterScopeExpr(OuterScopeExpr ast)
+    override void visitOuterScopeExpr(OuterScopeExpr ast)
     {
         print("::");
         visit(ast.e);
     }
 
-    void visitCommaExpr(CommaExpr ast)
+    override void visitCommaExpr(CommaExpr ast)
     {
         print("(");
         visit(ast.e1);
@@ -670,7 +670,7 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitSizeofExpr(SizeofExpr ast)
+    override void visitSizeofExpr(SizeofExpr ast)
     {
         print("sizeof(");
         if (ast.e)
@@ -680,12 +680,12 @@ class CppPrinter : Visitor
         print(")");
     }
 
-    void visitExprInit(ExprInit ast)
+    override void visitExprInit(ExprInit ast)
     {
         visit(ast.e);
     }
 
-    void visitArrayInit(ArrayInit ast)
+    override void visitArrayInit(ArrayInit ast)
     {
         println("{");
         foreach(v; ast.init)
@@ -696,38 +696,38 @@ class CppPrinter : Visitor
         println("}");
     }
 
-    void visitBasicType(BasicType ast)
+    override void visitBasicType(BasicType ast)
     {
         if (ast.isConst)
             print("const ");
         visit(ast.id);
     }
 
-    void visitClassType(ClassType ast)
+    override void visitClassType(ClassType ast)
     {
         if (ast.isConst)
             print("const ");
         visit(ast.id);
     }
 
-    void visitEnumType(EnumType ast)
+    override void visitEnumType(EnumType ast)
     {
         visit(ast.id);
     }
 
-    void visitPointerType(PointerType ast)
+    override void visitPointerType(PointerType ast)
     {
         visit(ast.next);
         print('*');
     }
 
-    void visitRefType(RefType ast)
+    override void visitRefType(RefType ast)
     {
         visit(ast.next);
         print('&');
     }
 
-    void visitArrayType(ArrayType ast)
+    override void visitArrayType(ArrayType ast)
     {
         visit(ast.next);
         print("[");
@@ -736,12 +736,12 @@ class CppPrinter : Visitor
         print("]");
     }
 
-    void visitFunctionType(FunctionType ast)
+    override void visitFunctionType(FunctionType ast)
     {
         assert(0);
     }
 
-    void visitTemplateType(TemplateType ast)
+    override void visitTemplateType(TemplateType ast)
     {
         visit(ast.next);
         print("<");
@@ -749,7 +749,7 @@ class CppPrinter : Visitor
         print(">");
     }
 
-    void visitParam(Param ast)
+    override void visitParam(Param ast)
     {
         if (ast.id == "...")
             visit(ast.id);
@@ -781,14 +781,14 @@ class CppPrinter : Visitor
         }
     }
 
-    void visitCompoundStatement(CompoundStatement ast)
+    override void visitCompoundStatement(CompoundStatement ast)
     {
         println("{");
         visit(ast.s);
         println("}");
     }
 
-    void visitReturnStatement(ReturnStatement ast)
+    override void visitReturnStatement(ReturnStatement ast)
     {
         print("return ");
         if (ast.e)
@@ -796,14 +796,14 @@ class CppPrinter : Visitor
         println(";");
     }
 
-    void visitExpressionStatement(ExpressionStatement ast)
+    override void visitExpressionStatement(ExpressionStatement ast)
     {
         if (ast.e)
             visit(ast.e);
         println(";");
     }
 
-    void visitVersionStatement(VersionStatement ast)
+    override void visitVersionStatement(VersionStatement ast)
     {
         foreach(i; 0..ast.cond.length)
         {
@@ -824,7 +824,7 @@ class CppPrinter : Visitor
             visit(ast.selse);
     }
 
-    void visitIfStatement(IfStatement ast)
+    override void visitIfStatement(IfStatement ast)
     {
         print("if (");
         visit(ast.e);
@@ -837,7 +837,7 @@ class CppPrinter : Visitor
         }
     }
 
-    void visitForStatement(ForStatement ast)
+    override void visitForStatement(ForStatement ast)
     {
         print("for (");
         if (ast.init)
@@ -852,7 +852,7 @@ class CppPrinter : Visitor
         visit(ast.sbody);
     }
 
-    void visitSwitchStatement(SwitchStatement ast)
+    override void visitSwitchStatement(SwitchStatement ast)
     {
         print("switch (");
         visit(ast.e);
@@ -860,29 +860,29 @@ class CppPrinter : Visitor
         visit(ast.sbody);
     }
 
-    void visitCaseStatement(CaseStatement ast)
+    override void visitCaseStatement(CaseStatement ast)
     {
         print("case ");
         visit(ast.e);
         println(":");
     }
 
-    void visitBreakStatement(BreakStatement ast)
+    override void visitBreakStatement(BreakStatement ast)
     {
         println("break;");
     }
 
-    void visitContinueStatement(ContinueStatement ast)
+    override void visitContinueStatement(ContinueStatement ast)
     {
         println("continue;");
     }
 
-    void visitDefaultStatement(DefaultStatement ast)
+    override void visitDefaultStatement(DefaultStatement ast)
     {
         println("default:");
     }
 
-    void visitWhileStatement(WhileStatement ast)
+    override void visitWhileStatement(WhileStatement ast)
     {
         print("while (");
         visit(ast.e);
@@ -890,7 +890,7 @@ class CppPrinter : Visitor
         visit(ast.sbody);
     }
 
-    void visitDoWhileStatement(DoWhileStatement ast)
+    override void visitDoWhileStatement(DoWhileStatement ast)
     {
         println("do");
         visit(ast.sbody);
@@ -900,20 +900,20 @@ class CppPrinter : Visitor
         println(")");
     }
 
-    void visitGotoStatement(GotoStatement ast)
+    override void visitGotoStatement(GotoStatement ast)
     {
         print("goto ");
         visit(ast.id);
         println(";");
     }
 
-    void visitLabelStatement(LabelStatement ast)
+    override void visitLabelStatement(LabelStatement ast)
     {
         visit(ast.id);
         println(":");
     }
 
-    void visitDanglingElseStatement(DanglingElseStatement ast)
+    override void visitDanglingElseStatement(DanglingElseStatement ast)
     {
         print(" else ");
         visit(ast.sbody);

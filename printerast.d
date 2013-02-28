@@ -82,7 +82,7 @@ class AstPrinter : Visitor
     
     ///////////////////////////////////////
 
-    void visitModule(Module ast)
+    override void visitModule(Module ast)
     {
         print("Module(");
         visit(ast.file);
