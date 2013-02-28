@@ -1,4 +1,6 @@
 
+import core.stdc.stdlib;
+
 import std.conv;
 import std.algorithm;
 import std.stdio;
@@ -8,8 +10,23 @@ import ast;
 
 Lexer tx;
 Token t;
-void fail(size_t line = __LINE__) { assert(0, to!string(line) ~ ": " ~ to!string(t.line) ~ ": " ~ t.text); }
-string check(string s, size_t line = __LINE__) { if (t.text != s) fail(line); return nextToken(); }
+string currentfile;
+void error(T...)(string format, T args)
+{
+    writef("Error: %s(%s): ", currentfile, t.line);
+    writefln(format, args);
+    core.stdc.stdlib.exit(1);
+}
+void fail(size_t line = __LINE__)
+{
+    error("Unknown at line %d", line);
+}
+string check(string s, size_t line = __LINE__)
+{
+    if (t.text != s)
+        error("'%s' expected, not '%s'", s, t.text);
+    return nextToken();
+}
 string nextToken() { auto l = t.text; t = tx.front; tx.popFront(); return l; }
 
 int level;
@@ -19,9 +36,10 @@ void exit(string s, size_t line = __LINE__) { check(s, line); level--; marker = 
 
 int inFunc;
 
-Module parse(Lexer tokens)
+Module parse(Lexer tokens, string fn)
 {
     tx = tokens;
+    currentfile = fn;
     Declaration[] decls;
     
     nextToken();
@@ -1043,7 +1061,7 @@ Type parseBasicType()
             break;
         }
     }
-    fail();
+    error("Unknown basic type %s", t.text);
     assert(0);
 }
 

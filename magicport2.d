@@ -3,6 +3,7 @@ import std.file;
 import std.stdio;
 import std.range;
 import std.path;
+import std.algorithm;
 
 import tokens;
 import parser;
@@ -12,64 +13,45 @@ import printerast;
 import scanner;
 import ast;
 
-//r"dmd\src\intrange.c", 
-auto csrc = [
-    /**/
-    r"dmd\src\access.c", r"dmd\src\aliasthis.c", r"dmd\src\apply.c", r"dmd\src\argtypes.c",
-    r"dmd\src\arrayop.c", r"dmd\src\attrib.c", r"dmd\src\builtin.c", r"dmd\src\canthrow.c",
-    r"dmd\src\cast.c", r"dmd\src\class.c", r"dmd\src\clone.c", r"dmd\src\cond.c", r"dmd\src\constfold.c",
-    r"dmd\src\cppmangle.c", r"dmd\src\declaration.c", r"dmd\src\delegatize.c", r"dmd\src\doc.c",
-    r"dmd\src\dsymbol.c", r"dmd\src\dump.c", r"dmd\src\e2ir.c", r"dmd\src\eh.c", r"dmd\src\entity.c",
-    r"dmd\src\enum.c", r"dmd\src\expression.c", r"dmd\src\func.c", r"dmd\src\glue.c", r"dmd\src\hdrgen.c",
-    r"dmd\src\iasm.c", r"dmd\src\identifier.c",
-    r"dmd\src\imphint.c", r"dmd\src\import.c", r"dmd\src\inifile.c", r"dmd\src\init.c", r"dmd\src\inline.c",
-    r"dmd\src\interpret.c", r"dmd\src\irstate.c", r"dmd\src\json.c", r"dmd\src\lexer.c",
-    r"dmd\src\libomf.c", r"dmd\src\link.c", r"dmd\src\macro.c",
-    r"dmd\src\mangle.c", r"dmd\src\mars.c", r"dmd\src\module.c", r"dmd\src\msc.c", r"dmd\src\mtype.c",
-    r"dmd\src\opover.c", r"dmd\src\optimize.c", r"dmd\src\parse.c", r"dmd\src\ph.c", r"dmd\src\s2ir.c",
-    r"dmd\src\scope.c", r"dmd\src\sideeffect.c", r"dmd\src\statement.c", r"dmd\src\staticassert.c",
-    r"dmd\src\struct.c", r"dmd\src\template.c", r"dmd\src\tk.c", r"dmd\src\tocsym.c", r"dmd\src\toctype.c",
-    r"dmd\src\tocvdebug.c", r"dmd\src\todt.c", r"dmd\src\toir.c", r"dmd\src\toobj.c",
-    r"dmd\src\traits.c", r"dmd\src\typinf.c", r"dmd\src\unialpha.c", r"dmd\src\utf.c",
-    r"dmd\src\util.c", r"dmd\src\version.c",
-    r"dmd\src\aggregate.h", r"dmd\src\aliasthis.h", r"dmd\src\arraytypes.h", r"dmd\src\attrib.h",
-    r"dmd\src\cond.h", r"dmd\src\declaration.h", r"dmd\src\doc.h", r"dmd\src\dsymbol.h",
-    r"dmd\src\enum.h", r"dmd\src\expression.h", r"dmd\src\hdrgen.h", r"dmd\src\id.h", r"dmd\src\identifier.h",
-    r"dmd\src\import.h", r"dmd\src\init.h", r"dmd\src\irstate.h", r"dmd\src\json.h",
-    r"dmd\src\lexer.h", r"dmd\src\lib.h", r"dmd\src\macro.h", r"dmd\src\mars.h", r"dmd\src\module.h",
-    r"dmd\src\mtype.h", r"dmd\src\objfile.h", r"dmd\src\parse.h", r"dmd\src\scope.h", r"dmd\src\statement.h",
-    r"dmd\src\staticassert.h", r"dmd\src\template.h", r"dmd\src\toir.h", r"dmd\src\total.h", r"dmd\src\utf.h",
-    r"dmd\src\version.h",
+auto frontsrc = [
+    "mars.c", "enum.c", "struct.c", "dsymbol.c", "import.c", "idgen.c", "impcnvgen.c", "utf.h",
+    "utf.c", "entity.c", "identifier.c", "mtype.c", "expression.c", "optimize.c", "template.h",
+    "template.c", "lexer.c", "declaration.c", "cast.c", "cond.h", "cond.c", "link.c",
+    "aggregate.h", "staticassert.h", "parse.c", "statement.c", "constfold.c", "version.h",
+    "version.c", "inifile.c", "iasm.c", "staticassert.c", "module.c", "scope.c", "dump.c",
+    "init.h", "init.c", "attrib.h", "attrib.c", "opover.c", "eh.c", "toctype.c", "class.c",
+    "mangle.c", "tocsym.c", "func.c", "inline.c", "access.c", "complex_t.h", "irstate.h",
+    "irstate.c", "glue.c", "msc.c", "tk.c", "s2ir.c", "todt.c", "e2ir.c", "toobj.c",
+    "cppmangle.c", "identifier.h", "parse.h", "scope.h", "enum.h", "import.h", "typinf.c",
+    "tocvdebug.c", "toelfdebug.c", "mars.h", "module.h", "mtype.h", "dsymbol.h",
+    "declaration.h", "lexer.h", "expression.h", "statement.h", "doc.h", "doc.c", "macro.h",
+    "macro.c", "hdrgen.h", "hdrgen.c", "arraytypes.h", "delegatize.c", "toir.h", "toir.c",
+    "interpret.c", "ctfeexpr.c", "traits.c", "builtin.c", "clone.c", "lib.h", "libomf.c",
+    "libelf.c", "libmach.c", "arrayop.c", "aliasthis.h", "aliasthis.c", "json.h", "json.c",
+    "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sideeffect.c", "libmscoff.c",
+    "scanmscoff.c", "ctfe.h", "intrange.h", "intrange.c", "canthrow.c", "target.c", "target.h"
 ];
+
+auto backsrc = [
+    "cdef.h", "cc.h", "oper.h", "ty.h", "optabgen.c", "global.h", "code.h", "code_x86.h",
+    "code_stub.h", "platform_stub.c", "type.h", "dt.h", "cgcv.h", "el.h", "iasm.h", "rtlsym.h",
+    "bcomplex.c", "blockopt.c", "cg.c", "cg87.c", "cgxmm.c", "cgcod.c", "cgcs.c", "cgcv.c",
+    "cgelem.c", "cgen.c", "cgobj.c", "cgreg.c", "var.c", "cgsched.c", "cod1.c", "cod2.c",
+    "cod3.c", "cod4.c", "cod5.c", "code.c", "symbol.c", "debug.c", "dt.c", "ee.c", "el.c",
+    "evalu8.c", "go.c", "gflow.c", "gdag.c", "gother.c", "glocal.c", "gloop.c", "newman.c",
+    "nteh.c", "os.c", "out.c", "outbuf.c", "ptrntab.c", "rtlsym.c", "type.c", "melf.h",
+    "mach.h", "mscoff.h", "bcomplex.h", "cdeflnx.h", "outbuf.h", "token.h", "tassert.h",
+    "elfobj.c", "cv4.h", "dwarf2.h", "exh.h", "go.h", "dwarf.c", "dwarf.h", "cppman.c",
+    "machobj.c", "strtold.c", "aa.h", "aa.c", "tinfo.h", "ti_achar.c", "md5.h", "md5.c",
+    "ti_pvoid.c", "xmm.h", "ph2.c", "util2.c", "mscoffobj.c", "obj.h", "pdata.c", "cv8.c",
+    "backconfig.c"
+];
+
+enum frontpath = r"..\dmdgit\src\";
+enum backpath = frontpath ~ r"backend\";
 
 void main()
 {
-/*    auto f = File("ast.txt", "w");
-    foreach(fn; chain(csrc, hsrc))
-    {
-        writeln("-- ", fn);
-        auto ast = parse(Lexer(readText(fn), fn));
-        ast.visit(new AstPrinter(f));
-    }*/
-/*    foreach(fn; chain(csrc, hsrc))
-    {
-        writeln("-- ", fn);
-        auto ast = parse(Lexer(readText(fn), fn));
-        
-        auto f = File("port\\" ~ ast.file, "w");
-        ast.visit(new CppPrinter(f));
-        f.close();
-    }*/
-/*    foreach(fn; chain(csrc, hsrc))
-    {
-        writeln("-- ", fn);
-        auto ast = parse(Lexer(readText("port\\" ~ fn), fn));
-        
-        auto f = File("port2\\" ~ ast.file, "w");
-        ast.visit(new CppPrinter(f));
-        f.close();
-    }*/
-    
     Module[] asts;
     
     writeln("-- ");
@@ -77,10 +59,11 @@ void main()
     writeln("-- ");
 
     auto scan = new Scanner();
-    foreach(fn; csrc)
+    foreach(fn; chain(frontsrc.map!(b => frontpath ~ b)(), backsrc.map!(b => backpath ~ b)()))
     {
         writeln("-- ", fn);
-        asts ~= parse(Lexer(readText(fn), fn));
+        assert(fn.exists(), fn);
+        asts ~= parse(Lexer(readText(fn), fn), fn);
         asts[$-1].visit(scan);
     }
     writeln("-- ");

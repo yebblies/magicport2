@@ -208,6 +208,7 @@ auto classTypes =
     "debtyp_t",
     "TypeTrait",
     "DsymbolTrait",
+    "LPEXCEPTION_POINTERS",
     
     "ArrayBase",
     "Objects",
