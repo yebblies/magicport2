@@ -113,7 +113,7 @@ class DPrinter : Visitor
             "import", "module", "version", "align", "dchar", "ref", "scope", "wchar", "pragma",
             "body", "real", "alias", "is", "invariant", "TypeInfo", "in", "byte", "debug", "inout",
             "override", "final", "toString", "delegate", "cast", "mangleof", "stringof",
-            "enum", "foreach", "finally", "super", "unittest"
+            "enum", "foreach", "finally", "super", "unittest", "Object"
         ];
         print(list.canFind(s) ? '_' ~ s : s);
     }
@@ -447,7 +447,10 @@ class DPrinter : Visitor
     override void visitStructDeclaration(StructDeclaration ast)
     {
         auto parentlessclasses = ["Scope", "Section", "DocComment", "Global", "BaseClass", "Condition", "TemplateParameter", "Lexer"];
+        bool isclass;
         if (ast.superid || parentlessclasses.canFind(ast.id))
+            isclass = true;
+        if (isclass)
             print("class");
         else
             print(ast.kind);
@@ -458,6 +461,8 @@ class DPrinter : Visitor
             print(" : ");
             visitIdent(ast.superid);
         }
+        else if (isclass)
+            print(" : _Object");
         println("");
         println("{");
         foreach(d; ast.decls)

@@ -33,7 +33,7 @@ auto frontsrc = [
     "interpret.c", "ctfeexpr.c", "traits.c", "builtin.c", "clone.c", "lib.h", "libomf.c",
     "arrayop.c", "aliasthis.h", "aliasthis.c", "json.h", "json.c",
     "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sideeffect.c",
-    "scanmscoff.c", "ctfe.h", "canthrow.c", "target.c", "target.h"
+    "scanmscoff.c", "ctfe.h", "canthrow.c", "target.c", "target.h", "id.c", "id.h"
 ];
 
 auto backsrc = [
