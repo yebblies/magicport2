@@ -432,7 +432,7 @@ Expression parsePrimaryExpr()
             exit(")");
             return e;
         }
-        if (t.text == "const_cast")
+        if (t.text == "const_cast" || t.text == "static_cast")
         {
             nextToken();
             check("<");
