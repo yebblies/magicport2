@@ -1148,7 +1148,16 @@ Param parseParam()
     }
     auto tx = parseType();
     string id;
-    if (t.text != "," && t.text != ")")
+    if (t.text == "(")
+    {
+        check("(");
+        check("*");
+        id = parseIdent();
+        check(")");
+        auto params = parseParams();
+        tx = new FunctionType(tx, params);
+    }
+    else if (t.text != "," && t.text != ")")
         id = parseIdent();
     while (t.text == "[")
     {

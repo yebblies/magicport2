@@ -90,6 +90,7 @@ auto basicTypes = [
     "utf8_t",
     "padd_fp_t",
     "fpcmp_t",
+    "ForeachDg",
     
     "TY",
     "StorageClass",
