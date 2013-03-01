@@ -478,6 +478,11 @@ class Scanner : Visitor
         visit(ast.param);
     }
 
+    override void visitQualifiedType(QualifiedType ast)
+    {
+        visit(ast.next);
+    }
+
     override void visitParam(Param ast)
     {
         if (ast.t)

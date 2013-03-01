@@ -516,6 +516,14 @@ class TemplateType : Type
     mixin(visitor_str);
 }
 
+class QualifiedType : Type
+{
+    Type next;
+    string id;
+    this(Type next, string id) { this.next = next; this.id = id; }
+    mixin(visitor_str);
+}
+
 /********************************************************/
 
 class Param : Ast

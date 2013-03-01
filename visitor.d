@@ -305,6 +305,11 @@ class Visitor
         assert(0);
     }
 
+    void visitQualifiedType(QualifiedType ast)
+    {
+        assert(0);
+    }
+
     void visitParam(Param ast)
     {
         assert(0);

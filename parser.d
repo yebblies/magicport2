@@ -1016,7 +1016,7 @@ Type parseType(string* id = null)
         nextToken();
         isConst = true;
     }
-    auto tx = parseBasicType();
+    auto tx = parseBasicType(id !is null);
     parsePostConst(tx);
     tx.isConst = isConst;
     while (true)
@@ -1076,7 +1076,7 @@ void parsePostConst(Type tx)
 
 import typenames;
 
-Type parseBasicType()
+Type parseBasicType(bool flag = false)
 {
     debug(PARSE) writeln("parseBasicType");
     if (t.text == "unsigned" || t.text == "signed" || t.text == "volatile" || t.text == "long" || t.text == "_Complex")
@@ -1097,7 +1097,15 @@ Type parseBasicType()
     if (basicTypes.canFind(t.text))
         return new BasicType(parseIdent());
     else if (classTypes.canFind(t.text))
-        return new ClassType(parseIdent());
+    {
+        Type tx = new ClassType(parseIdent());
+        if (t.text == "::" && flag)
+        {
+            nextToken();
+            tx = new QualifiedType(tx, parseIdent());
+        }
+        return tx;
+    }
     else
     {
         switch(t.text)
