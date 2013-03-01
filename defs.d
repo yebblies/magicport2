@@ -57,3 +57,5 @@ enum TARGET_OPENBSD = 0;
 enum TARGET_SOLARIS = 0;
 enum TARGET_WINDOS = 1;
 enum _WIN32 = 1;
+
+enum I64 = false;
