@@ -204,7 +204,7 @@ class DPrinter : Visitor
                         }
                         if (samep)
                         {
-                            assert(!fbody);
+                            assert(!fbody, "Duplicate definition of: " ~ fb.id);
                             fbody = fb;
                         }
                     }
@@ -773,13 +773,14 @@ class DPrinter : Visitor
 
     override void visitArrayInit(ArrayInit ast)
     {
-        println("[");
-        foreach(v; ast.init)
+        print("[ ");
+        foreach(i, v; ast.init)
         {
+            if (i)
+                print(", ");
             visit(v);
-            println(",");
         }
-        println("]");
+        print("]");
     }
 
     static bool typeMatch(Type t1, Type t2)
@@ -794,7 +795,27 @@ class DPrinter : Visitor
             return typeMatch((cast(PointerType)t1).next, (cast(PointerType)t2).next);
         if (cast(RefType)t1)
             return typeMatch((cast(RefType)t1).next, (cast(RefType)t2).next);
-        assert(cast(ClassType)t1 || cast(BasicType)t1 || cast(EnumType)t1);
+        if (cast(ArrayType)t1)
+            return typeMatch((cast(ArrayType)t1).next, (cast(ArrayType)t2).next);
+        if (cast(FunctionType)t1)
+        {
+            auto tf1 = cast(FunctionType)t1;
+            auto tf2 = cast(FunctionType)t2;
+            auto m = typeMatch(tf1.next, tf2.next);
+            if (!m) return false;
+            assert(tf1.cdecl == tf2.cdecl);
+            m = tf1.params.length == tf2.params.length;
+            if (!m) return false;
+            foreach(i; 0..tf1.params.length)
+            {
+                m = typeMatch(tf1.params[i].t, tf2.params[i].t);
+                if (!m) return false;
+            }
+            foreach(i; 0..tf1.params.length)
+                assert(tf1.params[i].id == tf2.params[i].id, "Param name mismatch");
+            return true;
+        }
+        assert(cast(ClassType)t1 || cast(BasicType)t1 || cast(EnumType)t1, typeid(t1).toString());
         return true;
     }
 

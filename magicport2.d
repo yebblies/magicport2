@@ -14,10 +14,10 @@ import scanner;
 import ast;
 import preprocess;
 
-// "complex_t.h", "intrange.h", "intrange.c",
+// "complex_t.h", "intrange.h", "intrange.c", "toelfdebug.c", "libelf.c", "libmach.c", "idgen.c",
 
 auto frontsrc = [
-    "mars.c", "enum.c", "struct.c", "dsymbol.c", "import.c", "idgen.c", "utf.h",
+    "mars.c", "enum.c", "struct.c", "dsymbol.c", "import.c", "utf.h",
     "utf.c", "entity.c", "identifier.c", "mtype.c", "expression.c", "optimize.c", "template.h",
     "template.c", "lexer.c", "declaration.c", "cast.c", "cond.h", "cond.c", "link.c",
     "aggregate.h", "staticassert.h", "parse.c", "statement.c", "constfold.c", "version.h",
@@ -26,11 +26,11 @@ auto frontsrc = [
     "mangle.c", "tocsym.c", "func.c", "inline.c", "access.c", "irstate.h",
     "irstate.c", "glue.c", "msc.c", "tk.c", "s2ir.c", "todt.c", "e2ir.c", "toobj.c",
     "cppmangle.c", "identifier.h", "parse.h", "scope.h", "enum.h", "import.h", "typinf.c",
-    "tocvdebug.c", "toelfdebug.c", "mars.h", "module.h", "mtype.h", "dsymbol.h",
+    "tocvdebug.c", "mars.h", "module.h", "mtype.h", "dsymbol.h",
     "declaration.h", "lexer.h", "expression.h", "statement.h", "doc.h", "doc.c", "macro.h",
     "macro.c", "hdrgen.h", "hdrgen.c", "arraytypes.h", "delegatize.c", "toir.h", "toir.c",
     "interpret.c", "ctfeexpr.c", "traits.c", "builtin.c", "clone.c", "lib.h", "libomf.c",
-    "libelf.c", "libmach.c", "arrayop.c", "aliasthis.h", "aliasthis.c", "json.h", "json.c",
+    "arrayop.c", "aliasthis.h", "aliasthis.c", "json.h", "json.c",
     "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sideeffect.c", "libmscoff.c",
     "scanmscoff.c", "ctfe.h", "canthrow.c", "target.c", "target.h"
 ];
