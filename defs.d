@@ -2,6 +2,10 @@
 public import core.stdc.stdarg;
 public import core.stdc.stdio;
 public import core.stdc.stdlib;
+public import core.stdc.string;
+public import core.stdc.ctype;
+public import core.stdc.errno;
+public import core.stdc.limits;
 
 enum NULL = null;
 
@@ -9,7 +13,24 @@ struct ArrayBase(T)
 {
 };
 
-struct OutBuffer {}
+struct Mem
+{
+    void init();
+    void free(void*);
+    void setStackBottom(void*);
+    void addroots(void*, void*);
+}
+extern extern(C) uint _xi_a;
+extern extern(C) uint _end;
+
+Mem mem;
+
+struct OutBuffer
+{
+    int vprintf(const char* format, ...);
+    char *toChars();
+}
+
 struct File {}
 struct StringTable {}
 
