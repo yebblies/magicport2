@@ -1025,8 +1025,8 @@ Type parseType(string* id = null)
         isConst = true;
     }
     auto tx = parseBasicType(id !is null);
-    parsePostConst(tx);
     tx.isConst = isConst;
+    parsePostConst(tx);
     while (true)
     {
         if (t.text == "*")
