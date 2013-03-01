@@ -15,13 +15,14 @@ import ast;
 import preprocess;
 
 // "complex_t.h", "intrange.h", "intrange.c", "toelfdebug.c", "libelf.c", "libmach.c", "idgen.c", "libmscoff.c",
+// "iasm.c",
 
 auto frontsrc = [
     "mars.c", "enum.c", "struct.c", "dsymbol.c", "import.c", "utf.h",
     "utf.c", "entity.c", "identifier.c", "mtype.c", "expression.c", "optimize.c", "template.h",
     "template.c", "lexer.c", "declaration.c", "cast.c", "cond.h", "cond.c", "link.c",
     "aggregate.h", "staticassert.h", "parse.c", "statement.c", "constfold.c", "version.h",
-    "version.c", "inifile.c", "iasm.c", "staticassert.c", "module.c", "scope.c", "dump.c",
+    "version.c", "inifile.c", "staticassert.c", "module.c", "scope.c", "dump.c",
     "init.h", "init.c", "attrib.h", "attrib.c", "opover.c", "eh.c", "toctype.c", "class.c",
     "mangle.c", "tocsym.c", "func.c", "inline.c", "access.c", "irstate.h",
     "irstate.c", "glue.c", "msc.c", "tk.c", "s2ir.c", "todt.c", "e2ir.c", "toobj.c",
