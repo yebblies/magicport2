@@ -14,9 +14,11 @@ import dprinter;
 class Scanner : Visitor
 {
     FuncDeclaration[] funcDeclarations;
+    FuncDeclaration[string] funcDeclarationsTakingLoc;
     FuncBodyDeclaration[] funcBodyDeclarations;
     StructDeclaration[] structsUsingInheritance;
     StaticMemberVarDeclaration[] staticMemberVarDeclarations;
+    CallExpr[] callExprs;
 
     this()
     {
@@ -46,6 +48,8 @@ class Scanner : Visitor
     {
         funcDeclarations ~= ast;
         visit(ast.type);
+        if (ast.params.length && ast.params[0].t.id == "Loc")
+            funcDeclarationsTakingLoc[ast.id] = ast;
         foreach(p; ast.params)
             visit(p);
         if (ast.fbody)
@@ -273,6 +277,7 @@ class Scanner : Visitor
 
     override void visitCallExpr(CallExpr ast)
     {
+        callExprs ~= ast;
         visit(ast.func);
         foreach(a; ast.args)
             visit(a);
@@ -599,8 +604,27 @@ Module collapse(Module[] mods, Scanner scan)
     findProto(decls, scan);
     
     fixMain(decls, scan);
+
+    zeroToLoc(scan);
     
     return new Module("dmd.d", decls);
+}
+
+void zeroToLoc(Scanner scan)
+{
+    foreach(e; scan.callExprs)
+    {
+        if (auto ie = cast(IdentExpr)e.func)
+        {
+            if (e.args.length && cast(LitExpr)e.args[0] && (cast(LitExpr)e.args[0]).val == "0")
+            {
+                if (auto p = ie.id in scan.funcDeclarationsTakingLoc)
+                {
+                    e.args[0] = new CallExpr(new IdentExpr("Loc"), null);
+                }
+            }
+        }
+    }
 }
 
 void findProto(Declaration[] decls, Scanner scan)
