@@ -1246,6 +1246,10 @@ Statement parseStatement()
         return parseDanglingElseStatement();
     case "do":
         return parseDoWhileStatement();
+    case "try":
+        return parseTryCatchStatement();
+    case "throw":
+        return parseThrowStatement();
     case "#if", "#ifdef", "#ifndef":
         auto ndef = (t.text == "#ifndef");
         nextToken();
@@ -1446,6 +1450,28 @@ Statement parseDanglingElseStatement()
     check("else");
     auto sbody = parseStatement();
     return new DanglingElseStatement(sbody);
+}
+
+Statement parseTryCatchStatement()
+{
+    debug(PARSE) writeln("parseTryCatchStatement");
+    check("try");
+    auto s = parseStatement();
+    check("catch");
+    auto p = parseParams();
+    auto c = parseStatement();
+    return s;
+}
+
+Statement parseThrowStatement()
+{
+    debug(PARSE) writeln("parseThrowStatement");
+    check("throw");
+    parseExpr();
+    Expression e = new IdentExpr("assert");
+    Expression[] args = [new LitExpr("1")];
+    e = new CallExpr(e, args);
+    return new ExpressionStatement(e);
 }
 
 
