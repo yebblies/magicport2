@@ -112,7 +112,7 @@ class DPrinter : Visitor
             "import", "module", "version", "align", "dchar", "ref", "scope", "wchar", "pragma",
             "body", "real", "alias", "is", "invariant", "TypeInfo", "in", "byte", "debug", "inout",
             "override", "final", "toString", "delegate", "cast", "mangleof", "stringof",
-            "enum", "foreach", "finally", "super",
+            "enum", "foreach", "finally", "super", "unittest"
         ];
         print(list.canFind(s) ? '_' ~ s : s);
     }
@@ -235,6 +235,7 @@ class DPrinter : Visitor
             if (ast.types[i])
             {
                 if (ast.ids[i] == "__locale_decpoint") return;
+                if (ast.ids[i] == "__file__") return;
                 if (!allsame || !i)
                 {
                     visit(ast.stc | STCvirtual);

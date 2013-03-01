@@ -14,7 +14,7 @@ import scanner;
 import ast;
 import preprocess;
 
-// "complex_t.h", "intrange.h", "intrange.c", "toelfdebug.c", "libelf.c", "libmach.c", "idgen.c",
+// "complex_t.h", "intrange.h", "intrange.c", "toelfdebug.c", "libelf.c", "libmach.c", "idgen.c", "libmscoff.c",
 
 auto frontsrc = [
     "mars.c", "enum.c", "struct.c", "dsymbol.c", "import.c", "utf.h",
@@ -31,7 +31,7 @@ auto frontsrc = [
     "macro.c", "hdrgen.h", "hdrgen.c", "arraytypes.h", "delegatize.c", "toir.h", "toir.c",
     "interpret.c", "ctfeexpr.c", "traits.c", "builtin.c", "clone.c", "lib.h", "libomf.c",
     "arrayop.c", "aliasthis.h", "aliasthis.c", "json.h", "json.c",
-    "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sideeffect.c", "libmscoff.c",
+    "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sideeffect.c",
     "scanmscoff.c", "ctfe.h", "canthrow.c", "target.c", "target.h"
 ];
 
