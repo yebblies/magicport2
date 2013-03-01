@@ -1,6 +1,7 @@
 
 public import core.stdc.stdarg;
 public import core.stdc.stdio;
+public import core.stdc.stdlib;
 
 enum NULL = null;
 

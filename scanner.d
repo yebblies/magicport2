@@ -596,10 +596,41 @@ Module collapse(Module[] mods, Scanner scan)
         decls ~= resolveVersions(mod.decls);
     
     decls = removeDuplicates(decls);
+    findProto(decls, scan);
     
-    fixMain(decls);
+    fixMain(decls, scan);
     
     return new Module("dmd.d", decls);
+}
+
+void findProto(Declaration[] decls, Scanner scan)
+{
+    foreach(f1; scan.funcDeclarations)
+    {
+        if (f1.fbody)
+        {
+            foreach(f2; scan.funcDeclarations)
+            {
+                if (!f2.fbody && f1.id == f2.id)
+                {
+                    auto tf1 = new FunctionType(f1.type, f1.params);
+                    auto tf2 = new FunctionType(f2.type, f2.params);
+                    assert(tf1 && tf2);
+                    if (typeMatch(tf1, tf2))
+                    {
+                        foreach(i; 0..tf1.params.length)
+                        {
+                            if (tf1.params[i].def && tf2.params[i].def)
+                            {
+                                assert(typeid(tf1.params[i].def) == typeid(tf2.params[i].def)); // Good enough for now
+                            }
+                            tf1.params[i].def = tf2.params[i].def;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 Declaration[] removeDuplicates(Declaration[] decls)
@@ -673,19 +704,16 @@ Declaration[] pickWinner(VersionDeclaration ast)
     return null;
 }
 
-void fixMain(Declaration[] decls)
+void fixMain(Declaration[] decls, Scanner scan)
 {
     bool found;
-    foreach(d; decls)
+    foreach(fd; scan.funcDeclarations)
     {
-        if (auto fd = cast(FuncDeclaration)d)
+        if (fd.id == "main")
         {
-            if (fd.id == "main")
-            {
-                assert(!found);
-                fd.id = "xmain";
-                found = true;
-            }
+            assert(!found);
+            fd.id = "xmain";
+            found = true;
         }
     }
 }
