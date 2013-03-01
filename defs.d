@@ -48,6 +48,7 @@ alias real longdouble;
 alias uint regm_t;
 alias uint tym_t;
 alias uint list_t;
+alias uint idx_t;
 
 enum TARGET_LINUX = 0;
 enum TARGET_OSX = 0;
