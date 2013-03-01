@@ -929,6 +929,28 @@ memberfunc:
             supertype = parseType();
             superargs = parseArgs();
         }
+        // Just skip pre/post conditions for now
+        if (t.text == "__in")
+        {
+            nextToken();
+            inFunc++;
+            parseCompoundStatement();
+            inFunc--;
+        }
+        if (t.text == "__out")
+        {
+            nextToken();
+            check("(");
+            parseIdent();
+            check(")");
+            inFunc++;
+            parseCompoundStatement();
+            inFunc--;
+        }
+        if (t.text == "__body")
+        {
+            nextToken();
+        }
         if (t.text == "{") {
             inFunc++;
             fbody = parseCompoundStatement();
