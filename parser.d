@@ -649,22 +649,10 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
     } else if (t.text == "typedef")
     {
         nextToken();
-        auto type = parseType();
         string id;
-        if (t.text == "(")
-        {
-            enter("(");
-            if (t.text == "__cdecl")
-                nextToken();
-            check("*");
-            id = parseIdent();
-            exit(")");
-            assert(t.text == "(");
-            auto params = parseParams();
-            type = new FunctionType(type, params);
-        }
-        else
-            id = parseIdent();
+        auto type = parseType(&id);
+        if (!id.length)
+            error("Identifier expected for typedef");
         if (!inExpr)
             check(";");
         return new TypedefDeclaration(type, id);
@@ -1019,7 +1007,7 @@ string parseIdent()
 
 /********************************************************/
 
-Type parseType()
+Type parseType(string* id = null)
 {
     debug(PARSE) writeln("parseType");
     bool isConst;
@@ -1051,6 +1039,29 @@ Type parseType()
         } else
             break;
     }
+    if (id)
+    {
+        if (t.text == "(")
+        {
+            check("(");
+            bool cdecl;
+            if (t.text == "__cdecl")
+            {
+                nextToken();
+                cdecl = true;
+            }
+            check("*");
+            *id = parseIdent();
+            check(")");
+            auto params = parseParams();
+            auto tf = new FunctionType(tx, params);
+            tf.cdecl = cdecl;
+            tx = tf;
+        }
+        else if (t.text != "," && t.text != ")")
+            *id = parseIdent();
+    }
+
     return tx;
 }
 
@@ -1146,19 +1157,8 @@ Param parseParam()
     {
         return new Param(null, nextToken(), null);
     }
-    auto tx = parseType();
     string id;
-    if (t.text == "(")
-    {
-        check("(");
-        check("*");
-        id = parseIdent();
-        check(")");
-        auto params = parseParams();
-        tx = new FunctionType(tx, params);
-    }
-    else if (t.text != "," && t.text != ")")
-        id = parseIdent();
+    auto tx = parseType(&id);
     while (t.text == "[")
     {
         nextToken();

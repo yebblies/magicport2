@@ -503,6 +503,7 @@ class FunctionType : Type
 {
     Type next;
     Param[] params;
+    bool cdecl;
     this(Type next, Param[] params) { this.next = next; this.params = params; }
     mixin(visitor_str);
 }
