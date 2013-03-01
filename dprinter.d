@@ -225,21 +225,31 @@ class DPrinter : Visitor
     override void visitVarDeclaration(VarDeclaration ast)
     {
         if (ast.stc & STCextern) return;
+        auto t0 = ast.types[0];
+        bool allsame = t0 !is null;
+        foreach(t; ast.types[1..$])
+            if (!typeMatch(t, t0))
+                allsame = false;
         foreach(i; 0..ast.types.length)
         {
             if (ast.types[i])
             {
                 if (ast.ids[i] == "__locale_decpoint") return;
-                visit(ast.stc | STCvirtual);
-                visit(ast.types[i]);
-                print(" ");
+                if (!allsame || !i)
+                {
+                    visit(ast.stc | STCvirtual);
+                    visit(ast.types[i]);
+                    print(" ");
+                }
                 visitIdent(ast.ids[i]);
                 if (ast.inits[i])
                 {
                     print(" = ");
                     visit(ast.inits[i]);
                 }
-                if (!E || i != ast.types.length - 1)
+                if (allsame && i != ast.types.length - 1)
+                    println(", ");
+                else if (!E || i != ast.types.length - 1)
                     println(";");
             } else {
                 if (ast.ids[i] == "LOG" || ast.ids[i] == "LOGSEMANTIC") return;
@@ -831,6 +841,7 @@ class DPrinter : Visitor
             "unsigned long long" : "ulong",
             "unsigned short" : "ushort",
             "unsigned" : "uint",
+            "unsigned int" : "uint",
             "unsigned long" : "uint",
             "_Complex long double" : "creal",
         ];
