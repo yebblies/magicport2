@@ -19,6 +19,8 @@ class Scanner : Visitor
     StructDeclaration[] structsUsingInheritance;
     StaticMemberVarDeclaration[] staticMemberVarDeclarations;
     CallExpr[] callExprs;
+    NewExpr[] newExprs;
+    ConstructDeclaration[] constructDeclarations;
 
     this()
     {
@@ -94,6 +96,7 @@ class Scanner : Visitor
 
     override void visitConstructDeclaration(ConstructDeclaration ast)
     {
+        constructDeclarations ~= ast;
         visit(ast.type);
         foreach(a; ast.args)
             visit(a);
@@ -404,6 +407,7 @@ class Scanner : Visitor
 
     override void visitNewExpr(NewExpr ast)
     {
+        newExprs ~= ast;
         if (ast.dim)
             visit(ast.dim);
         visit(ast.t);
@@ -619,6 +623,32 @@ void zeroToLoc(Scanner scan)
             if (e.args.length && cast(LitExpr)e.args[0] && (cast(LitExpr)e.args[0]).val == "0")
             {
                 if (auto p = ie.id in scan.funcDeclarationsTakingLoc)
+                {
+                    e.args[0] = new CallExpr(new IdentExpr("Loc"), null);
+                }
+            }
+        }
+    }
+    foreach(e; scan.newExprs)
+    {
+        if (e.args.length && cast(LitExpr)e.args[0] && (cast(LitExpr)e.args[0]).val == "0")
+        {
+            if (auto p = e.t.id in scan.funcDeclarationsTakingLoc)
+            {
+                if (e.args.length == p.params.length)
+                {
+                    e.args[0] = new CallExpr(new IdentExpr("Loc"), null);
+                }
+            }
+        }
+    }
+    foreach(e; scan.constructDeclarations)
+    {
+        if (e.args.length && cast(LitExpr)e.args[0] && (cast(LitExpr)e.args[0]).val == "0")
+        {
+            if (auto p = e.type.id in scan.funcDeclarationsTakingLoc)
+            {
+                if (e.args.length == p.params.length)
                 {
                     e.args[0] = new CallExpr(new IdentExpr("Loc"), null);
                 }

@@ -276,6 +276,7 @@ auto classTypes =
     "ReturnStatements",
     
     "Object",
+    "_Object",
     "Dsymbol",
     "DsymbolTable",
     "ScopeDsymbol",

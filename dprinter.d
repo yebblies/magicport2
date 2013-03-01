@@ -10,6 +10,7 @@ import ast;
 import visitor;
 import scanner;
 
+auto parentlessclasses = ["Scope", "Section", "DocComment", "Global", "Condition", "TemplateParameter", "Lexer", "Object"];
 
 class DPrinter : Visitor
 {
@@ -24,6 +25,7 @@ class DPrinter : Visitor
     Expression E;
     StructDeclaration P;
     Type inittype;
+    string[] stackclasses;
 
     void print(string arg)
     {
@@ -108,6 +110,11 @@ class DPrinter : Visitor
     
     void visitIdent(string s)
     {
+        if (s == "I")
+        {
+            print("1i");
+            return;
+        }
         auto list =
         [
             "import", "module", "version", "align", "dchar", "ref", "scope", "wchar", "pragma",
@@ -156,7 +163,7 @@ class DPrinter : Visitor
     {
         if (ast.id == "operator new") return;
         if (!P && !ast.fbody) return;
-        auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState"];
+        auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass"];
         if (ast.type.id == ast.id && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
         visit(ast.stc);
@@ -300,12 +307,15 @@ class DPrinter : Visitor
                     return true;
                 }
             }
+            if (parentlessclasses.canFind(ct.id))
+                return true;
         }
         return false;
     }
 
     override void visitConstructDeclaration(ConstructDeclaration ast)
     {
+        stackclasses ~= ast.id;
         visit(ast.type);
         if (!isClass(ast.type))
             print("*");
@@ -446,7 +456,6 @@ class DPrinter : Visitor
 
     override void visitStructDeclaration(StructDeclaration ast)
     {
-        auto parentlessclasses = ["Scope", "Section", "DocComment", "Global", "BaseClass", "Condition", "TemplateParameter", "Lexer"];
         bool isclass;
         if (ast.superid || parentlessclasses.canFind(ast.id))
             isclass = true;
@@ -708,6 +717,14 @@ class DPrinter : Visitor
 
     override void visitAddrExpr(AddrExpr ast)
     {
+        if (auto ie = cast(IdentExpr)ast.e)
+        {
+            if (stackclasses.canFind(ie.id))
+            {
+                visit(ast.e);
+                return;
+            }
+        }
         print("(&");
         visit(ast.e);
         print(")");
@@ -943,6 +960,8 @@ class DPrinter : Visitor
 
     override void visitCompoundStatement(CompoundStatement ast)
     {
+        auto stackclassessave = stackclasses;
+        scope(exit) stackclasses = stackclassessave;
         println("{");
         visit(ast.s);
         println("}");
