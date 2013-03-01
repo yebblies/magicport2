@@ -432,6 +432,14 @@ Expression parsePrimaryExpr()
             exit(")");
             return e;
         }
+        if (t.text == "const_cast")
+        {
+            nextToken();
+            check("<");
+            auto type = parseType();
+            check(">");
+            return new CastExpr(type, parseUnaryExpr());
+        }
         else if (t.text == "static" || t.text == "STATIC" || t.text == "struct" || t.text == "const" || t.text == "union" || t.text == "class" || t.text == "enum" || t.text == "typedef" || t.text == "register")
         {
             return new DeclarationExpr(parseDecl(null, true));
