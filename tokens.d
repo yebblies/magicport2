@@ -40,12 +40,12 @@ struct Lexer
         popFront();
     }
 
-    bool empty() { return t.empty || current.type == TOKeof; }
+    bool empty() { return current.type == TOKeof; }
     Token front() { return current; }
     void popFront()
     {
         auto f = t;
-        while (1)
+        while (current.type != TOKeof)
         {
             if (t.length >= 1 && isWhite(t[0])) SkipWhitespace();
             else if (t.length >= 2 && t[0..2] == "/*") SkipComment();
@@ -160,6 +160,8 @@ struct Lexer
             ++i;
         current = Token(file, line, t[0..i], TOKid, t[i] == '(');
         t = t[i..$];
+        if (t[0] != ' ')
+            current.flag = true;
     }
 
     void ReadNumber()

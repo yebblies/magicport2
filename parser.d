@@ -15,6 +15,7 @@ void error(T...)(string format, T args)
 {
     writef("Error: %s(%s): ", currentfile, t.line);
     writefln(format, args);
+    assert(0);
     core.stdc.stdlib.exit(1);
 }
 void fail(size_t line = __LINE__)
@@ -65,6 +66,7 @@ Module parse(Lexer tokens, string fn)
 
 Declaration parsePreprocessor()
 {
+    debug(PARSE) writeln("parsePreprocessor");
     check("#");
     if (t.type != TOKid)
         fail();
@@ -115,7 +117,7 @@ Declaration parsePreprocessor()
             auto line = t.line;
             exit(")");
             if (t.line != line)
-                fail();
+                return new MacroDeclaration(id, params, null);
             auto e = parseExpr();
             /*Token[] mbody;
             while (line == t.line)
@@ -161,7 +163,7 @@ Declaration parsePreprocessor()
         }
     case "error":
         auto line = t.line;
-        while(t.line == line)
+        while(t.line == line && t.type != TOKeof)
             nextToken();
         return new DummyDeclaration();
     default:
@@ -174,6 +176,7 @@ Declaration parsePreprocessor()
 
 Expression parseExpr()
 {
+    debug(PARSE) writeln("parseExpr");
     return parseCommaExpr();
 }
 
@@ -473,7 +476,7 @@ notCast:
             break;
         }
     }
-    fail();
+    error("Unrecognised expression: '%s'", t.text);
     assert(0);
 }
 
@@ -566,6 +569,7 @@ auto macroList =
 
 Declaration parseDecl(Type tx = null, bool inExpr = false)
 {
+    debug(PARSE) writeln("parseDecl");
     bool destructor;
     if (t.text == "template")
     {
@@ -967,7 +971,7 @@ memberfunc:
             check(";");
         return new VarDeclaration(types, ids, inits, stc);
     } else {
-        fail();
+        error("Unknown declaration: '%s'", t.text);
         assert(0);
     }
 }
@@ -976,9 +980,10 @@ memberfunc:
 
 string parseIdent()
 {
+    debug(PARSE) writeln("parseIdent");
     string[string] idents;
     if (t.type != TOKid)
-        fail();
+        error("Identifier expected, not '%s'", t.text);
     if (t.text == "operator")
     {
         nextToken();
@@ -994,6 +999,7 @@ string parseIdent()
 
 Type parseType()
 {
+    debug(PARSE) writeln("parseType");
     bool isConst;
     if (t.text == "const")
     {
@@ -1001,6 +1007,7 @@ Type parseType()
         isConst = true;
     }
     auto tx = parseBasicType();
+    parsePostConst(tx);
     tx.isConst = isConst;
     while (true)
     {
@@ -1008,6 +1015,7 @@ Type parseType()
         {
             nextToken();
             tx = new PointerType(tx);
+            parsePostConst(tx);
         } else if (t.text == "&")
         {
             nextToken();
@@ -1024,10 +1032,20 @@ Type parseType()
     return tx;
 }
 
+void parsePostConst(Type tx)
+{
+    if (t.text == "const")
+    {
+        nextToken();
+        tx.isConst = true;
+    }
+}
+
 import typenames;
 
 Type parseBasicType()
 {
+    debug(PARSE) writeln("parseBasicType");
     if (t.text == "unsigned" || t.text == "signed" || t.text == "volatile" || t.text == "long" || t.text == "_Complex")
     {
         auto id = parseIdent();
@@ -1088,6 +1106,7 @@ bool isType()
 
 Param[] parseParams()
 {
+    debug(PARSE) writeln("parseParams");
     Param[] p;
     enter("(");
     
@@ -1100,6 +1119,7 @@ Param[] parseParams()
 
 Param parseParam()
 {
+    debug(PARSE) writeln("parseParam");
     if (t.text == "...")
     {
         return new Param(null, nextToken(), null);
@@ -1132,6 +1152,7 @@ Param parseParam()
 
 Statement parseCompoundStatement()
 {
+    debug(PARSE) writeln("parseCompoundStatement");
     enter("{");
     auto s = parseStatements();
     exit("}");
@@ -1140,6 +1161,7 @@ Statement parseCompoundStatement()
 
 Statement[] parseStatements()
 {
+    debug(PARSE) writeln("parseStatements");
     Statement[] s;
     while (t.text != "}")
         s ~= parseStatement();
@@ -1148,6 +1170,7 @@ Statement[] parseStatements()
 
 Statement parseStatement()
 {
+    debug(PARSE) writeln("parseStatement");
     switch (t.text)
     {
     case "{":
@@ -1227,6 +1250,7 @@ Statement parseStatement()
 
 Statement parseReturnStatement()
 {
+    debug(PARSE) writeln("parseReturnStatement");
     check("return");
     Expression e;
     if (t.text != ";")
@@ -1239,6 +1263,7 @@ Statement parseReturnStatement()
 
 Statement parseForStatement()
 {
+    debug(PARSE) writeln("parseForStatement");
     check("for");
     enter("(");
     Expression init, cond, inc;
@@ -1257,6 +1282,7 @@ Statement parseForStatement()
 
 Statement parseIfStatement()
 {
+    debug(PARSE) writeln("parseIfStatement");
     check("if");
     enter("(");
     auto e = parseExpr();
@@ -1273,6 +1299,7 @@ Statement parseIfStatement()
 
 Statement parseDoWhileStatement()
 {
+    debug(PARSE) writeln("parseDoWhileStatement");
     check("do");
     auto sbody = parseStatement();
     check("while");
@@ -1284,6 +1311,7 @@ Statement parseDoWhileStatement()
 
 Statement parseExpressionStatement()
 {
+    debug(PARSE) writeln("parseExpressionStatement");
     Expression e;
     if (t.text != ";")
         e = parseExpr();
@@ -1292,7 +1320,7 @@ Statement parseExpressionStatement()
         nextToken();
         auto id = cast(IdentExpr)e;
         if (!id)
-            fail();
+            error("this should be an identifier: '%s'", e);
         return new LabelStatement(id.id);
     }
     if (t.text == "DUMP")
@@ -1303,6 +1331,7 @@ Statement parseExpressionStatement()
 
 Statement parseSwitchStatement()
 {
+    debug(PARSE) writeln("parseSwitchStatement");
     check("switch");
     enter("(");
     auto e = parseExpr();
@@ -1313,6 +1342,7 @@ Statement parseSwitchStatement()
 
 Statement parseWhileStatement()
 {
+    debug(PARSE) writeln("parseWhileStatement");
     check("while");
     enter("(");
     auto e = parseExpr();
@@ -1323,6 +1353,7 @@ Statement parseWhileStatement()
 
 Statement parseCaseStatement()
 {
+    debug(PARSE) writeln("parseCaseStatement");
     check("case");
     auto e = parseExpr();
     check(":");
@@ -1331,6 +1362,7 @@ Statement parseCaseStatement()
 
 Statement parseBreakStatement()
 {
+    debug(PARSE) writeln("parseBreakStatement");
     check("break");
     check(";");
     return new BreakStatement();
@@ -1338,6 +1370,7 @@ Statement parseBreakStatement()
 
 Statement parseContinueStatement()
 {
+    debug(PARSE) writeln("parseContinueStatement");
     check("continue");
     check(";");
     return new ContinueStatement();
@@ -1345,6 +1378,7 @@ Statement parseContinueStatement()
 
 Statement parseDefaultStatement()
 {
+    debug(PARSE) writeln("parseDefaultStatement");
     check("default");
     check(":");
     return new DefaultStatement();
@@ -1352,6 +1386,7 @@ Statement parseDefaultStatement()
 
 Statement parseGotoStatement()
 {
+    debug(PARSE) writeln("parseGotoStatement");
     check("goto");
     auto id = parseIdent();
     check(";");
@@ -1360,6 +1395,7 @@ Statement parseGotoStatement()
 
 Statement parseDanglingElseStatement()
 {
+    debug(PARSE) writeln("parseDanglingElseStatement");
     check("else");
     auto sbody = parseStatement();
     return new DanglingElseStatement(sbody);

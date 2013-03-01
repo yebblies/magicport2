@@ -1,5 +1,5 @@
 
-SRC=magicport2.d ast.d scanner.d tokens.d parser.d printerast.d printercpp.d dprinter.d typenames.d visitor.d
+SRC=magicport2.d ast.d scanner.d tokens.d parser.d printerast.d printercpp.d dprinter.d typenames.d visitor.d preprocess.d
 
 DFLAGS=-g
 
@@ -10,4 +10,4 @@ magicport2.exe : $(SRC)
 	dmd $(SRC) $(DFLAGS)
 
 clean:
-	del dmd.exe
+	del magicport2.exe

@@ -12,15 +12,18 @@ import dprinter;
 import printerast;
 import scanner;
 import ast;
+import preprocess;
+
+// "complex_t.h", "intrange.h", "intrange.c",
 
 auto frontsrc = [
-    "mars.c", "enum.c", "struct.c", "dsymbol.c", "import.c", "idgen.c", "impcnvgen.c", "utf.h",
+    "mars.c", "enum.c", "struct.c", "dsymbol.c", "import.c", "idgen.c", "utf.h",
     "utf.c", "entity.c", "identifier.c", "mtype.c", "expression.c", "optimize.c", "template.h",
     "template.c", "lexer.c", "declaration.c", "cast.c", "cond.h", "cond.c", "link.c",
     "aggregate.h", "staticassert.h", "parse.c", "statement.c", "constfold.c", "version.h",
     "version.c", "inifile.c", "iasm.c", "staticassert.c", "module.c", "scope.c", "dump.c",
     "init.h", "init.c", "attrib.h", "attrib.c", "opover.c", "eh.c", "toctype.c", "class.c",
-    "mangle.c", "tocsym.c", "func.c", "inline.c", "access.c", "complex_t.h", "irstate.h",
+    "mangle.c", "tocsym.c", "func.c", "inline.c", "access.c", "irstate.h",
     "irstate.c", "glue.c", "msc.c", "tk.c", "s2ir.c", "todt.c", "e2ir.c", "toobj.c",
     "cppmangle.c", "identifier.h", "parse.h", "scope.h", "enum.h", "import.h", "typinf.c",
     "tocvdebug.c", "toelfdebug.c", "mars.h", "module.h", "mtype.h", "dsymbol.h",
@@ -29,7 +32,7 @@ auto frontsrc = [
     "interpret.c", "ctfeexpr.c", "traits.c", "builtin.c", "clone.c", "lib.h", "libomf.c",
     "libelf.c", "libmach.c", "arrayop.c", "aliasthis.h", "aliasthis.c", "json.h", "json.c",
     "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sideeffect.c", "libmscoff.c",
-    "scanmscoff.c", "ctfe.h", "intrange.h", "intrange.c", "canthrow.c", "target.c", "target.h"
+    "scanmscoff.c", "ctfe.h", "canthrow.c", "target.c", "target.h"
 ];
 
 auto backsrc = [
@@ -59,11 +62,14 @@ void main()
     writeln("-- ");
 
     auto scan = new Scanner();
-    foreach(fn; chain(frontsrc.map!(b => frontpath ~ b)(), backsrc.map!(b => backpath ~ b)()))
+    foreach(fn; frontsrc.map!(b => frontpath ~ b)())
     {
         writeln("-- ", fn);
         assert(fn.exists(), fn);
-        asts ~= parse(Lexer(readText(fn), fn), fn);
+        auto pp = cast(string)read(fn);
+        pp = preprocess.preprocess(Lexer(pp, fn), fn);
+        std.file.write("pre.txt", pp);
+        asts ~= parse(Lexer(pp, fn), fn);
         asts[$-1].visit(scan);
     }
     writeln("-- ");
@@ -73,8 +79,6 @@ void main()
     auto superast = collapse(asts, scan);
     
     auto f = File("port\\dmd.d", "w");
-    f.writeln(r"
-import defs;
-    ");
+    f.writeln("\nimport defs;\n");
     superast.visit(new DPrinter((string s) { f.write(s); }, scan));
 }
