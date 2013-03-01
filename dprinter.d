@@ -23,6 +23,7 @@ class DPrinter : Visitor
 
     Expression E;
     StructDeclaration P;
+    Type inittype;
 
     void print(string arg)
     {
@@ -233,6 +234,18 @@ class DPrinter : Visitor
         foreach(t; ast.types[1..$])
             if (!typeMatch(t, t0))
                 allsame = false;
+        bool manifest;
+        if (auto tp = cast(ArrayType)t0)
+        {
+            if (auto tc = cast(ClassType)tp.next)
+            {
+                if (tc.id == "NameId")
+                {
+                    ast.stc &= ~STCstatic;
+                    manifest = true;
+                }
+            }
+        }
         foreach(i; 0..ast.types.length)
         {
             if (ast.types[i])
@@ -241,6 +254,8 @@ class DPrinter : Visitor
                 if (ast.ids[i] == "__file__") return;
                 if (!allsame || !i)
                 {
+                    if (manifest)
+                        print("enum ");
                     visit(ast.stc | STCvirtual);
                     visit(ast.types[i]);
                     print(" ");
@@ -249,7 +264,9 @@ class DPrinter : Visitor
                 if (ast.inits[i])
                 {
                     print(" = ");
+                    this.inittype = ast.types[i];
                     visit(ast.inits[i]);
+                    inittype = null;
                 }
                 if (allsame && i != ast.types.length - 1)
                     println(", ");
@@ -786,14 +803,32 @@ class DPrinter : Visitor
 
     override void visitArrayInit(ArrayInit ast)
     {
-        print("[ ");
-        foreach(i, v; ast.init)
+        if (auto ts = cast(ClassType)inittype)
         {
-            if (i)
-                print(", ");
-            visit(v);
+            print(ts.id);
+            print("(");
+            foreach(i, v; ast.init)
+            {
+                if (i)
+                    print(", ");
+                visit(v);
+            }
+            print(")");
         }
-        print("]");
+        else if (auto at = cast(ArrayType)inittype)
+        {
+            auto inittypesave = inittype;
+            scope(exit) inittype = inittypesave;
+            inittype = at.next;
+            print("[ ");
+            foreach(i, v; ast.init)
+            {
+                if (i)
+                    print(", ");
+                visit(v);
+            }
+            print("]");
+        }
     }
 
     static bool typeMatch(Type t1, Type t2)
