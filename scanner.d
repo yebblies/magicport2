@@ -21,6 +21,7 @@ class Scanner : Visitor
     CallExpr[] callExprs;
     NewExpr[] newExprs;
     ConstructDeclaration[] constructDeclarations;
+    string agg;
 
     this()
     {
@@ -49,6 +50,7 @@ class Scanner : Visitor
     override void visitFuncDeclaration(FuncDeclaration ast)
     {
         funcDeclarations ~= ast;
+        ast.structid = agg;
         visit(ast.type);
         if (ast.params.length && ast.params[0].t.id == "Loc")
             funcDeclarationsTakingLoc[ast.id] = ast;
@@ -223,6 +225,9 @@ class Scanner : Visitor
 
     override void visitStructDeclaration(StructDeclaration ast)
     {
+        auto aggsave = agg;
+        scope(exit) agg = aggsave;
+        agg = ast.id;
         if (ast.superid)
             structsUsingInheritance ~= ast;
         foreach(d; ast.decls)
@@ -611,7 +616,29 @@ Module collapse(Module[] mods, Scanner scan)
 
     zeroToLoc(scan);
     
+    funcBodies(scan);
+
     return new Module("dmd.d", decls);
+}
+
+void funcBodies(Scanner scan)
+{
+    foreach(fd; scan.funcDeclarations)
+    {
+        foreach(fb; scan.funcBodyDeclarations)
+        {
+            if (fd.structid == fb.id && fd.id == fb.id2)
+            {
+                auto tf1 = new FunctionType(fd.type, fd.params);
+                auto tf2 = new FunctionType(fb.type, fb.params);
+                if (typeMatch(tf1, tf2))
+                {
+                    assert(!fd.fbody && fb.fbody);
+                    fd.fbody = fb.fbody;
+                }
+            }
+        }
+    }
 }
 
 void zeroToLoc(Scanner scan)

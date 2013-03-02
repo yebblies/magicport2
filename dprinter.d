@@ -862,6 +862,7 @@ class DPrinter : Visitor
         [
             "unsigned char" : "ubyte",
             "signed char" : "byte",
+            "long long" : "long",
             "unsigned long long" : "ulong",
             "unsigned short" : "ushort",
             "unsigned" : "uint",

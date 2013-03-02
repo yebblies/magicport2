@@ -5,7 +5,7 @@ DFLAGS=-g
 
 run: magicport2.exe
 	magicport2
-	dmd port/dmd -d
+	dmd port/dmd -d -ofport\dmd.exe
 
 magicport2.exe : $(SRC)
 	dmd $(SRC) $(DFLAGS)

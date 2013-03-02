@@ -53,6 +53,7 @@ class FuncDeclaration : Declaration
     STC stc;
     Type supertype;
     Expression[] superargs;
+    string structid;
     this(Type type, string id, Param[] params, Statement fbody, STC stc, Type supertype, Expression[] superargs) { this.type = type; this.id = id; this.params = params; this.fbody = fbody; this.stc = stc; this.supertype = supertype; this.superargs = superargs; }
     mixin(visitor_str);
     bool skip;

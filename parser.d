@@ -787,6 +787,7 @@ getid:
     } else if (t.text == "::")
     {
         constructor = true;
+        id = (cast(ClassType)type).id;
         goto memberfunc;
     }
     else if (t.text == ";")
