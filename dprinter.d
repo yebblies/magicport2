@@ -162,7 +162,7 @@ class DPrinter : Visitor
     override void visitFuncDeclaration(FuncDeclaration ast)
     {
         if (ast.id == "operator new") return;
-        if (!P && !ast.fbody) return;
+        if (!P && !ast.fbody && ast.skip) return;
         auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass"];
         if (ast.type.id == ast.id && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one

@@ -661,16 +661,17 @@ void findProto(Declaration[] decls, Scanner scan)
 {
     foreach(f1; scan.funcDeclarations)
     {
-        if (f1.fbody)
+        foreach(f2; scan.funcDeclarations)
         {
-            foreach(f2; scan.funcDeclarations)
+            if (!f2.fbody && f1.id == f2.id)
             {
-                if (!f2.fbody && f1.id == f2.id)
+                auto tf1 = new FunctionType(f1.type, f1.params);
+                auto tf2 = new FunctionType(f2.type, f2.params);
+                assert(tf1 && tf2);
+                if (typeMatch(tf1, tf2))
                 {
-                    auto tf1 = new FunctionType(f1.type, f1.params);
-                    auto tf2 = new FunctionType(f2.type, f2.params);
-                    assert(tf1 && tf2);
-                    if (typeMatch(tf1, tf2))
+                    f2.skip = true;
+                    if (f1.fbody)
                     {
                         foreach(i; 0..tf1.params.length)
                         {

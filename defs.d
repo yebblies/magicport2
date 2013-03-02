@@ -12,6 +12,7 @@ alias GetModuleFileNameA GetModuleFileName;
 
 int memcmp(const char*, const char*, size_t len);
 int memcmp(void*, void*, size_t len);
+int stricmp(const char*, const char*);
 int ld_sprint(const char*, ...);
 void __locale_decpoint(const char*);
 char* __locale_decpoint();
@@ -50,6 +51,7 @@ struct ArrayBase(U)
     T* tdata();
     typeof(this)* copy();
     void shift(T);
+    T* data;
 };
 
 struct Mem
@@ -60,6 +62,7 @@ struct Mem
     char* strdup(const char*);
     void setStackBottom(void*);
     void addroots(void*, void*);
+    void* calloc(size_t, size_t);
 }
 extern extern(C) uint _xi_a;
 extern extern(C) uint _end;
@@ -84,6 +87,11 @@ struct OutBuffer
     void reset();
     void write(OutBuffer*);
     void write(const char*, size_t);
+    void remove(size_t, size_t);
+    void reserve(size_t);
+    void setsize(size_t);
+    size_t insert(size_t, const char*, size_t);
+    size_t bracket(size_t, const char *, size_t, const char *);
 }
 
 struct Port
@@ -200,3 +208,17 @@ enum I64 = false;
 real creall(creal);
 real cimagl(creal);
 real ldouble(double);
+
+
+void obj_start(const char*);
+void obj_end(void*, File*);
+void obj_write_deferred(void*);
+void out_config_init(int, bool, bool, bool, char, bool, char, bool, bool);
+void backend_init();
+void backend_term();
+
+import dmd;
+
+Expression createTypeInfoArray(Scope sc, Expression *args, size_t dim);
+
+struct IRState;
