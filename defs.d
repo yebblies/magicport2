@@ -7,6 +7,7 @@ public import core.stdc.ctype;
 public import core.stdc.errno;
 public import core.stdc.limits;
 public import core.sys.windows.windows;
+public import core.stdc.math;
 
 alias GetModuleFileNameA GetModuleFileName;
 
@@ -98,7 +99,7 @@ struct Port
 {
     static bool isNan(real);
     static real fmodl(real, real);
-    double nan;
+    static double nan;
     static int memicmp(const char*, const char*, size_t);
     static char* strupr(const char*);
 }
@@ -140,6 +141,7 @@ struct FileName
     static ArrayBase!char* splitPath(const char*);
     static int absolute(const char*);
     static int exists(const char*);
+    const char* toChars();
 }
 struct StringTable
 {
@@ -222,3 +224,6 @@ import dmd;
 Expression createTypeInfoArray(Scope sc, Expression *args, size_t dim);
 
 struct IRState;
+
+ushort _rotl(ushort, int);
+ushort _rotr(ushort, int);
