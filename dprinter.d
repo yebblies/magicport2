@@ -26,6 +26,7 @@ class DPrinter : Visitor
     StructDeclaration P;
     Type inittype;
     string[] stackclasses;
+    bool align1;
 
     void print(string arg)
     {
@@ -474,6 +475,8 @@ class DPrinter : Visitor
             print(" : _Object");
         println("");
         println("{");
+        if (align1)
+            println("align(1):");
         foreach(d; ast.decls)
             visit(d);
         println("};");
@@ -552,10 +555,10 @@ class DPrinter : Visitor
 
     override void visitAlignDeclaration(AlignDeclaration ast)
     {
-        print("align(");
-        if (ast.id)
-            print(to!string(ast.id));
-        println(")");
+        auto align1save = align1;
+        scope(exit) align1 = align1save;
+        if (ast.id == 1)
+            align1 = true;
     }
 
     override void visitLitExpr(LitExpr ast)
@@ -746,6 +749,7 @@ class DPrinter : Visitor
 
     override void visitDeleteExpr(DeleteExpr ast)
     {
+        print("do {/*delete*/} while(0)");
     }
 
     override void visitNotExpr(NotExpr ast)
