@@ -71,7 +71,7 @@ void main()
         assert(fn.exists(), fn);
         auto pp = cast(string)read(fn);
         pp = preprocess.preprocess(Lexer(pp, fn), fn);
-        std.file.write("pre.txt", pp);
+        //std.file.write("pre.txt", pp);
         asts ~= parse(Lexer(pp, fn), fn);
         asts[$-1].visit(scan);
     }

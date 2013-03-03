@@ -2,12 +2,13 @@
 public import core.stdc.stdarg;
 public import core.stdc.stdio;
 public import core.stdc.stdlib;
-import core.stdc.string : strcmp, memcpy, strlen, strncmp, strchr, memcmp, memset, memmove, strdup;
+import core.stdc.string : strcmp, memcpy, strlen, strncmp, strchr, memcmp, memset, memmove, strdup, strcpy;
 public import core.stdc.ctype;
 public import core.stdc.errno;
 public import core.stdc.limits;
 public import core.sys.windows.windows;
 public import core.stdc.math;
+public import core.stdc.time;
 
 alias GetModuleFileNameA GetModuleFileName;
 
@@ -31,6 +32,8 @@ class _Object
         assert(0);
     }
     int equals(_Object);
+    char *toChars();
+    void print();
 }
 
 struct ArrayBase(U)
@@ -53,11 +56,12 @@ struct ArrayBase(U)
     typeof(this)* copy();
     void shift(T);
     T* data;
+    void zero();
 };
 
 struct Mem
 {
-    void init();
+    void _init();
     void* malloc(size_t);
     void free(void*);
     char* strdup(const char*);
@@ -83,7 +87,7 @@ struct OutBuffer
     void prependstring(const char*);
     char *toChars();
     char *extractData();
-    char *data;
+    ubyte *data;
     size_t offset;
     void reset();
     void write(OutBuffer*);
@@ -93,6 +97,10 @@ struct OutBuffer
     void setsize(size_t);
     size_t insert(size_t, const char*, size_t);
     size_t bracket(size_t, const char *, size_t, const char *);
+    void writenl();
+    size_t level;
+    void writeUTF8(uint);
+    bool doindent;
 }
 
 struct Port
@@ -102,29 +110,63 @@ struct Port
     static double nan;
     static int memicmp(const char*, const char*, size_t);
     static char* strupr(const char*);
+    enum ldbl_max = real.max;
+    enum infinity = real.infinity;
 }
+
+enum FLT_MAX = float.max;
+enum FLT_MIN = float.min;
+enum FLT_DIG = float.dig;
+enum FLT_EPSILON = float.epsilon;
+enum FLT_MANT_DIG = float.mant_dig;
+enum FLT_MAX_10_EXP = float.max_10_exp;
+enum FLT_MAX_EXP = float.max_exp;
+enum FLT_MIN_10_EXP = float.min_10_exp;
+enum FLT_MIN_EXP = float.min_exp;
+enum DBL_MAX = double.max;
+enum DBL_MIN = double.min;
+enum DBL_DIG = double.dig;
+enum DBL_EPSILON = double.epsilon;
+enum DBL_MANT_DIG = double.mant_dig;
+enum DBL_MAX_10_EXP = double.max_10_exp;
+enum DBL_MAX_EXP = double.max_exp;
+enum DBL_MIN_10_EXP = double.min_10_exp;
+enum DBL_MIN_EXP = double.min_exp;
+enum LDBL_MIN = real.min;
+enum LDBL_DIG = real.dig;
+enum LDBL_EPSILON = real.epsilon;
+enum LDBL_MANT_DIG = real.mant_dig;
+enum LDBL_MAX_10_EXP = real.max_10_exp;
+enum LDBL_MAX_EXP = real.max_exp;
+enum LDBL_MIN_10_EXP = real.min_10_exp;
+enum LDBL_MIN_EXP = real.min_exp;
 
 struct StringValue
 {
     char *ptrvalue;
+    void* toDchars();
 }
 
 struct File
 {
     uint _ref;
     this(const char*);
+    this(FileName*);
     FileName name();
     void setbuffer(void*, size_t);
     void writev();
     char* toChars();
     bool write();
     bool read();
+    bool readv();
     size_t len;
     char* buffer;
+    void remove();
 }
 
 struct FileName
 {
+    this(const char*);
     const(char)* str();
     static void free(const char *);
     static const(char)* ext(const char *);
@@ -136,6 +178,7 @@ struct FileName
     static int compare(const char*, const char*);
     static const(char)* forceExt(const char*, const char*);
     static const(char)* defaultExt(const char*, const char*);
+    static int equalsExt(const char*, const char*);
     static const(char)* combine(const char*, const char*);
     static const(char)* replaceName(const char*, const char*);
     static ArrayBase!char* splitPath(const char*);
@@ -146,6 +189,8 @@ struct FileName
 struct StringTable
 {
     StringValue* lookup(const char*, size_t);
+    void _init(size_t);
+    StringValue* update(const char*, size_t);
 }
 
 struct Symbol;
@@ -153,7 +198,6 @@ struct Classsym;
 struct TYPE;
 struct elem;
 alias Symbol symbol;
-struct AA;
 struct Outbuffer {}
 struct jmp_buf {}
 struct code;
@@ -227,3 +271,18 @@ struct IRState;
 
 ushort _rotl(ushort, int);
 ushort _rotr(ushort, int);
+
+struct AA;
+_Object _aaGetRvalue(AA*, _Object);
+_Object _aaGet(AA**, _Object);
+
+void util_progress();
+
+struct String
+{
+    static size_t calcHash(const char*);
+}
+
+void speller(const char*, void* function(void*, const(char)*), Scope, const char*);
+
+const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";

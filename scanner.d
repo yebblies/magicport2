@@ -614,7 +614,7 @@ Module collapse(Module[] mods, Scanner scan)
     
     fixMain(decls, scan);
 
-    zeroToLoc(scan);
+    //zeroToLoc(scan);
     
     funcBodies(scan);
 
@@ -635,6 +635,13 @@ void funcBodies(Scanner scan)
                 {
                     assert(!fd.fbody && fb.fbody);
                     fd.fbody = fb.fbody;
+                    if (fb.superargs)
+                        fd.superargs = fb.superargs;
+                    foreach(i; 0..tf1.params.length)
+                    {
+                        if (tf2.params[i].id)
+                            tf1.params[i].id = tf2.params[i].id;
+                    }
                 }
             }
         }

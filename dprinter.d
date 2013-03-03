@@ -121,7 +121,7 @@ class DPrinter : Visitor
             "import", "module", "version", "align", "dchar", "ref", "scope", "wchar", "pragma",
             "body", "real", "alias", "is", "invariant", "TypeInfo", "in", "byte", "debug", "inout",
             "override", "final", "toString", "delegate", "cast", "mangleof", "stringof",
-            "enum", "foreach", "finally", "super", "unittest", "Object"
+            "enum", "foreach", "finally", "super", "unittest", "Object", "init"
         ];
         print(list.canFind(s) ? '_' ~ s : s);
     }
@@ -793,7 +793,10 @@ class DPrinter : Visitor
         print("(new ");
         visit(ast.t);
         print("(");
-        printArgs(ast.args);
+        if (ast.t.id == "Scope" && ast.args.length == 1 && cast(PtrExpr)ast.args[0])
+            visit((cast(PtrExpr)ast.args[0]).e);
+        else
+            printArgs(ast.args);
         print("))");
     }
 
