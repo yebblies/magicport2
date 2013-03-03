@@ -97,6 +97,7 @@ auto basicTypes = [
     "MATCH",
     "PROT",
     "NeedInterpret",
+    "FLAGS",
 ];
 
 auto classTypes =

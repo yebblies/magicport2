@@ -2,7 +2,7 @@
 public import core.stdc.stdarg;
 public import core.stdc.stdio;
 public import core.stdc.stdlib;
-import core.stdc.string : strcmp, memcpy, strlen, strncmp, strchr, memcmp, memset, memmove, strdup, strcpy;
+import core.stdc.string : strcmp, strlen, strncmp, strchr, memcmp, memset, memmove, strdup, strcpy, strcat;
 public import core.stdc.ctype;
 public import core.stdc.errno;
 public import core.stdc.limits;
@@ -32,6 +32,7 @@ class _Object
         assert(0);
     }
     int equals(_Object);
+    int compare(_Object);
     char *toChars();
     void print();
 }
@@ -49,7 +50,7 @@ struct ArrayBase(U)
     void remove(size_t);
     void insert(size_t, typeof(this)*);
     void insert(size_t, T);
-    size_t dim();
+    size_t dim;
     void setDim(size_t);
     ref T opIndex(size_t);
     T* tdata();
@@ -57,6 +58,7 @@ struct ArrayBase(U)
     void shift(T);
     T* data;
     void zero();
+    void pop();
 };
 
 struct Mem
@@ -68,6 +70,7 @@ struct Mem
     void setStackBottom(void*);
     void addroots(void*, void*);
     void* calloc(size_t, size_t);
+    void* realloc(void*, size_t);
 }
 extern extern(C) uint _xi_a;
 extern extern(C) uint _end;
@@ -92,15 +95,22 @@ struct OutBuffer
     void reset();
     void write(OutBuffer*);
     void write(const char*, size_t);
+    void write(const ubyte*, size_t);
     void remove(size_t, size_t);
     void reserve(size_t);
     void setsize(size_t);
+    size_t insert(size_t, const ubyte*, size_t);
     size_t insert(size_t, const char*, size_t);
     size_t bracket(size_t, const char *, size_t, const char *);
     void writenl();
     size_t level;
     void writeUTF8(uint);
+    void writeUTF16(uint);
+    void write4(uint);
+    void writeword(uint);
     bool doindent;
+    void spread(size_t, size_t);
+    void fill0(size_t);
 }
 
 struct Port
@@ -181,6 +191,7 @@ struct FileName
     static int equalsExt(const char*, const char*);
     static const(char)* combine(const char*, const char*);
     static const(char)* replaceName(const char*, const char*);
+    static const(char)* safeSearchPath(Strings*, const char*);
     static ArrayBase!char* splitPath(const char*);
     static int absolute(const char*);
     static int exists(const char*);
@@ -189,8 +200,9 @@ struct FileName
 struct StringTable
 {
     StringValue* lookup(const char*, size_t);
-    void _init(size_t);
+    void _init(size_t = 0);
     StringValue* update(const char*, size_t);
+    StringValue* insert(const char*, size_t);
 }
 
 struct Symbol;
@@ -214,11 +226,31 @@ struct SignExtendedNumber
 {
     ulong value;
     bool negative;
+    SignExtendedNumber opNeg();
+    SignExtendedNumber opAdd(SignExtendedNumber);
+    SignExtendedNumber opSub(SignExtendedNumber);
+    SignExtendedNumber opMul(SignExtendedNumber);
+    SignExtendedNumber opDiv(SignExtendedNumber);
+    ref SignExtendedNumber opAddAssign(ulong);
+    int opCmp(SignExtendedNumber);
+    SignExtendedNumber opShl(SignExtendedNumber);
+    SignExtendedNumber opShr(SignExtendedNumber);
 }
 
 struct IntRange
 {
     SignExtendedNumber imin, imax;
+    this(dinteger_t);
+    this(SignExtendedNumber, SignExtendedNumber);
+    static IntRange fromType(Type, bool = false);
+    bool contains(IntRange);
+    IntRange _cast(Type);
+    static IntRange fromNumbers4(SignExtendedNumber*);
+    bool containsZero();
+    IntRange absNeg();
+    IntRange castUnsigned(Type);
+    IntRange splitBySign(IntRange, bool, IntRange, bool);
+    IntRange unionOrAssign(IntRange, bool);
 }
 
 alias byte int8_t;
@@ -230,6 +262,7 @@ alias uint uint32_t;
 alias long int64_t;
 alias ulong uint64_t;
 
+alias long longlong;
 alias ulong ulonglong;
 
 alias long targ_llong;
@@ -258,7 +291,9 @@ real ldouble(double);
 
 void obj_start(const char*);
 void obj_end(void*, File*);
+void obj_end(Library, File*);
 void obj_write_deferred(void*);
+void obj_write_deferred(Library);
 void out_config_init(int, bool, bool, bool, char, bool, char, bool, bool);
 void backend_init();
 void backend_term();
@@ -284,5 +319,19 @@ struct String
 }
 
 void speller(const char*, void* function(void*, const(char)*), Scope, const char*);
+void speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*);
 
 const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+
+void memcpy()(void* dest, const void* src, size_t size);
+void memcpy(T : Type)(ref T dest, T src, size_t size);
+void memcpy(T : Parameter)(ref T dest, T src, size_t size);
+void memcpy(T : Expression)(ref T dest, T src, size_t size);
+void memcpy(T : VarDeclaration)(ref T dest, T src, size_t size);
+
+int binary(char *, const(char)**, size_t);
+
+int os_critsecsize32();
+int os_critsecsize64();
+
+Library LibMSCoff_factory();

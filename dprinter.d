@@ -10,7 +10,7 @@ import ast;
 import visitor;
 import scanner;
 
-auto parentlessclasses = ["Scope", "Section", "DocComment", "Global", "Condition", "TemplateParameter", "Lexer", "Object"];
+auto parentlessclasses = ["Scope", "Section", "DocComment", "Global", "Condition", "TemplateParameter", "Lexer", "Object", "Macro", "Library"];
 
 class DPrinter : Visitor
 {
@@ -121,7 +121,7 @@ class DPrinter : Visitor
             "import", "module", "version", "align", "dchar", "ref", "scope", "wchar", "pragma",
             "body", "real", "alias", "is", "invariant", "TypeInfo", "in", "byte", "debug", "inout",
             "override", "final", "toString", "delegate", "cast", "mangleof", "stringof",
-            "enum", "foreach", "finally", "super", "unittest", "Object", "init"
+            "enum", "foreach", "finally", "super", "unittest", "Object", "init", "tupleof"
         ];
         print(list.canFind(s) ? '_' ~ s : s);
     }
@@ -165,7 +165,7 @@ class DPrinter : Visitor
         if (ast.id == "operator new") return;
         if (!P && !ast.fbody && ast.skip) return;
         auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass"];
-        if (ast.type.id == ast.id && dropdefaultctor.canFind(ast.id))
+        if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
         visit(ast.stc);
         if (ast.type.id == ast.id)
@@ -359,6 +359,9 @@ class DPrinter : Visitor
 
     override void visitTypedefDeclaration(TypedefDeclaration ast)
     {
+        if (auto ft = cast(FunctionType)ast.t)
+            if (ft.cdecl)
+                print("extern(C) ");
         print("alias ");
         visit(ast.t);
         print(" ");
@@ -911,9 +914,13 @@ class DPrinter : Visitor
 
     override void visitPointerType(PointerType ast)
     {
+        if (ast.isConst)
+            print("const(");
         visit(ast.next);
         if (!isClass(ast.next))
             print("*");
+        if (ast.isConst)
+            print(")");
     }
 
     override void visitRefType(RefType ast)
