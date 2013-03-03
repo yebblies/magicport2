@@ -318,16 +318,16 @@ struct String
     static size_t calcHash(const char*);
 }
 
-void speller(const char*, void* function(void*, const(char)*), Scope, const char*);
-void speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*);
+void* speller(const char*, void* function(void*, const(char)*), Scope, const char*);
+void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*);
 
 const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
-void memcpy()(void* dest, const void* src, size_t size);
-void memcpy(T : Type)(ref T dest, T src, size_t size);
-void memcpy(T : Parameter)(ref T dest, T src, size_t size);
-void memcpy(T : Expression)(ref T dest, T src, size_t size);
-void memcpy(T : VarDeclaration)(ref T dest, T src, size_t size);
+void* memcpy()(void* dest, const void* src, size_t size);
+void* memcpy(T : Type)(ref T dest, T src, size_t size);
+void* memcpy(T : Parameter)(ref T dest, T src, size_t size);
+void* memcpy(T : Expression)(ref T dest, T src, size_t size);
+void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size);
 
 int binary(char *, const(char)**, size_t);
 
