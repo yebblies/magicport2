@@ -40,20 +40,27 @@ struct ArrayBase(U)
         alias U* T;
     else
         alias U T;
-    void push(T) { assert(0); }
-    void push(const T) { assert(0); }
+
+    size_t dim;
+    T* data;
+
+    size_t allocdim;
+
+    void push(T ptr)
+    {
+        reserve(1);
+        data[dim++] = ptr;
+    }
     void append(typeof(this)*) { assert(0); }
     void reserve(size_t) { assert(0); }
     void remove(size_t) { assert(0); }
     void insert(size_t, typeof(this)*) { assert(0); }
     void insert(size_t, T) { assert(0); }
-    size_t dim;
     void setDim(size_t) { assert(0); }
     ref T opIndex(size_t) { assert(0); }
     T* tdata() { assert(0); }
     typeof(this)* copy() { assert(0); }
     void shift(T) { assert(0); }
-    T* data;
     void zero() { assert(0); }
     void pop() { assert(0); }
     int apply(apply_fp_t, void*) { assert(0); }
@@ -61,12 +68,12 @@ struct ArrayBase(U)
 
 struct Mem
 {
-    void _init() { assert(0); }
+    void _init() {}
     void* malloc(size_t) { assert(0); }
     void free(void*) { assert(0); }
     char* strdup(const char*) { assert(0); }
-    void setStackBottom(void*) { assert(0); }
-    void addroots(void*, void*) { assert(0); }
+    void setStackBottom(void*) {}
+    void addroots(void*, void*) {}
     void* calloc(size_t, size_t) { assert(0); }
     void* realloc(void*, size_t) { assert(0); }
 }
@@ -75,7 +82,10 @@ extern extern(C) uint _end;
 
 Mem mem;
 
-int response_expand(size_t*, char***) { assert(0); }
+int response_expand(size_t*, const(char)***)
+{
+    return 0;
+}
 void browse(const char*) { assert(0); }
 
 struct OutBuffer
@@ -190,7 +200,7 @@ struct FileName
     static const(char)* combine(const char*, const char*) { assert(0); }
     static const(char)* replaceName(const char*, const char*) { assert(0); }
     static const(char)* safeSearchPath(Strings*, const char*) { assert(0); }
-    static ArrayBase!char* splitPath(const char*) { assert(0); }
+    static ArrayBase!(const(char))* splitPath(const char*) { assert(0); }
     static int absolute(const char*) { assert(0); }
     static int exists(const char*) { assert(0); }
     const char* toChars() { assert(0); }
@@ -337,8 +347,8 @@ Library LibMSCoff_factory() { assert(0); }
 void main(string[] args)
 {
     int argc = cast(int)args.length;
-    char** argv = (new char*[](argc)).ptr;
+    auto argv = (new const(char)*[](argc)).ptr;
     foreach(i, a; args)
-        argv[i] = cast(char*)(a ~ '\0').ptr;
+        argv[i] = cast(const(char)*)(a ~ '\0').ptr;
     xmain(argc, argv);
 }
