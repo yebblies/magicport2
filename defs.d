@@ -335,3 +335,12 @@ int os_critsecsize32();
 int os_critsecsize64();
 
 Library LibMSCoff_factory();
+
+void main(string[] args)
+{
+    int argc = cast(int)args.length;
+    char** argv = (new char*[](argc)).ptr;
+    foreach(i, a; args)
+        argv[i] = cast(char*)(a ~ '\0').ptr;
+    xmain(argc, argv);
+}
