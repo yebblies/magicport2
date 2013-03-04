@@ -222,11 +222,16 @@ class DPrinter : Visitor
                     }
                 }
             }
-            println("{ assert(0); }");
-            if (P)
-                writeln("Missing body - ", P.id, "::", ast.id);
+            if (ast.stc & STCabstract)
+                println(";");
             else
-                writeln("Missing body - ", ast.id);
+            {
+                println("{ assert(0); }");
+                if (P)
+                    writeln("Missing body - ", P.id, "::", ast.id);
+                else
+                    writeln("Missing body - ", ast.id);
+            }
         }
     }
 
