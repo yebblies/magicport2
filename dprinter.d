@@ -222,7 +222,11 @@ class DPrinter : Visitor
                     }
                 }
             }
-            println(";");
+            println("{ assert(0); }");
+            if (P)
+                writeln("Missing body - ", P.id, "::", ast.id);
+            else
+                writeln("Missing body - ", ast.id);
         }
     }
 

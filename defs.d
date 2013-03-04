@@ -56,6 +56,7 @@ struct ArrayBase(U)
     T* data;
     void zero() { assert(0); }
     void pop() { assert(0); }
+    int apply(apply_fp_t, void*);
 };
 
 struct Mem
