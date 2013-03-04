@@ -12,29 +12,26 @@ public import core.stdc.time;
 
 alias GetModuleFileNameA GetModuleFileName;
 
-int memcmp(const char*, const char*, size_t len);
-int memcmp(void*, void*, size_t len);
-int stricmp(const char*, const char*);
-int ld_sprint(const char*, ...);
-void __locale_decpoint(const char*);
-char* __locale_decpoint();
-int putenv(const char*);
-int spawnlp(int, const char*, const char*, const char*, const char*);
-int spawnl(int, const char*, const char*, const char*, const char*);
-int spawnv(int, const char*, const char**);
+int memcmp(const char*, const char*, size_t len) { assert(0); }
+int memcmp(void*, void*, size_t len) { assert(0); }
+int stricmp(const char*, const char*) { assert(0); }
+int ld_sprint(const char*, ...) { assert(0); }
+void __locale_decpoint(const char*) { assert(0); }
+char* __locale_decpoint() { assert(0); }
+int putenv(const char*) { assert(0); }
+int spawnlp(int, const char*, const char*, const char*, const char*) { assert(0); }
+int spawnl(int, const char*, const char*, const char*, const char*) { assert(0); }
+int spawnv(int, const char*, const char**) { assert(0); }
 
 enum NULL = null;
 
 class _Object
 {
-    int dyncast()
-    {
-        assert(0);
-    }
-    int equals(_Object);
-    int compare(_Object);
-    char *toChars();
-    void print();
+    int dyncast() { assert(0); }
+    int equals(_Object) { assert(0); }
+    int compare(_Object) { assert(0); }
+    char *toChars() { assert(0); }
+    void print() { assert(0); }
 }
 
 struct ArrayBase(U)
@@ -43,83 +40,83 @@ struct ArrayBase(U)
         alias U* T;
     else
         alias U T;
-    void push(T);
-    void push(const T);
-    void append(typeof(this)*);
-    void reserve(size_t);
-    void remove(size_t);
-    void insert(size_t, typeof(this)*);
-    void insert(size_t, T);
+    void push(T) { assert(0); }
+    void push(const T) { assert(0); }
+    void append(typeof(this)*) { assert(0); }
+    void reserve(size_t) { assert(0); }
+    void remove(size_t) { assert(0); }
+    void insert(size_t, typeof(this)*) { assert(0); }
+    void insert(size_t, T) { assert(0); }
     size_t dim;
-    void setDim(size_t);
-    ref T opIndex(size_t);
-    T* tdata();
-    typeof(this)* copy();
-    void shift(T);
+    void setDim(size_t) { assert(0); }
+    ref T opIndex(size_t) { assert(0); }
+    T* tdata() { assert(0); }
+    typeof(this)* copy() { assert(0); }
+    void shift(T) { assert(0); }
     T* data;
-    void zero();
-    void pop();
+    void zero() { assert(0); }
+    void pop() { assert(0); }
 };
 
 struct Mem
 {
-    void _init();
-    void* malloc(size_t);
-    void free(void*);
-    char* strdup(const char*);
-    void setStackBottom(void*);
-    void addroots(void*, void*);
-    void* calloc(size_t, size_t);
-    void* realloc(void*, size_t);
+    void _init() { assert(0); }
+    void* malloc(size_t) { assert(0); }
+    void free(void*) { assert(0); }
+    char* strdup(const char*) { assert(0); }
+    void setStackBottom(void*) { assert(0); }
+    void addroots(void*, void*) { assert(0); }
+    void* calloc(size_t, size_t) { assert(0); }
+    void* realloc(void*, size_t) { assert(0); }
 }
 extern extern(C) uint _xi_a;
 extern extern(C) uint _end;
 
 Mem mem;
 
-int response_expand(size_t*, char***);
-void browse(const char*);
+int response_expand(size_t*, char***) { assert(0); }
+void browse(const char*) { assert(0); }
 
 struct OutBuffer
 {
-    int vprintf(const char* format, va_list);
-    int printf(const char* format, ...);
-    void writebyte(int);
-    void writeByte(int);
-    void writestring(const char*);
-    void prependstring(const char*);
-    char *toChars();
-    char *extractData();
+    int vprintf(const char* format, va_list) { assert(0); }
+    int printf(const char* format, ...) { assert(0); }
+    void writebyte(int) { assert(0); }
+    void writeByte(int) { assert(0); }
+    void writestring(const char*) { assert(0); }
+    void prependstring(const char*) { assert(0); }
+    char *toChars() { assert(0); }
+    char *extractData() { assert(0); }
     ubyte *data;
     size_t offset;
-    void reset();
-    void write(OutBuffer*);
-    void write(const char*, size_t);
-    void write(const ubyte*, size_t);
-    void remove(size_t, size_t);
-    void reserve(size_t);
-    void setsize(size_t);
-    size_t insert(size_t, const ubyte*, size_t);
-    size_t insert(size_t, const char*, size_t);
-    size_t bracket(size_t, const char *, size_t, const char *);
-    void writenl();
+    void reset() { assert(0); }
+    void write(OutBuffer*) { assert(0); }
+    void write(const char*, size_t) { assert(0); }
+    void write(const ubyte*, size_t) { assert(0); }
+    void remove(size_t, size_t) { assert(0); }
+    void reserve(size_t) { assert(0); }
+    void setsize(size_t) { assert(0); }
+    size_t insert(size_t, const ubyte*, size_t) { assert(0); }
+    size_t insert(size_t, const char*, size_t) { assert(0); }
+    size_t bracket(size_t, const char *, size_t, const char *) { assert(0); }
+    void writenl() { assert(0); }
     size_t level;
-    void writeUTF8(uint);
-    void writeUTF16(uint);
-    void write4(uint);
-    void writeword(uint);
+    void writeUTF8(uint) { assert(0); }
+    void writeUTF16(uint) { assert(0); }
+    void write4(uint) { assert(0); }
+    void writeword(uint) { assert(0); }
     bool doindent;
-    void spread(size_t, size_t);
-    void fill0(size_t);
+    void spread(size_t, size_t) { assert(0); }
+    void fill0(size_t) { assert(0); }
 }
 
 struct Port
 {
-    static bool isNan(real);
-    static real fmodl(real, real);
+    static bool isNan(real) { assert(0); }
+    static real fmodl(real, real) { assert(0); }
     static double nan;
-    static int memicmp(const char*, const char*, size_t);
-    static char* strupr(const char*);
+    static int memicmp(const char*, const char*, size_t) { assert(0); }
+    static char* strupr(const char*) { assert(0); }
     enum ldbl_max = real.max;
     enum infinity = real.infinity;
 }
@@ -154,55 +151,55 @@ enum LDBL_MIN_EXP = real.min_exp;
 struct StringValue
 {
     char *ptrvalue;
-    void* toDchars();
+    void* toDchars() { assert(0); }
 }
 
 struct File
 {
     uint _ref;
-    this(const char*);
-    this(FileName*);
-    FileName name();
-    void setbuffer(void*, size_t);
-    void writev();
-    char* toChars();
-    bool write();
-    bool read();
-    bool readv();
+    this(const char*) { assert(0); }
+    this(FileName*) { assert(0); }
+    FileName name() { assert(0); }
+    void setbuffer(void*, size_t) { assert(0); }
+    void writev() { assert(0); }
+    char* toChars() { assert(0); }
+    bool write() { assert(0); }
+    bool read() { assert(0); }
+    bool readv() { assert(0); }
     size_t len;
     char* buffer;
-    void remove();
+    void remove() { assert(0); }
 }
 
 struct FileName
 {
-    this(const char*);
-    const(char)* str();
-    static void free(const char *);
-    static const(char)* ext(const char *);
-    static const(char)* path(const char *);
-    static const(char)* removeExt(const char *);
-    static const(char)* name(const char *);
-    static void ensurePathToNameExists(const char *);
-    static int equals(const char*, const char*);
-    static int compare(const char*, const char*);
-    static const(char)* forceExt(const char*, const char*);
-    static const(char)* defaultExt(const char*, const char*);
-    static int equalsExt(const char*, const char*);
-    static const(char)* combine(const char*, const char*);
-    static const(char)* replaceName(const char*, const char*);
-    static const(char)* safeSearchPath(Strings*, const char*);
-    static ArrayBase!char* splitPath(const char*);
-    static int absolute(const char*);
-    static int exists(const char*);
-    const char* toChars();
+    this(const char*) { assert(0); }
+    const(char)* str() { assert(0); }
+    static void free(const char *) { assert(0); }
+    static const(char)* ext(const char *) { assert(0); }
+    static const(char)* path(const char *) { assert(0); }
+    static const(char)* removeExt(const char *) { assert(0); }
+    static const(char)* name(const char *) { assert(0); }
+    static void ensurePathToNameExists(const char *) { assert(0); }
+    static int equals(const char*, const char*) { assert(0); }
+    static int compare(const char*, const char*) { assert(0); }
+    static const(char)* forceExt(const char*, const char*) { assert(0); }
+    static const(char)* defaultExt(const char*, const char*) { assert(0); }
+    static int equalsExt(const char*, const char*) { assert(0); }
+    static const(char)* combine(const char*, const char*) { assert(0); }
+    static const(char)* replaceName(const char*, const char*) { assert(0); }
+    static const(char)* safeSearchPath(Strings*, const char*) { assert(0); }
+    static ArrayBase!char* splitPath(const char*) { assert(0); }
+    static int absolute(const char*) { assert(0); }
+    static int exists(const char*) { assert(0); }
+    const char* toChars() { assert(0); }
 }
 struct StringTable
 {
-    StringValue* lookup(const char*, size_t);
-    void _init(size_t = 0);
-    StringValue* update(const char*, size_t);
-    StringValue* insert(const char*, size_t);
+    StringValue* lookup(const char*, size_t) { assert(0); }
+    void _init(size_t = 0) { assert(0); }
+    StringValue* update(const char*, size_t) { assert(0); }
+    StringValue* insert(const char*, size_t) { assert(0); }
 }
 
 struct Symbol;
@@ -226,31 +223,31 @@ struct SignExtendedNumber
 {
     ulong value;
     bool negative;
-    SignExtendedNumber opNeg();
-    SignExtendedNumber opAdd(SignExtendedNumber);
-    SignExtendedNumber opSub(SignExtendedNumber);
-    SignExtendedNumber opMul(SignExtendedNumber);
-    SignExtendedNumber opDiv(SignExtendedNumber);
-    ref SignExtendedNumber opAddAssign(ulong);
-    int opCmp(SignExtendedNumber);
-    SignExtendedNumber opShl(SignExtendedNumber);
-    SignExtendedNumber opShr(SignExtendedNumber);
+    SignExtendedNumber opNeg() { assert(0); }
+    SignExtendedNumber opAdd(SignExtendedNumber) { assert(0); }
+    SignExtendedNumber opSub(SignExtendedNumber) { assert(0); }
+    SignExtendedNumber opMul(SignExtendedNumber) { assert(0); }
+    SignExtendedNumber opDiv(SignExtendedNumber) { assert(0); }
+    ref SignExtendedNumber opAddAssign(ulong) { assert(0); }
+    int opCmp(SignExtendedNumber) { assert(0); }
+    SignExtendedNumber opShl(SignExtendedNumber) { assert(0); }
+    SignExtendedNumber opShr(SignExtendedNumber) { assert(0); }
 }
 
 struct IntRange
 {
     SignExtendedNumber imin, imax;
-    this(dinteger_t);
-    this(SignExtendedNumber, SignExtendedNumber);
-    static IntRange fromType(Type, bool = false);
-    bool contains(IntRange);
-    IntRange _cast(Type);
-    static IntRange fromNumbers4(SignExtendedNumber*);
-    bool containsZero();
-    IntRange absNeg();
-    IntRange castUnsigned(Type);
-    IntRange splitBySign(IntRange, bool, IntRange, bool);
-    IntRange unionOrAssign(IntRange, bool);
+    this(dinteger_t) { assert(0); }
+    this(SignExtendedNumber, SignExtendedNumber) { assert(0); }
+    static IntRange fromType(Type, bool = false) { assert(0); }
+    bool contains(IntRange) { assert(0); }
+    IntRange _cast(Type) { assert(0); }
+    static IntRange fromNumbers4(SignExtendedNumber*) { assert(0); }
+    bool containsZero() { assert(0); }
+    IntRange absNeg() { assert(0); }
+    IntRange castUnsigned(Type) { assert(0); }
+    IntRange splitBySign(IntRange, bool, IntRange, bool) { assert(0); }
+    IntRange unionOrAssign(IntRange, bool) { assert(0); }
 }
 
 alias byte int8_t;
@@ -284,57 +281,57 @@ enum _WIN32 = 1;
 
 enum I64 = false;
 
-real creall(creal);
-real cimagl(creal);
-real ldouble(double);
+real creall(creal) { assert(0); }
+real cimagl(creal) { assert(0); }
+real ldouble(double) { assert(0); }
 
 
-void obj_start(const char*);
-void obj_end(void*, File*);
-void obj_end(Library, File*);
-void obj_write_deferred(void*);
-void obj_write_deferred(Library);
-void out_config_init(int, bool, bool, bool, char, bool, char, bool, bool);
-void backend_init();
-void backend_term();
+void obj_start(const char*) { assert(0); }
+void obj_end(void*, File*) { assert(0); }
+void obj_end(Library, File*) { assert(0); }
+void obj_write_deferred(void*) { assert(0); }
+void obj_write_deferred(Library) { assert(0); }
+void out_config_init(int, bool, bool, bool, char, bool, char, bool, bool) { assert(0); }
+void backend_init() { assert(0); }
+void backend_term() { assert(0); }
 
 import dmd;
 
-Expression createTypeInfoArray(Scope sc, Expression *args, size_t dim);
+Expression createTypeInfoArray(Scope sc, Expression *args, size_t dim) { assert(0); }
 
 struct IRState;
 
-ushort _rotl(ushort, int);
-ushort _rotr(ushort, int);
+ushort _rotl(ushort, int) { assert(0); }
+ushort _rotr(ushort, int) { assert(0); }
 
 struct AA;
-_Object _aaGetRvalue(AA*, _Object);
-_Object _aaGet(AA**, _Object);
+_Object _aaGetRvalue(AA*, _Object) { assert(0); }
+_Object _aaGet(AA**, _Object) { assert(0); }
 
-void util_progress();
+void util_progress() { assert(0); }
 
 struct String
 {
-    static size_t calcHash(const char*);
+    static size_t calcHash(const char*) { assert(0); }
 }
 
-void* speller(const char*, void* function(void*, const(char)*), Scope, const char*);
-void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*);
+void* speller(const char*, void* function(void*, const(char)*), Scope, const char*) { assert(0); }
+void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*) { assert(0); }
 
 const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
-void* memcpy()(void* dest, const void* src, size_t size);
-void* memcpy(T : Type)(ref T dest, T src, size_t size);
-void* memcpy(T : Parameter)(ref T dest, T src, size_t size);
-void* memcpy(T : Expression)(ref T dest, T src, size_t size);
-void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size);
+void* memcpy()(void* dest, const void* src, size_t size) { assert(0); }
+void* memcpy(T : Type)(ref T dest, T src, size_t size) { assert(0); }
+void* memcpy(T : Parameter)(ref T dest, T src, size_t size) { assert(0); }
+void* memcpy(T : Expression)(ref T dest, T src, size_t size) { assert(0); }
+void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size) { assert(0); }
 
-int binary(char *, const(char)**, size_t);
+int binary(char *, const(char)**, size_t) { assert(0); }
 
-int os_critsecsize32();
-int os_critsecsize64();
+int os_critsecsize32() { assert(0); }
+int os_critsecsize64() { assert(0); }
 
-Library LibMSCoff_factory();
+Library LibMSCoff_factory() { assert(0); }
 
 void main(string[] args)
 {
