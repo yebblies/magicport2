@@ -2,7 +2,7 @@
 public import core.stdc.stdarg;
 public import core.stdc.stdio;
 public import core.stdc.stdlib;
-import core.stdc.string : strcmp, strlen, strncmp, strchr, memcmp, memset, memmove, strdup, strcpy, strcat;
+import core.stdc.string : strcmp, strlen, strncmp, strchr, memcmp, memset, memmove, strdup, strcpy, strcat, xmemcmp = memcmp;
 public import core.stdc.ctype;
 public import core.stdc.errno;
 public import core.stdc.limits;
@@ -17,7 +17,7 @@ alias WIN32_FIND_DATA WIN32_FIND_DATAA;
 extern(Windows) DWORD GetFullPathNameA(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR *lpFilePart);
 alias GetFullPathNameA GetFullPathName;
 
-int memcmp(const char*, const char*, size_t len) { assert(0); }
+int memcmp(const char* a, const char* b, size_t len) { return .xmemcmp(a, b, len); }
 int memcmp(void*, void*, size_t len) { assert(0); }
 int stricmp(const char*, const char*) { assert(0); }
 int ld_sprint(const char*, ...) { assert(0); }
@@ -307,3 +307,8 @@ GC gc;
 
 extern(C) int mkdir(const char*);
 alias mkdir _mkdir;
+
+void trace(const char* s)
+{
+    printf("%s\n", s);
+}

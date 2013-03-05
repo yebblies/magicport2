@@ -79,8 +79,8 @@ class StaticMemberVarDeclaration : Declaration
     Type type;
     string id;
     string id2;
-    Init init;
-    this(Type type, string id, string id2, Init init = null) { this.type = type; this.id = id; this.id2 = id2; this.init = init; }
+    Init xinit;
+    this(Type type, string id, string id2, Init xinit = null) { this.type = type; this.id = id; this.id2 = id2; this.xinit = xinit; }
     mixin(visitor_str);
 }
 
@@ -90,7 +90,7 @@ class VarDeclaration : Declaration
     string[] ids;
     Init[] inits;
     STC stc;
-    this(Type type, string id, Init init, STC stc) { this.types = [type]; this.ids = [id]; this.inits = [init]; this.stc = stc; }
+    this(Type type, string id, Init xinit, STC stc) { this.types = [type]; this.ids = [id]; this.inits = [xinit]; this.stc = stc; }
     this(Type[] types, string[] ids, Init[] inits, STC stc) { this.types = types; this.ids = ids; this.inits = inits; this.stc = stc; }
     mixin(visitor_str);
 }
@@ -447,9 +447,9 @@ class ExprInit : Init
 
 class ArrayInit : Init
 {
-    Init[] init;
-    this (Expression[] e) { foreach(v; e) this.init ~= new ExprInit(v); }
-    this (Init[] init) { this.init = init; }
+    Init[] xinit;
+    this (Expression[] e) { foreach(v; e) this.xinit ~= new ExprInit(v); }
+    this (Init[] xinit) { this.xinit = xinit; }
     mixin(visitor_str);
 }
 
@@ -584,9 +584,9 @@ class IfStatement : Statement
 
 class ForStatement : Statement
 {
-    Expression init, cond, inc;
+    Expression xinit, cond, inc;
     Statement sbody;
-    this(Expression init, Expression cond, Expression inc, Statement sbody) { this.init = init; this.cond = cond; this.inc = inc; this.sbody = sbody; }
+    this(Expression xinit, Expression cond, Expression inc, Statement sbody) { this.xinit = xinit; this.cond = cond; this.inc = inc; this.sbody = sbody; }
     mixin(visitor_str);
 }
 

@@ -134,7 +134,8 @@ class DPrinter : Visitor
             "import", "module", "version", "align", "dchar", "ref", "scope", "wchar", "pragma",
             "body", "real", "alias", "is", "invariant", "TypeInfo", "in", "byte", "debug", "inout",
             "override", "final", "toString", "delegate", "cast", "mangleof", "stringof",
-            "enum", "foreach", "finally", "super", "unittest", "Object", "init", "tupleof"
+            "enum", "foreach", "finally", "super", "unittest", "Object", "init", "tupleof",
+            "Throwable"
         ];
         print(list.canFind(s) ? '_' ~ s : s);
     }
@@ -211,7 +212,18 @@ class DPrinter : Visitor
         } else if (ast.fbody)
         {
             println("");
+            println("{");
+            print("trace(\"  ");
+            print(ast.id);
+            println("\");");
+            print("scope(success) trace(\"~ ");
+            print(ast.id);
+            println("\");");
+            print("scope(failure) trace(\"! ");
+            print(ast.id);
+            println("\");");
             visit(ast.fbody);
+            println("}");
         } else {
             FuncBodyDeclaration fbody;
             foreach(fb; scan.funcBodyDeclarations)
@@ -279,6 +291,13 @@ class DPrinter : Visitor
                 }
             }
         }
+        bool realarray;
+        if (ast.types.length == 1 && ast.types[0] && !ast.inits[0])
+            if (auto at = cast(ArrayType)ast.types[0])
+                if (at.dim)
+                    realarray = true;
+        if (fd)
+            realarray = false;
         foreach(i; 0..ast.types.length)
         {
             if (ast.types[i])
@@ -290,7 +309,16 @@ class DPrinter : Visitor
                     if (manifest)
                         print("enum ");
                     visit(ast.stc | STCvirtual);
-                    visit(ast.types[i]);
+                    if (realarray)
+                    {
+                        auto at = cast(ArrayType)ast.types[i];
+                        visit(at.next);
+                        print("[");
+                        visit(at.dim);
+                        print("]");
+                    }
+                    else
+                        visit(ast.types[i]);
                     print(" ");
                 }
                 visitIdent(ast.ids[i]);
@@ -322,6 +350,40 @@ class DPrinter : Visitor
                     print(" = 0");
                 }
                 println(";");
+            }
+        }
+        if (ast.types.length == 1)
+        {
+            if (auto at = cast(ArrayType)ast.types[0])
+            {
+                if (auto le = cast(LitExpr)at.dim)
+                {
+                    if (E)
+                        println(";");
+                    visit((ast.stc & STCstatic) | STCvirtual);
+                    print("enum ");
+                    print(ast.ids[0]);
+                    print("__array_length = ");
+                    print(le.val);
+                    if (!E)
+                        println(";");
+                    return;
+                }
+            }
+        }
+        if (ast.types.length == 1 && ast.inits[0])
+        {
+            if (auto ai = cast(ArrayInit)ast.inits[0])
+            {
+                if (E)
+                    println(";");
+                visit((ast.stc & STCstatic) | STCvirtual);
+                print("enum ");
+                print(ast.ids[0]);
+                print("__array_length = ");
+                print(to!string(ai.xinit.length));
+                if (!E)
+                    println(";");
             }
         }
     }
@@ -642,6 +704,36 @@ class DPrinter : Visitor
 
     override void visitMulExpr(MulExpr ast)
     {
+        if (ast.op == "/")
+        {
+            if (auto se1 = cast(SizeofExpr)ast.e1)
+            {
+                if (auto se2 = cast(SizeofExpr)ast.e2)
+                {
+                    if (auto id1 = cast(IdentExpr)se1.e)
+                    {
+                        if (auto ie2 = cast(IndexExpr)se2.e)
+                        {
+                            if (auto id2 = cast(IdentExpr)ie2.e)
+                            {
+                                if (id1.id == id2.id && ie2.args.length == 1)
+                                {
+                                    if (auto le = cast(LitExpr)ie2.args[0])
+                                    {
+                                        if (le.val == "0")
+                                        {
+                                            print(id1.id);
+                                            print("__array_length");
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         print("(");
         visit(ast.e1);
         print(" ");
@@ -874,7 +966,7 @@ class DPrinter : Visitor
         {
             print(ts.id);
             print("(");
-            foreach(i, v; ast.init)
+            foreach(i, v; ast.xinit)
             {
                 if (i)
                     print(", ");
@@ -888,7 +980,7 @@ class DPrinter : Visitor
             scope(exit) inittype = inittypesave;
             inittype = at.next;
             print("[ ");
-            foreach(i, v; ast.init)
+            foreach(i, v; ast.xinit)
             {
                 if (i)
                     print(", ");
@@ -1171,8 +1263,8 @@ class DPrinter : Visitor
     override void visitForStatement(ForStatement ast)
     {
         print("for (");
-        if (ast.init)
-            visit(ast.init);
+        if (ast.xinit)
+            visit(ast.xinit);
         print("; ");
         if (ast.cond)
             visit(ast.cond);

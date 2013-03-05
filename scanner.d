@@ -82,8 +82,8 @@ class Scanner : Visitor
     {
         staticMemberVarDeclarations ~= ast;
         visit(ast.type);
-        if (ast.init)
-            visit(ast.init);
+        if (ast.xinit)
+            visit(ast.xinit);
     }
 
     override void visitVarDeclaration(VarDeclaration ast)
@@ -446,7 +446,7 @@ class Scanner : Visitor
 
     override void visitArrayInit(ArrayInit ast)
     {
-        foreach(i; ast.init)
+        foreach(i; ast.xinit)
             visit(i);
     }
 
@@ -543,8 +543,8 @@ class Scanner : Visitor
 
     override void visitForStatement(ForStatement ast)
     {
-        if (ast.init)
-            visit(ast.init);
+        if (ast.xinit)
+            visit(ast.xinit);
         if (ast.cond)
             visit(ast.cond);
         if (ast.inc)

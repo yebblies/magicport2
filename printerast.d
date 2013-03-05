@@ -128,7 +128,7 @@ class AstPrinter : Visitor
         visit(ast.type);
         visit(ast.id);
         visit(ast.id2);
-        visit(ast.init);
+        visit(ast.xinit);
         print(")");
     }
 
@@ -501,7 +501,7 @@ class AstPrinter : Visitor
     override void visitArrayInit(ArrayInit ast)
     {
         print("ArrayInit(");
-        visit(ast.init);
+        visit(ast.xinit);
         print(")");
     }
 
@@ -622,7 +622,7 @@ class AstPrinter : Visitor
     override void visitForStatement(ForStatement ast)
     {
         print("ForStatement(");
-        visit(ast.init);
+        visit(ast.xinit);
         visit(ast.cond);
         visit(ast.inc);
         visit(ast.sbody);

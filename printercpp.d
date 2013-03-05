@@ -188,10 +188,10 @@ class CppPrinter : Visitor
             print("::");
             visit(ast.id2);
         }
-        if (ast.init)
+        if (ast.xinit)
         {
             print(" = ");
-            visit(ast.init);
+            visit(ast.xinit);
         }
         println(";");
     }
@@ -688,7 +688,7 @@ class CppPrinter : Visitor
     override void visitArrayInit(ArrayInit ast)
     {
         println("{");
-        foreach(v; ast.init)
+        foreach(v; ast.xinit)
         {
             visit(v);
             println(",");
@@ -840,8 +840,8 @@ class CppPrinter : Visitor
     override void visitForStatement(ForStatement ast)
     {
         print("for (");
-        if (ast.init)
-            visit(ast.init);
+        if (ast.xinit)
+            visit(ast.xinit);
         print("; ");
         if (ast.cond)
             visit(ast.cond);
