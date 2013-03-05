@@ -113,40 +113,6 @@ int response_expand(size_t*, const(char)***)
 }
 void browse(const char*) { assert(0); }
 
-/*
-struct OutBuffer
-{
-    int vprintf(const char* format, va_list) { assert(0); }
-    int printf(const char* format, ...) { assert(0); }
-    void writebyte(int) { assert(0); }
-    void writeByte(int) { assert(0); }
-    void writestring(const char*) { assert(0); }
-    void prependstring(const char*) { assert(0); }
-    char *toChars() { assert(0); }
-    char *extractData() { assert(0); }
-    ubyte *data;
-    size_t offset;
-    void reset() { assert(0); }
-    void write(OutBuffer*) { assert(0); }
-    void write(const char*, size_t) { assert(0); }
-    void write(const ubyte*, size_t) { assert(0); }
-    void remove(size_t, size_t) { assert(0); }
-    void reserve(size_t) { assert(0); }
-    void setsize(size_t) { assert(0); }
-    size_t insert(size_t, const ubyte*, size_t) { assert(0); }
-    size_t insert(size_t, const char*, size_t) { assert(0); }
-    size_t bracket(size_t, const char *, size_t, const char *) { assert(0); }
-    void writenl() { assert(0); }
-    size_t level;
-    void writeUTF8(uint) { assert(0); }
-    void writeUTF16(uint) { assert(0); }
-    void write4(uint) { assert(0); }
-    void writeword(uint) { assert(0); }
-    bool doindent;
-    void spread(size_t, size_t) { assert(0); }
-    void fill0(size_t) { assert(0); }
-}*/
-
 extern(C) int memicmp(const char*, const char*, size_t);
 extern(C) char* strupr(const char*);
 
@@ -187,60 +153,6 @@ enum LDBL_MAX_10_EXP = real.max_10_exp;
 enum LDBL_MAX_EXP = real.max_exp;
 enum LDBL_MIN_10_EXP = real.min_10_exp;
 enum LDBL_MIN_EXP = real.min_exp;
-
-struct StringValue
-{
-    char *ptrvalue;
-    void* toDchars() { assert(0); }
-}
-
-struct File
-{
-    uint _ref;
-    this(const char*) { assert(0); }
-    this(FileName*) { assert(0); }
-    FileName name() { assert(0); }
-    void setbuffer(void*, size_t) { assert(0); }
-    void writev() { assert(0); }
-    char* toChars() { assert(0); }
-    bool write() { assert(0); }
-    bool read() { assert(0); }
-    bool readv() { assert(0); }
-    size_t len;
-    char* buffer;
-    void remove() { assert(0); }
-}
-
-struct FileName
-{
-    this(const char*) { assert(0); }
-    const(char)* str() { assert(0); }
-    static void free(const char *) { assert(0); }
-    static const(char)* ext(const char *) { assert(0); }
-    static const(char)* path(const char *) { assert(0); }
-    static const(char)* removeExt(const char *) { assert(0); }
-    static const(char)* name(const char *) { assert(0); }
-    static void ensurePathToNameExists(const char *) { assert(0); }
-    static int equals(const char*, const char*) { assert(0); }
-    static int compare(const char*, const char*) { assert(0); }
-    static const(char)* forceExt(const char*, const char*) { assert(0); }
-    static const(char)* defaultExt(const char*, const char*) { assert(0); }
-    static int equalsExt(const char*, const char*) { assert(0); }
-    static const(char)* combine(const char*, const char*) { assert(0); }
-    static const(char)* replaceName(const char*, const char*) { assert(0); }
-    static const(char)* safeSearchPath(Strings*, const char*) { assert(0); }
-    static ArrayBase!(const(char))* splitPath(const char*) { assert(0); }
-    static int absolute(const char*) { assert(0); }
-    static int exists(const char*) { assert(0); }
-    const char* toChars() { assert(0); }
-}
-struct StringTable
-{
-    StringValue* lookup(const char*, size_t) { assert(0); }
-    void _init(size_t = 0) { assert(0); }
-    StringValue* update(const char*, size_t) { assert(0); }
-    StringValue* insert(const char*, size_t) { assert(0); }
-}
 
 struct Symbol;
 struct Classsym;

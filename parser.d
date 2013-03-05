@@ -751,6 +751,12 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
         {
             tx = new EnumType("enum " ~ id);
         }
+    } else if (t.text == "friend")
+    {
+        while(t.text != ";")
+            nextToken();
+        nextToken();
+        return new DummyDeclaration("// friend");
     }
 
     auto stc = parseStorageClasses();
@@ -839,6 +845,11 @@ func:
             if (destructor)
                 id = "~" ~ id;
             auto params = parseParams();
+            if (t.text == "const")
+            {
+                nextToken();
+                type.isConst = true;
+            }
             Statement fbody;
             if (t.text == "__attribute__")
             {

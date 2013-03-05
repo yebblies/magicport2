@@ -309,6 +309,7 @@ auto classTypes =
     "Module",
     "StringTab",
     "StringTable",
+    "StringEntry",
     "Classsym",
     "symbol",
     "list_t",
