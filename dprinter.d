@@ -29,15 +29,27 @@ class DPrinter : Visitor
     bool align1;
     FuncDeclaration fd;
 
+    int indent;
+    bool wasnl;
+
     void print(string arg)
     {
+        if (wasnl)
+            foreach(i; 0..indent)
+                target("    ");
         target(arg);
+        wasnl = false;
     }
     void println(string arg)
     {
+        if (wasnl)
+            foreach(i; 0..indent)
+                target("    ");
         target(arg);
         target("\n");
+        wasnl = true;
     }
+
     void printArgs(Expression[] args)
     {
         foreach(i, a; args)
@@ -501,8 +513,10 @@ class DPrinter : Visitor
         println("{");
         if (align1)
             println("align(1):");
+        indent++;
         foreach(d; ast.decls)
             visit(d);
+        indent--;
         println("};");
     }
 
@@ -999,7 +1013,9 @@ class DPrinter : Visitor
         auto stackclassessave = stackclasses;
         scope(exit) stackclasses = stackclassessave;
         println("{");
+        indent++;
         visit(ast.s);
+        indent--;
         println("}");
     }
 
@@ -1177,9 +1193,11 @@ class DPrinter : Visitor
 
     override void visitCaseStatement(CaseStatement ast)
     {
+        indent--;
         print("case ");
         visit(ast.e);
         println(":");
+        indent++;
     }
 
     override void visitBreakStatement(BreakStatement ast)
@@ -1194,7 +1212,9 @@ class DPrinter : Visitor
 
     override void visitDefaultStatement(DefaultStatement ast)
     {
+        indent--;
         println("default:");
+        indent++;
     }
 
     override void visitWhileStatement(WhileStatement ast)
