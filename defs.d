@@ -23,7 +23,7 @@ int stricmp(const char*, const char*) { assert(0); }
 int ld_sprint(const char*, ...) { assert(0); }
 void __locale_decpoint(const char*) { assert(0); }
 char* __locale_decpoint() { assert(0); }
-int putenv(const char*) { assert(0); }
+extern(C) int putenv(const char*);
 int spawnlp(int, const char*, const char*, const char*, const char*) { assert(0); }
 int spawnl(int, const char*, const char*, const char*, const char*) { assert(0); }
 int spawnv(int, const char*, const char**) { assert(0); }
@@ -79,9 +79,22 @@ public:
     void remove(size_t) { assert(0); }
     void insert(size_t, typeof(this)*) { assert(0); }
     void insert(size_t, T) { assert(0); }
-    void setDim(size_t) { assert(0); }
-    ref T opIndex(size_t) { assert(0); }
-    T* tdata() { assert(0); }
+    void setDim(size_t newdim)
+    {
+        if (dim < newdim)
+        {
+            reserve(newdim - dim);
+        }
+        dim = newdim;
+    }
+    ref T opIndex(size_t i)
+    {
+        return tdata()[i];
+    }
+    T* tdata()
+    {
+        return cast(T*)data;
+    }
     typeof(this)* copy() { assert(0); }
     void shift(T) { assert(0); }
     void zero() { assert(0); }
@@ -134,15 +147,18 @@ struct OutBuffer
     void fill0(size_t) { assert(0); }
 }*/
 
+extern(C) int memicmp(const char*, const char*, size_t);
+extern(C) char* strupr(const char*);
+
 struct Port
 {
-    static bool isNan(real) { assert(0); }
-    static real fmodl(real, real) { assert(0); }
-    static double nan;
-    static int memicmp(const char*, const char*, size_t) { assert(0); }
-    static char* strupr(const char*) { assert(0); }
+    static bool isNan(double r) { return !(r == r); }
+    static real fmodl(real a, real b) { return a % b; }
+    enum nan = double.nan;
+    static int memicmp(const char* s1, const char* s2, size_t n) { return .memicmp(s1, s2, n); }
+    static char* strupr(const char* s) { return .strupr(s); }
     enum ldbl_max = real.max;
-    enum infinity = real.infinity;
+    enum infinity = double.infinity;
 }
 
 enum FLT_MAX = float.max;
