@@ -265,6 +265,10 @@ private int eval(Expression e)
         case "__GLIBC__":
         case "CANINLINE_LOG":
         case "MODULEINFO_IS_STRUCT":
+        case "POSIX":
+        case "MACINTOSH":
+        case "_POSIX_VERSION":
+        case "PATH_MAX":
             return 0;
         case "DMDV2":
         case "__DMC__":

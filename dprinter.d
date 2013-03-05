@@ -27,6 +27,7 @@ class DPrinter : Visitor
     Type inittype;
     string[] stackclasses;
     bool align1;
+    FuncDeclaration fd;
 
     void print(string arg)
     {
@@ -162,6 +163,9 @@ class DPrinter : Visitor
 
     override void visitFuncDeclaration(FuncDeclaration ast)
     {
+        auto fdsave = fd;
+        scope(exit) fd = fdsave;
+        fd = ast;
         if (ast.id == "operator new") return;
         if (!P && !ast.fbody && ast.skip) return;
         auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem"];
@@ -285,6 +289,10 @@ class DPrinter : Visitor
                     visit(ast.inits[i]);
                     inittype = null;
                 }
+                else if (ast.types[i].id == "OutBuffer")
+                {
+                    print(" = new OutBuffer()");
+                }
                 if (allsame && i != ast.types.length - 1)
                     println(", ");
                 else if (!E || i != ast.types.length - 1)
@@ -402,6 +410,10 @@ class DPrinter : Visitor
         }
         println(")");
         print("{ return ");
+        if (!ast.e)
+        {
+            writeln(ast.id);
+        }
         visit(ast.e);
         println("; }");
         /+foreach(i; 0..ast.toks.length)

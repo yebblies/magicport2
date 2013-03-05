@@ -43,7 +43,7 @@ auto frontsrc = [
 // "root.c", "root.h", "speller.c", "speller.h", "stringtable.c", "stringtable.h", "thread.h"
 
 auto rootsrc = [
-    "rmem.h", "rmem.c"
+    "rmem.h", "rmem.c", "root.h", "root.c"
 ];
 
 auto backsrc = [

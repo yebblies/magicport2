@@ -618,7 +618,43 @@ Module collapse(Module[] mods, Scanner scan)
     
     funcBodies(scan);
 
+    bufAddr(scan);
+
     return new Module("dmd.d", decls);
+}
+
+void bufAddr(Scanner scan)
+{
+    auto buffuncs = ["json_generate", "MODtoBuffer", "toCBuffer2", "write", "toCBuffer", "ObjectToCBuffer", "argExpTypesToCBuffer",
+        "toMangleBuffer", "writeFilename", "toDecoBuffer", "expand", "modToBuffer", "argsToDecoBuffer",
+        "toDocBuffer", "buildArrayIdent", "MODMatchToBuffer", "highlightCode", "highlightCode2", "highlightCode3",
+        "emitAnchor", "WriteLibToBuffer"];
+    auto buffers = ["buf", "argbuf", "bufa", "cmdbuf", "hdrbufr", "buf2", "b", "codebuf", "res", "ancbuf", "libbuf", "thisBuf", "funcBuf"];
+    foreach(e; scan.callExprs)
+    {
+        auto fe = cast(IdentExpr)e.func;
+        auto de = cast(DotIdExpr)e.func;
+        if (fe || de)
+        {
+            auto id = fe ? fe.id : de.id;
+            if (buffuncs.canFind(id))
+            {
+                foreach(ref a; e.args)
+                {
+                    if (auto ae = cast(AddrExpr)a)
+                    {
+                        if (auto ie = cast(IdentExpr)ae.e)
+                        {
+                            if (buffers.canFind(ie.id))
+                            {
+                                a = ie;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void funcBodies(Scanner scan)

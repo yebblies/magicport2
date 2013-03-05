@@ -11,6 +11,11 @@ public import core.stdc.math;
 public import core.stdc.time;
 
 alias GetModuleFileNameA GetModuleFileName;
+alias CreateFileA CreateFile;
+alias CreateFileMappingA CreateFileMapping;
+alias WIN32_FIND_DATA WIN32_FIND_DATAA;
+extern(Windows) DWORD GetFullPathNameA(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR *lpFilePart);
+alias GetFullPathNameA GetFullPathName;
 
 int memcmp(const char*, const char*, size_t len) { assert(0); }
 int memcmp(void*, void*, size_t len) { assert(0); }
@@ -95,6 +100,7 @@ int response_expand(size_t*, const(char)***)
 }
 void browse(const char*) { assert(0); }
 
+/*
 struct OutBuffer
 {
     int vprintf(const char* format, va_list) { assert(0); }
@@ -126,7 +132,7 @@ struct OutBuffer
     bool doindent;
     void spread(size_t, size_t) { assert(0); }
     void fill0(size_t) { assert(0); }
-}
+}*/
 
 struct Port
 {
@@ -299,6 +305,12 @@ enum _WIN32 = 1;
 
 enum I64 = false;
 
+enum linux = false;
+enum __APPLE__ = false;
+enum __FreeBSD__ = false;
+enum __OpenBSD__ = false;
+enum __sun = false;
+
 real creall(creal) { assert(0); }
 real cimagl(creal) { assert(0); }
 real ldouble(double) { assert(0); }
@@ -338,7 +350,9 @@ void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const c
 
 const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
-void* memcpy()(void* dest, const void* src, size_t size) { assert(0); }
+static import stdstring = core.stdc.string;
+
+void* memcpy()(void* dest, const void* src, size_t size) { return stdstring.memcpy(dest, src, size); }
 void* memcpy(T : Type)(ref T dest, T src, size_t size) { assert(0); }
 void* memcpy(T : Parameter)(ref T dest, T src, size_t size) { assert(0); }
 void* memcpy(T : Expression)(ref T dest, T src, size_t size) { assert(0); }
@@ -362,3 +376,6 @@ void main(string[] args)
 }
 
 GC gc;
+
+extern(C) int mkdir(const char*);
+alias mkdir _mkdir;

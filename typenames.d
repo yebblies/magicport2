@@ -60,6 +60,8 @@ auto basicTypes = [
     "intmax_t",
     "uintmax_t",
     "_Complex",
+    "DWORD",
+    "HANDLE",
 
     "int8_t",
     "uint8_t",
@@ -247,6 +249,9 @@ auto classTypes =
     "Complex_d",
     "Complex_ld",
     "LIST",
+    "Ctxt",
+    "String",
+    "WIN32_FIND_DATAA",
 
     "ArrayBase",
     "Objects",
@@ -282,7 +287,8 @@ auto classTypes =
     "GotoCaseStatements",
     "TemplateInstances",
     "ReturnStatements",
-    
+    "Files",
+
     "Object",
     "_Object",
     "Dsymbol",
