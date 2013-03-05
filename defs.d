@@ -36,7 +36,10 @@ class _Object
     int equals(_Object) { assert(0); }
     int compare(_Object) { assert(0); }
     char *toChars() { assert(0); }
-    void print() { assert(0); }
+    void print()
+    {
+        printf("%s %p\n", toChars(), this);
+    }
 }
 
 struct ArrayBase(U)
@@ -281,7 +284,15 @@ const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123
 static import stdstring = core.stdc.string;
 
 void* memcpy()(void* dest, const void* src, size_t size) { return stdstring.memcpy(dest, src, size); }
-void* memcpy(T : Type)(ref T dest, T src, size_t size) { assert(0); }
+T memcpy(T : Type, size_t line = __LINE__)(ref T dest, T src, size_t size)
+{
+    dest = cast(T)src.clone();
+    foreach(i, v; dest.tupleof)
+    {
+        dest.tupleof[i] = src.tupleof[i];
+    }
+    return dest;
+}
 void* memcpy(T : Parameter)(ref T dest, T src, size_t size) { assert(0); }
 void* memcpy(T : Expression)(ref T dest, T src, size_t size) { assert(0); }
 void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size) { assert(0); }
