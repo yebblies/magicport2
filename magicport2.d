@@ -39,6 +39,13 @@ auto frontsrc = [
     "gluestub.c"
 ];
 
+// "aav.c", "aav.h", "array.c", "async.c", "async.h", "man.c", "response.c",
+// "root.c", "root.h", "speller.c", "speller.h", "stringtable.c", "stringtable.h", "thread.h"
+
+auto rootsrc = [
+    "rmem.h", "rmem.c"
+];
+
 auto backsrc = [
     "cdef.h", "cc.h", "oper.h", "ty.h", "optabgen.c", "global.h", "code.h", "code_x86.h",
     "code_stub.h", "platform_stub.c", "type.h", "dt.h", "cgcv.h", "el.h", "iasm.h", "rtlsym.h",
@@ -55,6 +62,7 @@ auto backsrc = [
 ];
 
 enum frontpath = r"..\dmdgit\src\";
+enum rootpath = r"..\dmdgit\src\root\";
 enum backpath = frontpath ~ r"backend\";
 
 void main()
@@ -66,7 +74,7 @@ void main()
     writeln("-- ");
 
     auto scan = new Scanner();
-    foreach(fn; frontsrc.map!(b => frontpath ~ b)())
+    foreach(fn; chain(rootsrc.map!(b => rootpath ~ b)(), frontsrc.map!(b => frontpath ~ b)()))
     {
         writeln("-- ", fn);
         assert(fn.exists(), fn);

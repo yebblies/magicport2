@@ -164,7 +164,7 @@ class DPrinter : Visitor
     {
         if (ast.id == "operator new") return;
         if (!P && !ast.fbody && ast.skip) return;
-        auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass"];
+        auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem"];
         if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
         visit(ast.stc);

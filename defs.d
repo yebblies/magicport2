@@ -41,18 +41,36 @@ struct ArrayBase(U)
     else
         alias U T;
 
+public:
     size_t dim;
-    T* data;
+    void** data;
 
+private:
     size_t allocdim;
 
+public:
     void push(T ptr)
     {
         reserve(1);
-        data[dim++] = ptr;
+        data[dim++] = cast(void*)ptr;
     }
     void append(typeof(this)*) { assert(0); }
-    void reserve(size_t) { assert(0); }
+    void reserve(size_t nentries)
+    {
+        //printf("Array::reserve: dim = %d, allocdim = %d, nentries = %d\n", (int)dim, (int)allocdim, (int)nentries);
+        if (allocdim - dim < nentries)
+        {
+            if (allocdim == 0)
+            {   // Not properly initialized, someone memset it to zero
+                allocdim = nentries;
+                data = cast(void **)mem.malloc(allocdim * (*data).sizeof);
+            }
+            else
+            {   allocdim = dim + nentries;
+                data = cast(void **)mem.realloc(data, allocdim * (*data).sizeof);
+            }
+        }
+    }
     void remove(size_t) { assert(0); }
     void insert(size_t, typeof(this)*) { assert(0); }
     void insert(size_t, T) { assert(0); }
@@ -66,21 +84,10 @@ struct ArrayBase(U)
     int apply(apply_fp_t, void*) { assert(0); }
 };
 
-struct Mem
-{
-    void _init() {}
-    void* malloc(size_t) { assert(0); }
-    void free(void*) { assert(0); }
-    char* strdup(const char*) { assert(0); }
-    void setStackBottom(void*) {}
-    void addroots(void*, void*) {}
-    void* calloc(size_t, size_t) { assert(0); }
-    void* realloc(void*, size_t) { assert(0); }
-}
 extern extern(C) uint _xi_a;
 extern extern(C) uint _end;
 
-Mem mem;
+struct GC {}
 
 int response_expand(size_t*, const(char)***)
 {
@@ -350,5 +357,8 @@ void main(string[] args)
     auto argv = (new const(char)*[](argc)).ptr;
     foreach(i, a; args)
         argv[i] = cast(const(char)*)(a ~ '\0').ptr;
+    global = new Global();
     xmain(argc, argv);
 }
+
+GC gc;
