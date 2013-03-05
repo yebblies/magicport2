@@ -19,7 +19,7 @@ alias GetFullPathNameA GetFullPathName;
 
 int memcmp(const char* a, const char* b, size_t len) { return .xmemcmp(a, b, len); }
 int memcmp(void*, void*, size_t len) { assert(0); }
-int stricmp(const char*, const char*) { assert(0); }
+extern(C) int stricmp(const char*, const char*);
 int ld_sprint(const char*, ...) { assert(0); }
 void __locale_decpoint(const char*) { assert(0); }
 char* __locale_decpoint() { assert(0); }
@@ -62,7 +62,10 @@ public:
         reserve(1);
         data[dim++] = cast(void*)ptr;
     }
-    void append(typeof(this)*) { assert(0); }
+    void append(typeof(this)* a)
+    {
+        insert(dim, a);
+    }
     void reserve(size_t nentries)
     {
         //printf("Array::reserve: dim = %d, allocdim = %d, nentries = %d\n", (int)dim, (int)allocdim, (int)nentries);
@@ -80,7 +83,18 @@ public:
         }
     }
     void remove(size_t) { assert(0); }
-    void insert(size_t, typeof(this)*) { assert(0); }
+    void insert(size_t index, typeof(this)* a)
+    {
+        if (a)
+        {
+            size_t d = a.dim;
+            reserve(d);
+            if (dim != index)
+                memmove(data + index + d, data + index, (dim - index) * (*data).sizeof);
+            memcpy(data + index, a.data, d * (*data).sizeof);
+            dim += d;
+        }
+    }
     void insert(size_t, T) { assert(0); }
     void setDim(size_t newdim)
     {
