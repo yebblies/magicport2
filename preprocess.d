@@ -260,8 +260,6 @@ private int eval(Expression e)
         case "LOG_LEASTAS":
         case "FIXBUG8863":
         case "D1INOUT":
-        case "CARRAYDECL":
-        case "CCASTSYNTAX":
         case "__GLIBC__":
         case "CANINLINE_LOG":
         case "MODULEINFO_IS_STRUCT":
@@ -287,6 +285,8 @@ private int eval(Expression e)
         case "LOGSEMANTIC":
         case "BUG6652":
         case "INTERFACE_VIRTUAL":
+        case "CCASTSYNTAX":
+        case "CARRAYDECL":
             return 1;
         case "DOS386":
         case "DOS16RM":

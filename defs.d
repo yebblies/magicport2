@@ -361,11 +361,11 @@ size_t tracedepth;
 
 version(trace)
 {
-    void tracein(const char* s)
+    void tracein(const char* s, size_t line = __LINE__)
     {
         foreach(i; 0..tracedepth*2)
             putchar(' ');
-        printf("+ %s\n", s);
+        printf("+ %s %d\n", s, line);
         tracedepth++;
     }
 
