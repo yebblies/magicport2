@@ -269,6 +269,7 @@ private int eval(Expression e)
         case "MACINTOSH":
         case "_POSIX_VERSION":
         case "PATH_MAX":
+        case "TEXTUAL_ASSEMBLY_OUT":
             return 0;
         case "DMDV2":
         case "__DMC__":
@@ -285,7 +286,6 @@ private int eval(Expression e)
         case "SNAN_DEFAULT_INIT":
         case "LOGSEMANTIC":
         case "BUG6652":
-        case "TEXTUAL_ASSEMBLY_OUT":
         case "INTERFACE_VIRTUAL":
             return 1;
         case "DOS386":
