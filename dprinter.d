@@ -29,6 +29,7 @@ class DPrinter : Visitor
     bool align1;
     FuncDeclaration fd;
     Declaration D;
+    Declaration D2;
 
     int indent;
     bool wasnl;
@@ -99,17 +100,23 @@ class DPrinter : Visitor
         auto saveE = E;
         auto saveP = P;
         auto saveD = D;
+        auto saveD2 = D2;
         if (cast(Expression)ast) E = cast(Expression)ast;
         if (cast(StructDeclaration)ast) E = null;
         if (cast(AnonStructDeclaration)ast) E = null;
         if (cast(StructDeclaration)ast) P = cast(StructDeclaration)ast;
-        if (cast(Declaration)ast) D = cast(Declaration)ast;
+        if (cast(Declaration)ast)
+        {
+            D2 = D;
+            D = cast(Declaration)ast;
+        }
 
         ast.visit(this);
         
         P = saveP;
         E = saveE;
         D = saveD;
+        D2 = saveD2;
     }
     /*void visit(int line = __LINE__)(string ast)
     {
@@ -300,9 +307,9 @@ class DPrinter : Visitor
             if (auto at = cast(ArrayType)ast.types[0])
                 if (at.dim)
                     realarray = true;
-        if (fd)
+        if (fd && !(ast.stc & STCstatic))
             realarray = false;
-        if (ast.types.length == 1 && cast(ArrayType)ast.types[0] && (cast(ArrayType)ast.types[0]).dim && !realarray && cast(FuncDeclaration)D)
+        if (ast.types.length == 1 && cast(ArrayType)ast.types[0] && (cast(ArrayType)ast.types[0]).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
         {
             auto at = cast(ArrayType)ast.types[0];
             visit((ast.stc & STCstatic) | STCvirtual);
@@ -349,7 +356,7 @@ class DPrinter : Visitor
                 {
                     print(" = new OutBuffer()");
                 }
-                else if (cast(ArrayType)ast.types[i] && (cast(ArrayType)ast.types[i]).dim && !realarray && cast(FuncDeclaration)D)
+                else if (cast(ArrayType)ast.types[i] && (cast(ArrayType)ast.types[i]).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
                 {
                     assert(ast.types.length == 1);
                     auto at = cast(ArrayType)ast.types[i];
