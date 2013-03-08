@@ -28,6 +28,8 @@ int spawnlp(int, const char*, const char*, const char*, const char*) { assert(0)
 int spawnl(int, const char*, const char*, const char*, const char*) { assert(0); }
 int spawnv(int, const char*, const char**) { assert(0); }
 
+version=trace;
+
 enum NULL = null;
 
 class _Object
@@ -297,19 +299,41 @@ const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123
 
 static import stdstring = core.stdc.string;
 
+template defTT(T...) { alias defTT = T; }
+
 void* memcpy()(void* dest, const void* src, size_t size) { return stdstring.memcpy(dest, src, size); }
-T memcpy(T : Type, size_t line = __LINE__)(ref T dest, T src, size_t size)
+Type memcpy(T : Type)(ref T dest, T src, size_t size)
 {
-    dest = cast(T)src.clone();
-    foreach(i, v; dest.tupleof)
+    dest = cast(T)src.clone();;
+    assert(dest);
+    assert(typeid(dest) == typeid(src));
+    switch(typeid(src).toString())
     {
-        dest.tupleof[i] = src.tupleof[i];
+        foreach(s; defTT!("TypeBasic", "TypeIdentifier", "TypePointer"))
+        {
+            case "dmd." ~ s:
+                mixin("copyMembers!(" ~ s ~ ")(cast(" ~ s ~ ")dest, cast(" ~ s ~ ")src);");
+                return dest;
+        }
+    default:
+        assert(0, "Cannot copy type " ~ typeid(src).toString());
     }
     return dest;
 }
 void* memcpy(T : Parameter)(ref T dest, T src, size_t size) { assert(0); }
 void* memcpy(T : Expression)(ref T dest, T src, size_t size) { assert(0); }
 void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size) { assert(0); }
+
+void copyMembers(T : Type)(T dest, T src)
+{
+    foreach(i, v; dest.tupleof)
+        dest.tupleof[i] = src.tupleof[i];
+    static if (!is(T == Type) && is(T U == super))
+        copyMembers!(U)(dest, src);
+}
+void copyMembers(T : _Object)(T dest, T src)
+{
+}
 
 int binary(char *, const(char)**, size_t) { assert(0); }
 
@@ -335,26 +359,35 @@ alias mkdir _mkdir;
 
 size_t tracedepth;
 
-void tracein(const char* s)
+version(trace)
 {
-    foreach(i; 0..tracedepth*2)
-        putchar(' ');
-    printf("+ %s\n", s);
-    tracedepth++;
-}
+    void tracein(const char* s)
+    {
+        foreach(i; 0..tracedepth*2)
+            putchar(' ');
+        printf("+ %s\n", s);
+        tracedepth++;
+    }
 
-void traceout(const char* s)
-{
-    tracedepth--;
-    foreach(i; 0..tracedepth*2)
-        putchar(' ');
-    printf("- %s\n", s);
-}
+    void traceout(const char* s)
+    {
+        tracedepth--;
+        foreach(i; 0..tracedepth*2)
+            putchar(' ');
+        printf("- %s\n", s);
+    }
 
-void traceerr(const char* s)
+    void traceerr(const char* s)
+    {
+        tracedepth--;
+        foreach(i; 0..tracedepth*2)
+            putchar(' ');
+        printf("! %s\n", s);
+    }
+}
+else
 {
-    tracedepth--;
-    foreach(i; 0..tracedepth*2)
-        putchar(' ');
-    printf("! %s\n", s);
+    void tracein(const char* s) {}
+    void traceout(const char* s) {}
+    void traceerr(const char* s) {}
 }
