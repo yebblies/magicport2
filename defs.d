@@ -28,7 +28,7 @@ int spawnlp(int, const char*, const char*, const char*, const char*) { assert(0)
 int spawnl(int, const char*, const char*, const char*, const char*) { assert(0); }
 int spawnv(int, const char*, const char**) { assert(0); }
 
-version=trace;
+//version=trace;
 
 enum NULL = null;
 
@@ -115,7 +115,13 @@ public:
         return cast(T*)data;
     }
     typeof(this)* copy() { assert(0); }
-    void shift(T) { assert(0); }
+    void shift(T ptr)
+    {
+        reserve(1);
+        memmove(data + 1, data, dim * (*data).sizeof);
+        data[0] = cast(void*)ptr;
+        dim++;
+    }
     void zero() { assert(0); }
     void pop() { assert(0); }
     int apply(apply_fp_t, void*) { assert(0); }
@@ -282,7 +288,14 @@ ushort _rotl(ushort, int) { assert(0); }
 ushort _rotr(ushort, int) { assert(0); }
 
 struct AA;
-_Object _aaGetRvalue(AA*, _Object) { assert(0); }
+_Object _aaGetRvalue(AA* aa, _Object o)
+{
+    auto x = *cast(_Object[void*]*)&aa;
+    auto k = cast(void*)o;
+    if (auto p = k in x)
+        return *p;
+    return null;
+}
 _Object* _aaGet(AA** aa, _Object o)
 {
     auto x = *cast(_Object[void*]**)&aa;
