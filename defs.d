@@ -333,7 +333,28 @@ GC gc;
 extern(C) int mkdir(const char*);
 alias mkdir _mkdir;
 
-void trace(const char* s)
+size_t tracedepth;
+
+void tracein(const char* s)
 {
-    printf("%s\n", s);
+    foreach(i; 0..tracedepth*2)
+        putchar(' ');
+    printf("+ %s\n", s);
+    tracedepth++;
+}
+
+void traceout(const char* s)
+{
+    tracedepth--;
+    foreach(i; 0..tracedepth*2)
+        putchar(' ');
+    printf("- %s\n", s);
+}
+
+void traceerr(const char* s)
+{
+    tracedepth--;
+    foreach(i; 0..tracedepth*2)
+        putchar(' ');
+    printf("! %s\n", s);
 }

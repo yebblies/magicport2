@@ -101,6 +101,7 @@ auto basicTypes = [
     "PROT",
     "NeedInterpret",
     "FLAGS",
+    "AliasThisRec",
 ];
 
 auto classTypes =
@@ -440,6 +441,9 @@ auto classTypes =
     "VoidInitExp",
     "ThrownExceptionExp",
     "Exp",
+    "ModuleInitExp",
+    "FuncInitExp",
+    "PrettyFuncInitExp",
     
     "Initializer",
     "ExpInitializer",

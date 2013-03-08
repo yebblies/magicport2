@@ -213,13 +213,13 @@ class DPrinter : Visitor
         {
             println("");
             println("{");
-            print("trace(\"  ");
+            print("tracein(\"");
             print(ast.id);
             println("\");");
-            print("scope(success) trace(\"~ ");
+            print("scope(success) traceout(\"");
             print(ast.id);
             println("\");");
-            print("scope(failure) trace(\"! ");
+            print("scope(failure) traceerr(\"");
             print(ast.id);
             println("\");");
             visit(ast.fbody);
@@ -693,10 +693,20 @@ class DPrinter : Visitor
 
     override void visitCmpExpr(CmpExpr ast)
     {
+        auto ie1 = cast(IdentExpr)ast.e1;
+        auto ie2 = cast(IdentExpr)ast.e2;
+        auto n1 = ie1 && ie1.id == "NULL";
+        auto n2 = ie2 && ie2.id == "NULL";
+
         print("(");
         visit(ast.e1);
         print(" ");
-        print(ast.op);
+        if ((n1 || n2) && ast.op == "==")
+            print("is");
+        else if ((n1 || n2) && ast.op == "!=")
+            print("!is");
+        else
+            print(ast.op);
         print(" ");
         visit(ast.e2);
         print(")");
