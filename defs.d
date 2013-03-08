@@ -283,7 +283,16 @@ ushort _rotr(ushort, int) { assert(0); }
 
 struct AA;
 _Object _aaGetRvalue(AA*, _Object) { assert(0); }
-_Object _aaGet(AA**, _Object) { assert(0); }
+_Object* _aaGet(AA** aa, _Object o)
+{
+    auto x = *cast(_Object[void*]**)&aa;
+    auto k = cast(void*)o;
+    if (auto p = k in *x)
+        return p;
+    else
+        (*x)[k] = null;
+    return k in *x;
+}
 
 void util_progress() { assert(0); }
 
