@@ -28,6 +28,7 @@ class DPrinter : Visitor
     string[] stackclasses;
     bool align1;
     FuncDeclaration fd;
+    Declaration D;
 
     int indent;
     bool wasnl;
@@ -97,15 +98,18 @@ class DPrinter : Visitor
 
         auto saveE = E;
         auto saveP = P;
+        auto saveD = D;
         if (cast(Expression)ast) E = cast(Expression)ast;
         if (cast(StructDeclaration)ast) E = null;
         if (cast(AnonStructDeclaration)ast) E = null;
         if (cast(StructDeclaration)ast) P = cast(StructDeclaration)ast;
+        if (cast(Declaration)ast) D = cast(Declaration)ast;
 
         ast.visit(this);
         
         P = saveP;
         E = saveE;
+        D = saveD;
     }
     /*void visit(int line = __LINE__)(string ast)
     {
@@ -298,6 +302,18 @@ class DPrinter : Visitor
                     realarray = true;
         if (fd)
             realarray = false;
+        if (ast.types.length == 1 && cast(ArrayType)ast.types[0] && (cast(ArrayType)ast.types[0]).dim && !realarray && cast(FuncDeclaration)D)
+        {
+            auto at = cast(ArrayType)ast.types[0];
+            visit((ast.stc & STCstatic) | STCvirtual);
+            visit(at.next);
+            print("[");
+            visit(at.dim);
+            print("] ");
+            print(ast.ids[0]);
+            print("__array_storage");
+            println(";");
+        }
         foreach(i; 0..ast.types.length)
         {
             if (ast.types[i])
@@ -332,6 +348,14 @@ class DPrinter : Visitor
                 else if (ast.types[i].id == "OutBuffer")
                 {
                     print(" = new OutBuffer()");
+                }
+                else if (cast(ArrayType)ast.types[i] && (cast(ArrayType)ast.types[i]).dim && !realarray && cast(FuncDeclaration)D)
+                {
+                    assert(ast.types.length == 1);
+                    auto at = cast(ArrayType)ast.types[i];
+                    print(" = ");
+                    print(ast.ids[i]);
+                    print("__array_storage.ptr");
                 }
                 if (allsame && i != ast.types.length - 1)
                     println(", ");
