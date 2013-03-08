@@ -40,7 +40,7 @@ auto frontsrc = [
 ];
 
 // "aav.c", "aav.h", "array.c", "async.c", "async.h", "man.c", "response.c",
-// "root.c", "root.h", "speller.c", "speller.h", "stringtable.c", "stringtable.h", "thread.h"
+// "speller.c", "speller.h", "thread.h"
 
 auto rootsrc = [
     "rmem.h", "rmem.c", "root.h", "root.c", "stringtable.h", "stringtable.c"
