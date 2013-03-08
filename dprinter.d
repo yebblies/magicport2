@@ -218,6 +218,15 @@ class DPrinter : Visitor
             print("super(");
             printArgs(ast.superargs);
             println(");");
+            print("tracein(\"");
+            print(ast.id);
+            println("\");");
+            print("scope(success) traceout(\"");
+            print(ast.id);
+            println("\");");
+            print("scope(failure) traceerr(\"");
+            print(ast.id);
+            println("\");");
             visit(ast.fbody);
             println("}");
         } else if (ast.fbody)
