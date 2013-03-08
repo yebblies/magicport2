@@ -628,7 +628,7 @@ void bufAddr(Scanner scan)
     auto buffuncs = ["json_generate", "MODtoBuffer", "toCBuffer2", "write", "toCBuffer", "ObjectToCBuffer", "argExpTypesToCBuffer",
         "toMangleBuffer", "writeFilename", "toDecoBuffer", "expand", "modToBuffer", "argsToDecoBuffer",
         "toDocBuffer", "buildArrayIdent", "MODMatchToBuffer", "highlightCode", "highlightCode2", "highlightCode3",
-        "emitAnchor", "WriteLibToBuffer"];
+        "emitAnchor", "WriteLibToBuffer", "functionToCBuffer2"];
     auto buffers = ["buf", "argbuf", "bufa", "cmdbuf", "hdrbufr", "buf2", "b", "codebuf", "res", "ancbuf", "libbuf", "thisBuf", "funcBuf"];
     foreach(e; scan.callExprs)
     {
