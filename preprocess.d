@@ -282,12 +282,12 @@ private int eval(Expression e)
         case "SEH":
         case "MAGICPORT":
         case "SNAN_DEFAULT_INIT":
-        case "LOGSEMANTIC":
         case "BUG6652":
         case "INTERFACE_VIRTUAL":
         case "CCASTSYNTAX":
         case "CARRAYDECL":
             return 1;
+        case "LOGSEMANTIC":
         case "DOS386":
         case "DOS16RM":
         case "__SC__":
