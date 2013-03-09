@@ -258,6 +258,9 @@ int binary(char *, const(char)**, size_t) { assert(0); }
 struct AA;
 _Object _aaGetRvalue(AA* aa, _Object o)
 {
+    tracein("_aaGetRvalue");
+    scope(success) traceout("_aaGetRvalue");
+    scope(failure) traceerr("_aaGetRvalue");
     auto x = *cast(_Object[void*]*)&aa;
     auto k = cast(void*)o;
     if (auto p = k in x)
@@ -266,6 +269,9 @@ _Object _aaGetRvalue(AA* aa, _Object o)
 }
 _Object* _aaGet(AA** aa, _Object o)
 {
+    tracein("_aaGet");
+    scope(success) traceout("_aaGet");
+    scope(failure) traceerr("_aaGet");
     auto x = *cast(_Object[void*]**)&aa;
     auto k = cast(void*)o;
     if (auto p = k in *x)
@@ -286,6 +292,64 @@ void* speller(const char*, void* function(void*, const(char)*), Scope, const cha
 void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*) { assert(0); }
 
 const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+
+// root.stringtable
+
+struct StringValue
+{
+    void *ptrvalue;
+
+private:
+    const(char)[] value;
+
+public:
+    size_t len() const { return value.length; }
+    const(char)* toDchars() const { return value.ptr; }
+};
+
+struct StringTable
+{
+private:
+    StringValue*[const(char)[]] table;
+
+public:
+    void _init(size_t size = 37)
+    {
+    }
+    ~this()
+    {
+        table = null;
+    }
+
+    StringValue *lookup(const(char)* s, size_t len)
+    {
+        auto p = s[0..len] in table;
+        if (p)
+            return *p;
+        return null;
+    }
+    StringValue *insert(const(char)* s, size_t len)
+    {
+        auto key = s[0..len];
+        auto p = key in table;
+        if (p)
+            return null;
+        return (table[key] = new StringValue(null, s[0..len]));
+    }
+    StringValue *update(const(char)* s, size_t len)
+    {
+        assert(len <= 1000);
+        //printf("StringTable::update %d %.*s\n", len, len, s);
+        auto key = s[0..len];
+        auto p = key in table;
+        if (p)
+            return *p;
+        return (table[key] = new StringValue(null, s[0..len]));
+    }
+
+private:
+    void **search(const char *s, size_t len);
+};
 
 // hacks to support cloning classed with memcpy
 
@@ -340,7 +404,7 @@ void main(string[] args)
     xmain(argc, argv);
 }
 
-version=trace;
+//version=trace;
 version(trace)
 {
     size_t tracedepth;
