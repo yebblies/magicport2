@@ -85,7 +85,7 @@ private:
 public:
     void push(size_t line = __LINE__)(T ptr)
     {
-        static if (is(T == Dsymbol))
+        static if (is(T == Dsymbol) && 0)
         {
             printf("from %d\n", line);
             printf("pushing 0x%.8X\n", ptr);
@@ -456,7 +456,7 @@ void main(string[] args)
     xmain(argc, argv);
 }
 
-version=trace;
+//version=trace;
 
 version(trace)
 {
