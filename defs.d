@@ -32,8 +32,7 @@ alias GetFullPathNameA GetFullPathName;
 // So we can accept string literals
 int memcmp(const char* a, const char* b, size_t len) { return .xmemcmp(a, b, len); }
 int memcmp(void*, void*, size_t len) { assert(0); }
-void __locale_decpoint(const char*) { assert(0); }
-char* __locale_decpoint() { assert(0); }
+extern(C) const(char)* __locale_decpoint;
 
 // Not defined for some reason
 extern(C) int stricmp(const char*, const char*);
@@ -84,8 +83,14 @@ private:
     size_t allocdim;
 
 public:
-    void push(T ptr)
+    void push(size_t line = __LINE__)(T ptr)
     {
+        static if (is(T == Dsymbol))
+        {
+            //printf("from %d\n", line);
+            //printf("pushing 0x%.8X\n", ptr);
+            //printf("ident %.*s\n", ptr.ident.len, ptr.ident.toChars());
+        }
         reserve(1);
         data[dim++] = cast(void*)ptr;
     }
@@ -334,7 +339,8 @@ public:
         auto p = key in table;
         if (p)
             return null;
-        return (table[key] = new StringValue(null, s[0..len]));
+        key = key ~ '\0';
+        return (table[key[0..$-1]] = new StringValue(null, key));
     }
     StringValue *update(const(char)* s, size_t len)
     {
@@ -344,7 +350,8 @@ public:
         auto p = key in table;
         if (p)
             return *p;
-        return (table[key] = new StringValue(null, s[0..len]));
+        key = key ~ '\0';
+        return (table[key[0..$-1]] = new StringValue(null, key));
     }
 
 private:
@@ -380,6 +387,28 @@ void* memcpy(T : Parameter)(ref T dest, T src, size_t size) { assert(0); }
 void* memcpy(T : Expression)(ref T dest, T src, size_t size) { assert(0); }
 void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size) { assert(0); }
 
+// something is wrong with strtod/ld
+
+double strtod(const(char)* p, char** endp)
+{
+    tracein("strtod");
+    scope(success) traceout("strtod");
+    scope(failure) traceerr("strtod");
+    assert(!endp);
+    import std.conv : to;
+    return to!double(p[0..strlen(p)]);
+}
+
+real strtold(const(char)* p, char** endp)
+{
+    tracein("strtold");
+    scope(success) traceout("strtold");
+    scope(failure) traceerr("strtold");
+    assert(!endp);
+    import std.conv : to;
+    return to!real(p[0..strlen(p)]);
+}
+
 void copyMembers(T : Type)(T dest, T src)
 {
     static if (!is(T == _Object))
@@ -404,7 +433,7 @@ void main(string[] args)
     xmain(argc, argv);
 }
 
-//version=trace;
+version=trace;
 version(trace)
 {
     size_t tracedepth;
