@@ -1,4 +1,6 @@
 
+// c library
+
 public import core.stdc.stdarg;
 public import core.stdc.stdio;
 public import core.stdc.stdlib;
@@ -9,6 +11,14 @@ public import core.stdc.limits;
 public import core.sys.windows.windows;
 public import core.stdc.math;
 public import core.stdc.time;
+public import core.stdc.stdint;
+public import core.stdc.float_;
+
+// generated source
+
+import dmd;
+
+// win32
 
 alias GetModuleFileNameA GetModuleFileName;
 alias CreateFileA CreateFile;
@@ -17,20 +27,34 @@ alias WIN32_FIND_DATA WIN32_FIND_DATAA;
 extern(Windows) DWORD GetFullPathNameA(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR *lpFilePart);
 alias GetFullPathNameA GetFullPathName;
 
+// c lib
+
+// So we can accept string literals
 int memcmp(const char* a, const char* b, size_t len) { return .xmemcmp(a, b, len); }
 int memcmp(void*, void*, size_t len) { assert(0); }
-extern(C) int stricmp(const char*, const char*);
-int ld_sprint(const char*, ...) { assert(0); }
 void __locale_decpoint(const char*) { assert(0); }
 char* __locale_decpoint() { assert(0); }
-extern(C) int putenv(const char*);
-int spawnlp(int, const char*, const char*, const char*, const char*) { assert(0); }
-int spawnl(int, const char*, const char*, const char*, const char*) { assert(0); }
-int spawnv(int, const char*, const char**) { assert(0); }
 
-//version=trace;
+// Not defined for some reason
+extern(C) int stricmp(const char*, const char*);
+extern(C) int putenv(const char*);
+extern(C) int spawnlp(int, const char*, const char*, const char*, const char*);
+extern(C) int spawnl(int, const char*, const char*, const char*, const char*);
+extern(C) int spawnv(int, const char*, const char**);
+extern(C) int mkdir(const char*);
+alias mkdir _mkdir;
+extern(C) int memicmp(const char*, const char*, size_t);
+extern(C) char* strupr(const char*);
+extern(C) ushort _rotl(ushort, int);
+extern(C) ushort _rotr(ushort, int);
+
+int ld_sprint(const char*, ...) { assert(0); }
 
 enum NULL = null;
+extern extern(C) uint _xi_a;
+extern extern(C) uint _end;
+
+// root.Object
 
 class _Object
 {
@@ -43,6 +67,8 @@ class _Object
         printf("%s %p\n", toChars(), this);
     }
 }
+
+// root.Array
 
 struct ArrayBase(U)
 {
@@ -127,19 +153,22 @@ public:
     int apply(apply_fp_t, void*) { assert(0); }
 };
 
-extern extern(C) uint _xi_a;
-extern extern(C) uint _end;
+// root.rmem
 
-struct GC {}
+struct GC;
+
+// root.response
 
 int response_expand(size_t*, const(char)***)
 {
     return 0;
 }
+
+// root.man
+
 void browse(const char*) { assert(0); }
 
-extern(C) int memicmp(const char*, const char*, size_t);
-extern(C) char* strupr(const char*);
+// root.port
 
 struct Port
 {
@@ -152,49 +181,7 @@ struct Port
     enum infinity = double.infinity;
 }
 
-enum FLT_MAX = float.max;
-enum FLT_MIN = float.min;
-enum FLT_DIG = float.dig;
-enum FLT_EPSILON = float.epsilon;
-enum FLT_MANT_DIG = float.mant_dig;
-enum FLT_MAX_10_EXP = float.max_10_exp;
-enum FLT_MAX_EXP = float.max_exp;
-enum FLT_MIN_10_EXP = float.min_10_exp;
-enum FLT_MIN_EXP = float.min_exp;
-enum DBL_MAX = double.max;
-enum DBL_MIN = double.min;
-enum DBL_DIG = double.dig;
-enum DBL_EPSILON = double.epsilon;
-enum DBL_MANT_DIG = double.mant_dig;
-enum DBL_MAX_10_EXP = double.max_10_exp;
-enum DBL_MAX_EXP = double.max_exp;
-enum DBL_MIN_10_EXP = double.min_10_exp;
-enum DBL_MIN_EXP = double.min_exp;
-enum LDBL_MIN = real.min;
-enum LDBL_DIG = real.dig;
-enum LDBL_EPSILON = real.epsilon;
-enum LDBL_MANT_DIG = real.mant_dig;
-enum LDBL_MAX_10_EXP = real.max_10_exp;
-enum LDBL_MAX_EXP = real.max_exp;
-enum LDBL_MIN_10_EXP = real.min_10_exp;
-enum LDBL_MIN_EXP = real.min_exp;
-
-struct Symbol;
-struct Classsym;
-struct TYPE;
-struct elem;
-alias Symbol symbol;
-struct Outbuffer {}
-struct jmp_buf {}
-struct code;
-struct block;
-struct Blockx;
-alias uint opflag_t;
-struct PTRNTAB;
-struct OP;
-struct dt_t;
-struct Config {};
-struct Configv {};
+// IntRange
 
 struct SignExtendedNumber
 {
@@ -227,26 +214,7 @@ struct IntRange
     IntRange unionOrAssign(IntRange, bool) { assert(0); }
 }
 
-alias byte int8_t;
-alias ubyte uint8_t;
-alias short int16_t;
-alias ushort uint16_t;
-alias int int32_t;
-alias uint uint32_t;
-alias long int64_t;
-alias ulong uint64_t;
-
-alias long longlong;
-alias ulong ulonglong;
-
-alias long targ_llong;
-alias size_t targ_size_t;
-
-alias real longdouble;
-alias uint regm_t;
-alias uint tym_t;
-alias uint list_t;
-alias uint idx_t;
+// Preprocessor symbols (sometimes used as values)
 
 enum TARGET_LINUX = 0;
 enum TARGET_OSX = 0;
@@ -254,38 +222,39 @@ enum TARGET_FREEBSD = 0;
 enum TARGET_OPENBSD = 0;
 enum TARGET_SOLARIS = 0;
 enum TARGET_WINDOS = 1;
-enum _WIN32 = 1;
 
 enum I64 = false;
 
+enum _WIN32 = 1;
 enum linux = false;
 enum __APPLE__ = false;
 enum __FreeBSD__ = false;
 enum __OpenBSD__ = false;
 enum __sun = false;
 
-real creall(creal) { assert(0); }
-real cimagl(creal) { assert(0); }
-real ldouble(double) { assert(0); }
+// complex_t
 
+real creall(creal x) { return x.re; }
+real cimagl(creal x) { return x.im; }
 
-void obj_start(const char*) { assert(0); }
-void obj_end(void*, File*) { assert(0); }
-void obj_end(Library, File*) { assert(0); }
-void obj_write_deferred(void*) { assert(0); }
-void obj_write_deferred(Library) { assert(0); }
-void out_config_init(int, bool, bool, bool, char, bool, char, bool, bool) { assert(0); }
-void backend_init() { assert(0); }
-void backend_term() { assert(0); }
+// longdouble.h
 
-import dmd;
+real ldouble(T)(T x) { return cast(real)x; }
 
-Expression createTypeInfoArray(Scope sc, Expression *args, size_t dim) { assert(0); }
+// Backend
 
+struct Symbol;
+struct TYPE;
+struct elem;
+struct code;
+struct block;
+struct dt_t;
 struct IRState;
 
-ushort _rotl(ushort, int) { assert(0); }
-ushort _rotr(ushort, int) { assert(0); }
+// Util
+
+void util_progress() { assert(0); }
+int binary(char *, const(char)**, size_t) { assert(0); }
 
 struct AA;
 _Object _aaGetRvalue(AA* aa, _Object o)
@@ -307,17 +276,19 @@ _Object* _aaGet(AA** aa, _Object o)
     return k in *x;
 }
 
-void util_progress() { assert(0); }
-
 struct String
 {
     static size_t calcHash(const char*) { assert(0); }
 }
 
+// root.speller
+
 void* speller(const char*, void* function(void*, const(char)*), Scope, const char*) { assert(0); }
 void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*) { assert(0); }
 
 const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+
+// hacks to support cloning classed with memcpy
 
 static import stdstring = core.stdc.string;
 
@@ -348,21 +319,17 @@ void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size) { assert(0); }
 
 void copyMembers(T : Type)(T dest, T src)
 {
-    foreach(i, v; dest.tupleof)
-        dest.tupleof[i] = src.tupleof[i];
-    static if (!is(T == Type) && is(T U == super))
-        copyMembers!(U)(dest, src);
+    static if (!is(T == _Object))
+    {
+        foreach(i, v; dest.tupleof)
+            dest.tupleof[i] = src.tupleof[i];
+        static if (!is(T == Type) && is(T U == super))
+            copyMembers!(U)(dest, src);
+   }
 }
 void copyMembers(T : _Object)(T dest, T src)
 {
 }
-
-int binary(char *, const(char)**, size_t) { assert(0); }
-
-int os_critsecsize32() { assert(0); }
-int os_critsecsize64() { assert(0); }
-
-Library LibMSCoff_factory() { assert(0); }
 
 void main(string[] args)
 {
@@ -374,15 +341,11 @@ void main(string[] args)
     xmain(argc, argv);
 }
 
-GC gc;
-
-extern(C) int mkdir(const char*);
-alias mkdir _mkdir;
-
-size_t tracedepth;
-
+version=trace;
 version(trace)
 {
+    size_t tracedepth;
+
     void tracein(const char* s, size_t line = __LINE__)
     {
         foreach(i; 0..tracedepth*2)
