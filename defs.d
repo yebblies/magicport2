@@ -149,7 +149,13 @@ public:
     {
         return cast(T*)data;
     }
-    typeof(this)* copy() { assert(0); }
+    typeof(this)* copy()
+    {
+        auto a = new typeof(this)();
+        a.setDim(dim);
+        memcpy(a.data, data, dim * (void *).sizeof);
+        return a;
+    }
     void shift(T ptr)
     {
         reserve(1);
@@ -458,6 +464,8 @@ void main(string[] args)
 
 int tracedepth;
 
+//version=trace;
+
 version(trace)
 {
     void tracein(const char* s, size_t line = __LINE__)
@@ -496,5 +504,3 @@ else
     void traceout(const char* s) {}
     void traceerr(const char* s) {}
 }
-
-//version=trace;
