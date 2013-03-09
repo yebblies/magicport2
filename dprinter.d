@@ -978,15 +978,20 @@ class DPrinter : Visitor
 
     override void visitNewExpr(NewExpr ast)
     {
-        assert(!ast.dim);
-        print("(new ");
-        visit(ast.t);
-        print("(");
         if (ast.t.id == "Scope" && ast.args.length == 1 && cast(PtrExpr)ast.args[0])
+        {
             visit((cast(PtrExpr)ast.args[0]).e);
+            print(".makeCopy()");
+        }
         else
+        {
+            assert(!ast.dim);
+            print("(new ");
+            visit(ast.t);
+            print("(");
             printArgs(ast.args);
-        print("))");
+            print("))");
+        }
     }
 
     override void visitOuterScopeExpr(OuterScopeExpr ast)
