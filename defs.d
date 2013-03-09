@@ -87,9 +87,14 @@ public:
     {
         static if (is(T == Dsymbol))
         {
-            //printf("from %d\n", line);
-            //printf("pushing 0x%.8X\n", ptr);
-            //printf("ident %.*s\n", ptr.ident.len, ptr.ident.toChars());
+            printf("from %d\n", line);
+            printf("pushing 0x%.8X\n", ptr);
+            printf("%s\n", ptr.kind());
+            if (ptr.ident)
+            {
+                printf("ident 0x%.8X\n", ptr.ident);
+                printf("ident %.*s\n", ptr.ident.len, ptr.ident.toChars());
+            }
         }
         reserve(1);
         data[dim++] = cast(void*)ptr;
@@ -159,7 +164,22 @@ public:
 
 // root.rmem
 
-struct GC;
+struct mem
+{
+    import core.memory;
+    static char* strdup(const char *p)
+    {
+        return p[0..strlen(p)+1].dup.ptr;
+    }
+    static void free(void *p) {}
+    static void mark(void *pointer) {}
+    static void* malloc(size_t n) { return GC.malloc(n); }
+    static void* calloc(size_t size, size_t n) { return GC.calloc(size, n); }
+    static void* realloc(void *p, size_t size) { return GC.realloc(p, size); }
+    static void _init() {}
+    static void setStackBottom(void *bottom) {}
+    static void addroots(char* pStart, char* pEnd) {}
+}
 
 // root.response
 
@@ -425,6 +445,9 @@ void copyMembers(T : _Object)(T dest, T src)
 
 void main(string[] args)
 {
+    scope(success) exit(0);
+    scope(failure) exit(1);
+
     int argc = cast(int)args.length;
     auto argv = (new const(char)*[](argc)).ptr;
     foreach(i, a; args)
@@ -434,6 +457,7 @@ void main(string[] args)
 }
 
 version=trace;
+
 version(trace)
 {
     size_t tracedepth;
