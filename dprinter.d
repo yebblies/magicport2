@@ -349,7 +349,15 @@ class DPrinter : Visitor
                     if (realarray)
                     {
                         auto at = cast(ArrayType)ast.types[i];
-                        visit(at.next);
+                        if (auto at2 = cast(ArrayType)at.next)
+                        {
+                            visit(at2.next);
+                            print("[");
+                            visit(at2.dim);
+                            print("]");
+                        }
+                        else
+                            visit(at.next);
                         print("[");
                         visit(at.dim);
                         print("]");
