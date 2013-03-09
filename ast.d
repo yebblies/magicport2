@@ -663,6 +663,8 @@ class DanglingElseStatement : Statement
 
 bool typeMatch(Type t1, Type t2)
 {
+    assert(t1);
+    assert(t2);
     if (t1 == t2)
         return true;
     if (typeid(t1) != typeid(t2))
@@ -686,7 +688,9 @@ bool typeMatch(Type t1, Type t2)
         if (!m) return false;
         foreach(i; 0..tf1.params.length)
         {
-            m = typeMatch(tf1.params[i].t, tf2.params[i].t);
+            m = tf1.params[i].t is tf2.params[i].t;
+            if (!m)
+                m = typeMatch(tf1.params[i].t, tf2.params[i].t);
             if (!m) return false;
         }
         return true;
