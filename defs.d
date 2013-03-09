@@ -398,7 +398,7 @@ Type memcpy(T : Type)(ref T dest, T src, size_t size)
     assert(typeid(dest) == typeid(src));
     switch(typeid(src).toString())
     {
-        foreach(s; defTT!("TypeBasic", "TypeIdentifier", "TypePointer", "TypeFunction", "TypeDArray"))
+        foreach(s; defTT!("TypeBasic", "TypeIdentifier", "TypePointer", "TypeFunction", "TypeDArray", "TypeClass", "TypeStruct"))
         {
             case "dmd." ~ s:
                 mixin("copyMembers!(" ~ s ~ ")(cast(" ~ s ~ ")dest, cast(" ~ s ~ ")src);");
