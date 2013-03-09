@@ -409,7 +409,11 @@ Type memcpy(T : Type)(ref T dest, T src, size_t size)
     }
     return dest;
 }
-void* memcpy(T : Parameter)(ref T dest, T src, size_t size) { assert(0); }
+T memcpy(T : Parameter)(ref T dest, T src, size_t size)
+{
+    dest = new Parameter(src.storageClass, src.type, src.ident, src.defaultArg);
+    return dest;
+}
 void* memcpy(T : Expression)(ref T dest, T src, size_t size) { assert(0); }
 void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size) { assert(0); }
 
