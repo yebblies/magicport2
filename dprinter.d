@@ -335,6 +335,17 @@ class DPrinter : Visitor
             print("__array_storage");
             println(";");
         }
+        if (ast.types.length == 1 && (ast.stc & STCstatic) && !cast(FuncDeclaration)D2 && P)
+        {
+            foreach(vd; scan.staticMemberVarDeclarations)
+            {
+                if (P.id == vd.id && ast.ids[0] == vd.id2)
+                {
+                    //writeln("found value for ", vd.id, "::", vd.id2);
+                    ast.inits[0] = vd.xinit;
+                }
+            }
+        }
         foreach(i; 0..ast.types.length)
         {
             if (ast.types[i])
