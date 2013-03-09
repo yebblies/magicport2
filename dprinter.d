@@ -140,6 +140,11 @@ class DPrinter : Visitor
             print("1i");
             return;
         }
+        if (s == "NULL")
+        {
+            print("null");
+            return;
+        }
         auto list =
         [
             "import", "module", "version", "align", "dchar", "ref", "scope", "wchar", "pragma",

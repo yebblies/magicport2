@@ -50,7 +50,6 @@ extern(C) ushort _rotr(ushort, int);
 
 int ld_sprint(const char*, ...) { assert(0); }
 
-enum NULL = null;
 extern extern(C) uint _xi_a;
 extern extern(C) uint _end;
 
