@@ -1122,7 +1122,8 @@ Type parseBasicType(bool flag = false)
         if (t.text == "::" && flag)
         {
             nextToken();
-            tx = new QualifiedType(tx, parseIdent());
+            //tx = new QualifiedType(tx, parseIdent());
+            tx = new BasicType(parseIdent());
         }
         return tx;
     }
