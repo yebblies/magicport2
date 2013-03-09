@@ -446,6 +446,7 @@ void copyMembers(T : _Object)(T dest, T src)
 void main(string[] args)
 {
     scope(success) exit(0);
+    scope(failure) tracedepth = -1;
 
     int argc = cast(int)args.length;
     auto argv = (new const(char)*[](argc)).ptr;
@@ -455,34 +456,38 @@ void main(string[] args)
     xmain(argc, argv);
 }
 
-//version=trace;
+int tracedepth;
 
 version(trace)
 {
-    size_t tracedepth;
-
     void tracein(const char* s, size_t line = __LINE__)
     {
+        if (tracedepth < 0)
+            return;
         foreach(i; 0..tracedepth*2)
             putchar(' ');
         printf("+ %s %d\n", s, line);
         tracedepth++;
     }
 
-    void traceout(const char* s)
+    void traceout(const char* s, size_t line = __LINE__)
     {
+        if (tracedepth < 0)
+            return;
         tracedepth--;
         foreach(i; 0..tracedepth*2)
             putchar(' ');
-        printf("- %s\n", s);
+        printf("- %s %d\n", s, line);
     }
 
-    void traceerr(const char* s)
+    void traceerr(const char* s, size_t line = __LINE__)
     {
+        if (tracedepth < 0)
+            return;
         tracedepth--;
         foreach(i; 0..tracedepth*2)
             putchar(' ');
-        printf("! %s\n", s);
+        printf("! %s %d\n", s, line);
     }
 }
 else
@@ -491,3 +496,5 @@ else
     void traceout(const char* s) {}
     void traceerr(const char* s) {}
 }
+
+//version=trace;
