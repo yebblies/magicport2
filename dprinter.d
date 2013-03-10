@@ -421,7 +421,7 @@ class DPrinter : Visitor
         {
             if (auto at = cast(ArrayType)ast.types[0])
             {
-                if (auto le = cast(LitExpr)at.dim)
+                if (at.dim)
                 {
                     if (E)
                         println(";");
@@ -429,7 +429,7 @@ class DPrinter : Visitor
                     print("enum ");
                     print(ast.ids[0]);
                     print("__array_length = ");
-                    print(le.val);
+                    visit(at.dim);
                     if (!E)
                         println(";");
                     return;
