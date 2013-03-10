@@ -433,7 +433,17 @@ Expression memcpy(T : Expression)(ref T dest, T src, size_t size)
 }
 void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size) { assert(0); }
 
-// something is wrong with strtod/ld
+// something is wrong with strtof/d/ld
+
+double strtof(const(char)* p, char** endp)
+{
+    tracein("strtof");
+    scope(success) traceout("strtof");
+    scope(failure) traceerr("strtof");
+    assert(!endp);
+    import std.conv : to;
+    return to!float(p[0..strlen(p)]);
+}
 
 double strtod(const(char)* p, char** endp)
 {
