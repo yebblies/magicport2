@@ -30,6 +30,7 @@ class DPrinter : Visitor
     FuncDeclaration fd;
     Declaration D;
     Declaration D2;
+    SwitchStatement sswitch;
 
     int indent;
     bool wasnl;
@@ -1363,10 +1364,16 @@ class DPrinter : Visitor
 
     override void visitSwitchStatement(SwitchStatement ast)
     {
+        auto sswitchsave = sswitch;
+        scope(exit) sswitch = sswitchsave;
+        sswitch = ast;
         print("switch (");
         visit(ast.e);
-        println(")");
+        println(") {");
         visit(ast.sbody);
+        if (!ast.hasdefault)
+            println("default: break;");
+        println("}");
     }
 
     override void visitCaseStatement(CaseStatement ast)
@@ -1390,6 +1397,8 @@ class DPrinter : Visitor
 
     override void visitDefaultStatement(DefaultStatement ast)
     {
+        assert(sswitch);
+        sswitch.hasdefault = true;
         indent--;
         println("default:");
         indent++;

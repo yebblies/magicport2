@@ -594,6 +594,7 @@ class SwitchStatement : Statement
 {
     Expression e;
     Statement sbody;
+    bool hasdefault;
     this(Expression e, Statement sbody) { this.e = e; this.sbody = sbody; }
     mixin(visitor_str);
 }
