@@ -475,6 +475,16 @@ void copyMembers(T : Type)(T dest, T src)
             copyMembers!(U)(dest, src);
    }
 }
+void copyMembers(T : Expression)(T dest, T src)
+{
+    static if (!is(T == _Object))
+    {
+        foreach(i, v; dest.tupleof)
+            dest.tupleof[i] = src.tupleof[i];
+        static if (!is(T == Expression) && is(T U == super))
+            copyMembers!(U)(dest, src);
+   }
+}
 void copyMembers(T : _Object)(T dest, T src)
 {
 }
@@ -494,7 +504,8 @@ void main(string[] args)
 
 int tracedepth;
 
-//version=trace;
+version=trace;
+//version=fulltrace;
 
 version(trace)
 {
@@ -502,9 +513,12 @@ version(trace)
     {
         if (tracedepth < 0)
             return;
-        foreach(i; 0..tracedepth*2)
-            putchar(' ');
-        printf("+ %s %d\n", s, line);
+        version(fulltrace)
+        {
+            foreach(i; 0..tracedepth*2)
+                putchar(' ');
+            printf("+ %s %d\n", s, line);
+        }
         tracedepth++;
     }
 
@@ -513,9 +527,12 @@ version(trace)
         if (tracedepth < 0)
             return;
         tracedepth--;
-        foreach(i; 0..tracedepth*2)
-            putchar(' ');
-        printf("- %s %d\n", s, line);
+        version(fulltrace)
+        {
+            foreach(i; 0..tracedepth*2)
+                putchar(' ');
+            printf("- %s %d\n", s, line);
+        }
     }
 
     void traceerr(const char* s, size_t line = __LINE__)
