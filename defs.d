@@ -32,7 +32,8 @@ alias GetFullPathNameA GetFullPathName;
 // So we can accept string literals
 int memcmp(const char* a, const char* b, size_t len) { return .xmemcmp(a, b, len); }
 int memcmp(void* a, void* b, size_t len) { return .xmemcmp(a, b, len); }
-extern(C) const(char)* __locale_decpoint;
+const(char)* __locale_decpoint() { return "."; }
+void __locale_decpoint(const(char)*) {}
 
 // Not defined for some reason
 extern(C) int stricmp(const char*, const char*);
@@ -302,6 +303,10 @@ real ldouble(T)(T x) { return cast(real)x; }
 
 size_t ld_sprint(char* str, int fmt, real x)
 {
+    tracein("ld_sprint");
+    scope(success) traceout("ld_sprint");
+    scope(failure) traceerr("ld_sprint");
+
     if ((cast(real)cast(ulong)x) == x)
     {   // ((1.5 -> 1 -> 1.0) == 1.5) is false
         // ((1.0 -> 1 -> 1.0) == 1.0) is true
@@ -481,35 +486,9 @@ void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size) { assert(0); }
 
 // something is wrong with strtof/d/ld
 
-double strtof(const(char)* p, char** endp)
-{
-    tracein("strtof");
-    scope(success) traceout("strtof");
-    scope(failure) traceerr("strtof");
-    assert(!endp);
-    import std.conv : to;
-    return to!float(p[0..strlen(p)]);
-}
-
-double strtod(const(char)* p, char** endp)
-{
-    tracein("strtod");
-    scope(success) traceout("strtod");
-    scope(failure) traceerr("strtod");
-    assert(!endp);
-    import std.conv : to;
-    return to!double(p[0..strlen(p)]);
-}
-
-real strtold(const(char)* p, char** endp)
-{
-    tracein("strtold");
-    scope(success) traceout("strtold");
-    scope(failure) traceerr("strtold");
-    assert(!endp);
-    import std.conv : to;
-    return to!real(p[0..strlen(p)]);
-}
+extern(C) float strtof(const(char)* p, char** endp);
+extern(C) double strtod(const(char)* p, char** endp);
+extern(C) real strtold(const(char)* p, char** endp);
 
 void copyMembers(T : Type)(T dest, T src)
 {
