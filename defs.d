@@ -401,7 +401,6 @@ public:
     }
     StringValue *update(const(char)* s, size_t len)
     {
-        assert(len <= 1000);
         //printf("StringTable::update %d %.*s\n", len, len, s);
         auto key = s[0..len];
         auto p = key in table;
