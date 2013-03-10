@@ -119,7 +119,12 @@ public:
             }
         }
     }
-    void remove(size_t) { assert(0); }
+    void remove(size_t i)
+    {
+        if (dim - i - 1)
+            memmove(data + i, data + i + 1, (dim - i - 1) * (data[0]).sizeof);
+        dim--;
+    }
     void insert(size_t index, typeof(this)* a)
     {
         if (a)
