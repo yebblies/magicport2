@@ -273,7 +273,19 @@ struct SignExtendedNumber
     }
     int opCmp(const ref SignExtendedNumber a) const
     {
-        assert(0);
+        if (negative != a.negative)
+        {
+            if (negative)
+                return -1;
+            else
+                return 1;
+        }
+        if (value < a.value)
+            return -1;
+        else if (value > a.value)
+            return 1;
+        else
+            return 0;
     }
     SignExtendedNumber opNeg() const
     {
@@ -323,16 +335,36 @@ struct IntRange
     }
     this(const ref SignExtendedNumber a)
     {
-        assert(0);
+        imin = a;
+        imax = a;
     }
     this(SignExtendedNumber lower, SignExtendedNumber upper)
     {
-        assert(0);
+        imin = lower;
+        imax = lower;
     }
 
-    static IntRange fromType(Type type, bool isUnsigned = false)
+    static IntRange fromType(Type type)
     {
-        assert(0);
+        return fromType(type, type.isunsigned());
+    }
+    static IntRange fromType(Type type, bool isUnsigned)
+    {
+        if (!type.isintegral())
+            return widest();
+
+        uinteger_t mask = type.sizemask();
+        auto lower = SignExtendedNumber(0);
+        auto upper = SignExtendedNumber(mask);
+        if (type.toBasetype().ty == Tdchar)
+            upper.value = 0x10FFFFUL;
+        else if (!isUnsigned)
+        {
+            lower.value = ~(mask >> 1);
+            lower.negative = true;
+            upper.value = (mask >> 1);
+        }
+        return IntRange(lower, upper);
     }
     static IntRange fromNumbers4(SignExtendedNumber* numbers)
     {
@@ -364,7 +396,7 @@ struct IntRange
     }
     bool contains(const ref IntRange a)
     {
-        assert(0);
+        return imin <= a.imin && imax >= a.imax;
     }
     bool containsZero() const
     {
