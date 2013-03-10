@@ -163,7 +163,10 @@ public:
         data[0] = cast(void*)ptr;
         dim++;
     }
-    void zero() { assert(0); }
+    void zero()
+    {
+        memset(data,0,dim * (data[0]).sizeof);
+    }
     void pop() { assert(0); }
     int apply(apply_fp_t, void*) { assert(0); }
 };
