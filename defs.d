@@ -431,7 +431,7 @@ Expression memcpy(T : Expression)(ref T dest, T src, size_t size)
 {
     dest = cast(T)src.clone();;
     assert(dest);
-    assert(typeid(dest) == typeid(src));
+    assert(typeid(dest) == typeid(src), typeid(src).toString());
     switch(typeid(src).toString())
     {
         foreach(s; expTypes.expand)
