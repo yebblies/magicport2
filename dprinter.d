@@ -322,7 +322,7 @@ class DPrinter : Visitor
             if (auto at = cast(ArrayType)ast.types[0])
                 if (at.dim)
                     realarray = true;
-        if (fd && !(ast.stc & STCstatic))
+        if (fd && !(ast.stc & STCstatic) && !cast(AnonStructDeclaration)D2)
             realarray = false;
         if (ast.types.length == 1 && cast(ArrayType)ast.types[0] && (cast(ArrayType)ast.types[0]).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
         {
