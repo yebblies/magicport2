@@ -398,7 +398,8 @@ Type memcpy(T : Type)(ref T dest, T src, size_t size)
     assert(typeid(dest) == typeid(src));
     switch(typeid(src).toString())
     {
-        foreach(s; defTT!("TypeBasic", "TypeIdentifier", "TypePointer", "TypeFunction", "TypeDArray", "TypeClass", "TypeStruct"))
+        foreach(s; defTT!("TypeBasic", "TypeIdentifier", "TypePointer", "TypeFunction", "TypeDArray", "TypeClass", "TypeStruct",
+            "TypeTypeof", "TypeNull"))
         {
             case "dmd." ~ s:
                 mixin("copyMembers!(" ~ s ~ ")(cast(" ~ s ~ ")dest, cast(" ~ s ~ ")src);");
@@ -421,7 +422,7 @@ Expression memcpy(T : Expression)(ref T dest, T src, size_t size)
     assert(typeid(dest) == typeid(src));
     switch(typeid(src).toString())
     {
-        foreach(s; defTT!("Expression", "IntegerExp"))
+        foreach(s; defTT!("Expression", "IntegerExp", "NullExp", "FileInitExp", "LineInitExp", "ModuleInitExp", "FuncInitExp"))
         {
             case "dmd." ~ s:
                 mixin("copyMembers!(" ~ s ~ ")(cast(" ~ s ~ ")dest, cast(" ~ s ~ ")src);");
