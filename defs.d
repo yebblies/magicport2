@@ -247,31 +247,149 @@ struct SignExtendedNumber
 {
     ulong value;
     bool negative;
-    SignExtendedNumber opNeg() { assert(0); }
-    SignExtendedNumber opAdd(SignExtendedNumber) { assert(0); }
-    SignExtendedNumber opSub(SignExtendedNumber) { assert(0); }
-    SignExtendedNumber opMul(SignExtendedNumber) { assert(0); }
-    SignExtendedNumber opDiv(SignExtendedNumber) { assert(0); }
-    ref SignExtendedNumber opAddAssign(ulong) { assert(0); }
-    int opCmp(SignExtendedNumber) { assert(0); }
-    SignExtendedNumber opShl(SignExtendedNumber) { assert(0); }
-    SignExtendedNumber opShr(SignExtendedNumber) { assert(0); }
+    static SignExtendedNumber fromInteger(uinteger_t value)
+    {
+        assert(0);
+    }
+    static SignExtendedNumber extreme(bool minimum)
+    {
+        assert(0);
+    }
+    static SignExtendedNumber max()
+    {
+        assert(0);
+    }
+    static SignExtendedNumber min()
+    {
+        return SignExtendedNumber(0, true);
+    }
+    bool isMinimum() const
+    {
+        return negative && value == 0;
+    }
+    bool opEquals(const ref SignExtendedNumber a) const
+    {
+        assert(0);
+    }
+    int opCmp(const ref SignExtendedNumber a) const
+    {
+        assert(0);
+    }
+    SignExtendedNumber opNeg() const
+    {
+        assert(0);
+    }
+    SignExtendedNumber opAdd(const ref SignExtendedNumber a) const
+    {
+        assert(0);
+    }
+    SignExtendedNumber opSub(const ref SignExtendedNumber a) const
+    {
+        assert(0);
+    }
+    SignExtendedNumber opMul(const ref SignExtendedNumber a) const
+    {
+        assert(0);
+    }
+    SignExtendedNumber opDiv(const ref SignExtendedNumber a) const
+    {
+        assert(0);
+    }
+    SignExtendedNumber opMod(const ref SignExtendedNumber a) const
+    {
+        assert(0);
+    }
+    ref SignExtendedNumber opAddAssign(int a)
+    {
+        assert(0);
+    }
+    SignExtendedNumber opShl(const ref SignExtendedNumber a)
+    {
+        assert(0);
+    }
+    SignExtendedNumber opShr(const ref SignExtendedNumber a)
+    {
+        assert(0);
+    }
 }
 
 struct IntRange
 {
     SignExtendedNumber imin, imax;
-    this(dinteger_t) { assert(0); }
-    this(SignExtendedNumber, SignExtendedNumber) { assert(0); }
-    static IntRange fromType(Type, bool = false) { assert(0); }
-    bool contains(IntRange) { assert(0); }
-    IntRange _cast(Type) { assert(0); }
-    static IntRange fromNumbers4(SignExtendedNumber*) { assert(0); }
-    bool containsZero() { assert(0); }
-    IntRange absNeg() { assert(0); }
-    IntRange castUnsigned(Type) { assert(0); }
-    IntRange splitBySign(IntRange, bool, IntRange, bool) { assert(0); }
-    IntRange unionOrAssign(IntRange, bool) { assert(0); }
+
+    this(dinteger_t)
+    {
+        assert(0);
+    }
+    this(const ref SignExtendedNumber a)
+    {
+        assert(0);
+    }
+    this(SignExtendedNumber lower, SignExtendedNumber upper)
+    {
+        assert(0);
+    }
+
+    static IntRange fromType(Type type, bool isUnsigned = false)
+    {
+        assert(0);
+    }
+    static IntRange fromNumbers4(SignExtendedNumber* numbers)
+    {
+        assert(0);
+    }
+    static IntRange widest()
+    {
+        assert(0);
+    }
+    IntRange castSigned(uinteger_t mask)
+    {
+        assert(0);
+    }
+    IntRange castUnsigned(uinteger_t mask)
+    {
+        assert(0);
+    }
+    IntRange castDchar()
+    {
+        assert(0);
+    }
+    IntRange _cast(Type type)
+    {
+        assert(0);
+    }
+    IntRange castUnsigned(Type type)
+    {
+        assert(0);
+    }
+    bool contains(const ref IntRange a)
+    {
+        assert(0);
+    }
+    bool containsZero() const
+    {
+        assert(0);
+    }
+    IntRange absNeg() const
+    {
+        assert(0);
+    }
+    IntRange unionWidth(const ref IntRange other) const
+    {
+        assert(0);
+    }
+    IntRange unionOrAssign(IntRange other, ref bool union_)
+    {
+        assert(0);
+    }
+    ref const(IntRange) dump(const(char)* funcName, Expression e) const
+    {
+        assert(0);
+    }
+    IntRange splitBySign(ref IntRange negRange, ref bool hasNegRange, ref IntRange nonNegRange, ref bool hasNonNegRange) const
+    {
+        assert(0);
+    }
 }
 
 // Preprocessor symbols (sometimes used as values)
