@@ -387,8 +387,7 @@ private:
 // hacks to support cloning classed with memcpy
 
 static import stdstring = core.stdc.string;
-
-template defTT(T...) { alias defTT = T; }
+import typenames;
 
 void* memcpy()(void* dest, const void* src, size_t size) { return stdstring.memcpy(dest, src, size); }
 Type memcpy(T : Type)(ref T dest, T src, size_t size)
@@ -398,8 +397,7 @@ Type memcpy(T : Type)(ref T dest, T src, size_t size)
     assert(typeid(dest) == typeid(src));
     switch(typeid(src).toString())
     {
-        foreach(s; defTT!("TypeBasic", "TypeIdentifier", "TypePointer", "TypeFunction", "TypeDArray", "TypeClass", "TypeStruct",
-            "TypeTypeof", "TypeNull"))
+        foreach(s; typeTypes.expand)
         {
             case "dmd." ~ s:
                 mixin("copyMembers!(" ~ s ~ ")(cast(" ~ s ~ ")dest, cast(" ~ s ~ ")src);");
@@ -422,7 +420,7 @@ Expression memcpy(T : Expression)(ref T dest, T src, size_t size)
     assert(typeid(dest) == typeid(src));
     switch(typeid(src).toString())
     {
-        foreach(s; defTT!("Expression", "IntegerExp", "NullExp", "FileInitExp", "LineInitExp", "ModuleInitExp", "FuncInitExp"))
+        foreach(s; expTypes.expand)
         {
             case "dmd." ~ s:
                 mixin("copyMembers!(" ~ s ~ ")(cast(" ~ s ~ ")dest, cast(" ~ s ~ ")src);");
