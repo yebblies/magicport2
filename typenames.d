@@ -103,7 +103,14 @@ auto basicTypes = [
     "AliasThisRec",
 ];
 
-import std.typecons;
+struct Tuple(T...)
+{
+    T expand;
+}
+auto tuple(T...)(T args)
+{
+    return Tuple!T(args);
+}
 
 enum expTypes = tuple(
     "Expression",
