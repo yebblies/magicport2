@@ -179,7 +179,24 @@ public:
         memset(data,0,dim * (data[0]).sizeof);
     }
     void pop() { assert(0); }
-    int apply(apply_fp_t, void*) { assert(0); }
+    int apply(int function(T, void*) fp, void* param)
+    {
+        static if (is(typeof(T.init.apply(fp, null))))
+        {
+            for (size_t i = 0; i < dim; i++)
+            {   T e = tdata()[i];
+
+                if (e)
+                {
+                    if (e.apply(fp, param))
+                        return 1;
+                }
+            }
+            return 0;
+        }
+        else
+            assert(0);
+    }
 };
 
 // root.rmem
