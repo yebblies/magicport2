@@ -137,7 +137,13 @@ public:
             dim += d;
         }
     }
-    void insert(size_t, T) { assert(0); }
+    void insert(size_t index, T ptr)
+    {
+        reserve(1);
+        memmove(data + index + 1, data + index, (dim - index) * (*data).sizeof);
+        data[index] = cast(void*)ptr;
+        dim++;
+    }
     void setDim(size_t newdim)
     {
         if (dim < newdim)
