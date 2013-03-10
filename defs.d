@@ -414,7 +414,24 @@ T memcpy(T : Parameter)(ref T dest, T src, size_t size)
     dest = new Parameter(src.storageClass, src.type, src.ident, src.defaultArg);
     return dest;
 }
-void* memcpy(T : Expression)(ref T dest, T src, size_t size) { assert(0); }
+Expression memcpy(T : Expression)(ref T dest, T src, size_t size)
+{
+    dest = cast(T)src.clone();;
+    assert(dest);
+    assert(typeid(dest) == typeid(src));
+    switch(typeid(src).toString())
+    {
+        foreach(s; defTT!("Expression", "IntegerExp"))
+        {
+            case "dmd." ~ s:
+                mixin("copyMembers!(" ~ s ~ ")(cast(" ~ s ~ ")dest, cast(" ~ s ~ ")src);");
+                return dest;
+        }
+    default:
+        assert(0, "Cannot copy expression " ~ typeid(src).toString());
+    }
+    return dest;
+}
 void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size) { assert(0); }
 
 // something is wrong with strtod/ld
