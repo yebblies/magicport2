@@ -465,6 +465,7 @@ Expression parsePrimaryExpr()
             {
 notCast:
                 auto e = parseExpr();
+                e.hasParens = true;
                 check(")");
                 return e;
             }

@@ -52,6 +52,16 @@ class DPrinter : Visitor
         target("\n");
         wasnl = true;
     }
+    void lparen(Expression ast)
+    {
+        if (ast.hasParens)
+            print("(");
+    }
+    void rparen(Expression ast)
+    {
+        if (ast.hasParens)
+            print(")");
+    }
 
     void printArgs(Expression[] args)
     {
@@ -767,7 +777,7 @@ class DPrinter : Visitor
         auto n1 = ie1 && ie1.id == "NULL";
         auto n2 = ie2 && ie2.id == "NULL";
 
-        print("(");
+        lparen(ast);
         visit(ast.e1);
         print(" ");
         if ((n1 || n2) && ast.op == "==")
@@ -778,7 +788,7 @@ class DPrinter : Visitor
             print(ast.op);
         print(" ");
         visit(ast.e2);
-        print(")");
+        rparen(ast);
     }
 
     override void visitMulExpr(MulExpr ast)
@@ -813,90 +823,90 @@ class DPrinter : Visitor
                 }
             }
         }
-        print("(");
+        lparen(ast);
         visit(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
         visit(ast.e2);
-        print(")");
+        rparen(ast);
     }
 
     override void visitAddExpr(AddExpr ast)
     {
-        print("(");
+        lparen(ast);
         visit(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
         visit(ast.e2);
-        print(")");
+        rparen(ast);
     }
 
     override void visitOrOrExpr(OrOrExpr ast)
     {
-        print("(");
+        lparen(ast);
         visit(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
         visit(ast.e2);
-        print(")");
+        rparen(ast);
     }
 
     override void visitAndAndExpr(AndAndExpr ast)
     {
-        print("(");
+        lparen(ast);
         visit(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
         visit(ast.e2);
-        print(")");
+        rparen(ast);
     }
 
     override void visitOrExpr(OrExpr ast)
     {
-        print("(");
+        lparen(ast);
         visit(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
         visit(ast.e2);
-        print(")");
+        rparen(ast);
     }
 
     override void visitXorExpr(XorExpr ast)
     {
-        print("(");
+        lparen(ast);
         visit(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
         visit(ast.e2);
-        print(")");
+        rparen(ast);
     }
 
     override void visitAndExpr(AndExpr ast)
     {
-        print("(");
+        lparen(ast);
         visit(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
         visit(ast.e2);
-        print(")");
+        rparen(ast);
     }
 
     override void visitAssignExpr(AssignExpr ast)
     {
-        print("(");
+        lparen(ast);
         visit(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
         visit(ast.e2);
-        print(")");
+        rparen(ast);
     }
 
     override void visitDeclarationExpr(DeclarationExpr ast)
@@ -906,25 +916,26 @@ class DPrinter : Visitor
 
     override void visitPostExpr(PostExpr ast)
     {
-        print("(");
+        lparen(ast);
         visit(ast.e);
         print(ast.op);
-        print(")");
+        rparen(ast);
     }
 
     override void visitPreExpr(PreExpr ast)
     {
-        print("(");
+        lparen(ast);
         print(ast.op);
         visit(ast.e);
-        print(")");
+        rparen(ast);
     }
 
     override void visitPtrExpr(PtrExpr ast)
     {
-        print("(*");
+        lparen(ast);
+        print("*");
         visit(ast.e);
-        print(")");
+        rparen(ast);
     }
 
     override void visitAddrExpr(AddrExpr ast)
@@ -937,23 +948,26 @@ class DPrinter : Visitor
                 return;
             }
         }
-        print("(&");
+        lparen(ast);
+        print("&");
         visit(ast.e);
-        print(")");
+        rparen(ast);
     }
 
     override void visitNegExpr(NegExpr ast)
     {
-        print("(-");
+        lparen(ast);
+        print("-");
         visit(ast.e);
-        print(")");
+        rparen(ast);
     }
 
     override void visitComExpr(ComExpr ast)
     {
-        print("(~");
+        lparen(ast);
+        print("~");
         visit(ast.e);
-        print(")");
+        rparen(ast);
     }
 
     override void visitDeleteExpr(DeleteExpr ast)
@@ -963,9 +977,10 @@ class DPrinter : Visitor
 
     override void visitNotExpr(NotExpr ast)
     {
-        print("(!");
+        lparen(ast);
+        print("!");
         visit(ast.e);
-        print(")");
+        rparen(ast);
     }
 
     override void visitIndexExpr(IndexExpr ast)
@@ -978,22 +993,23 @@ class DPrinter : Visitor
 
     override void visitCondExpr(CondExpr ast)
     {
-        print("(");
+        lparen(ast);
         visit(ast.cond);
         print("?");
         visit(ast.e1);
         print(":");
         visit(ast.e2);
-        print(")");
+        rparen(ast);
     }
 
     override void visitCastExpr(CastExpr ast)
     {
-        print("(cast(");
+        lparen(ast);
+        print("cast(");
         visit(ast.t);
         print(")");
         visit(ast.e);
-        print(")");
+        rparen(ast);
     }
 
     override void visitNewExpr(NewExpr ast)
@@ -1006,11 +1022,13 @@ class DPrinter : Visitor
         else
         {
             assert(!ast.dim);
-            print("(new ");
+            lparen(ast);
+            print("new ");
             visit(ast.t);
             print("(");
             printArgs(ast.args);
-            print("))");
+            print(")");
+            rparen(ast);
         }
     }
 
@@ -1022,11 +1040,11 @@ class DPrinter : Visitor
 
     override void visitCommaExpr(CommaExpr ast)
     {
-        print("(");
+        lparen(ast);
         visit(ast.e1);
         print(", ");
         visit(ast.e2);
-        print(")");
+        rparen(ast);
     }
 
     override void visitSizeofExpr(SizeofExpr ast)

@@ -217,6 +217,7 @@ class AlignDeclaration : Declaration
 
 class Expression : Ast
 {
+    bool hasParens;
 };
 
 class LitExpr : Expression
