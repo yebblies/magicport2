@@ -555,7 +555,8 @@ class Scanner : Visitor
     override void visitSwitchStatement(SwitchStatement ast)
     {
         visit(ast.e);
-        visit(ast.sbody);
+        foreach(s; ast.sbody)
+            visit(s);
     }
 
     override void visitCaseStatement(CaseStatement ast)

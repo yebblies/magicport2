@@ -1409,7 +1409,9 @@ Statement parseSwitchStatement()
     enter("(");
     auto e = parseExpr();
     exit(")");
-    auto sbody = parseCompoundStatement();
+    check("{");
+    auto sbody = parseStatements();
+    check("}");
     return new SwitchStatement(e, sbody);
 }
 

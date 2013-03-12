@@ -1420,14 +1420,18 @@ class DPrinter : Visitor
         visit(ast.e);
         println(")");
         println("{");
-        if (!cast(CompoundStatement)ast.sbody)
-            indent++;
-        visit(ast.sbody);
+        indent++;
+        foreach(s; ast.sbody)
+            visit(s);
         if (!ast.hasdefault)
-            println("default: break;");
-        println("}");
-        if (!cast(CompoundStatement)ast.sbody)
+        {
             indent--;
+            println("default:");
+            indent++;
+            println("break;");
+        }
+        println("}");
+        indent--;
     }
 
     override void visitCaseStatement(CaseStatement ast)
@@ -1463,13 +1467,21 @@ class DPrinter : Visitor
         print("while (");
         visit(ast.e);
         println(")");
+        if (!cast(CompoundStatement)ast.sbody)
+            indent++;
         visit(ast.sbody);
+        if (!cast(CompoundStatement)ast.sbody)
+            indent--;
     }
 
     override void visitDoWhileStatement(DoWhileStatement ast)
     {
         println("do");
+        if (!cast(CompoundStatement)ast.sbody)
+            indent++;
         visit(ast.sbody);
+        if (!cast(CompoundStatement)ast.sbody)
+            indent--;
         print("while (");
         visit(ast.e);
         println(");");
@@ -1484,8 +1496,10 @@ class DPrinter : Visitor
 
     override void visitLabelStatement(LabelStatement ast)
     {
+        indent--;
         visitIdent(ast.id);
         println(":");
+        indent++;
     }
 
     override void visitDanglingElseStatement(DanglingElseStatement ast)
