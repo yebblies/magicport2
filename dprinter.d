@@ -1365,11 +1365,24 @@ class DPrinter : Visitor
         print("if (");
         visit(ast.e);
         println(")");
+        if (!cast(CompoundStatement)ast.sbody)
+            indent++;
         visit(ast.sbody);
+        if (!cast(CompoundStatement)ast.sbody)
+            indent--;
         if (ast.selse)
         {
-            print(" else ");
+            print("else");
+            auto elseisif = cast(IfStatement)ast.selse !is null;
+            if (elseisif)
+                print(" ");
+            else
+                println("");
+            if (!cast(CompoundStatement)ast.selse && !elseisif)
+                indent++;
             visit(ast.selse);
+            if (!cast(CompoundStatement)ast.selse && !elseisif)
+                indent--;
         }
     }
 
@@ -1378,14 +1391,24 @@ class DPrinter : Visitor
         print("for (");
         if (ast.xinit)
             visit(ast.xinit);
-        print("; ");
+        print(";");
         if (ast.cond)
+        {
+            print(" ");
             visit(ast.cond);
-        print("; ");
+        }
+        print(";");
         if (ast.inc)
+        {
+            print(" ");
             visit(ast.inc);
+        }
         println(")");
+        if (!cast(CompoundStatement)ast.sbody)
+            indent++;
         visit(ast.sbody);
+        if (!cast(CompoundStatement)ast.sbody)
+            indent--;
     }
 
     override void visitSwitchStatement(SwitchStatement ast)
@@ -1395,11 +1418,16 @@ class DPrinter : Visitor
         sswitch = ast;
         print("switch (");
         visit(ast.e);
-        println(") {");
+        println(")");
+        println("{");
+        if (!cast(CompoundStatement)ast.sbody)
+            indent++;
         visit(ast.sbody);
         if (!ast.hasdefault)
             println("default: break;");
         println("}");
+        if (!cast(CompoundStatement)ast.sbody)
+            indent--;
     }
 
     override void visitCaseStatement(CaseStatement ast)
