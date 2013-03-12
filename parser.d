@@ -851,7 +851,6 @@ func:
                 nextToken();
                 type.isConst = true;
             }
-            Statement fbody;
             if (t.text == "__attribute__")
             {
                 nextToken();
@@ -869,6 +868,8 @@ func:
                 supertype = parseType();
                 superargs = parseArgs();
             }
+            Statement[] fbody;
+            bool hasbody;
             if (t.text == "=")
             {
                 assert(stc & STCvirtual);
@@ -885,11 +886,14 @@ func:
                 nextToken();
             } else if (t.text == "{") {
                 inFunc++;
-                fbody = parseCompoundStatement();
+                check("{");
+                fbody = parseStatements();
+                hasbody = true;
+                check("}");
                 inFunc--;
             } else
                 fail();
-            return new FuncDeclaration(type, id, params, fbody, stc, supertype, superargs);
+            return new FuncDeclaration(type, id, params, fbody, stc, supertype, superargs, hasbody);
         } else {
             auto args = parseArgs();
             return new ConstructDeclaration(type, id, args);
@@ -929,7 +933,6 @@ memberfunc:
             return new StaticMemberVarDeclaration(type, id, id2);
         }
         auto params = parseParams();
-        Statement fbody;
         Expression[] superargs;
         Type supertype;
         if ((constructor || destructor) && t.text == ":")
@@ -960,13 +963,18 @@ memberfunc:
         {
             nextToken();
         }
+        Statement[] fbody;
+        bool hasbody;
         if (t.text == "{") {
             inFunc++;
-            fbody = parseCompoundStatement();
+            check("{");
+            fbody = parseStatements();
+            hasbody = true;
+            check("}");
             inFunc--;
         } else
             fail();
-        return new FuncBodyDeclaration(type, id, id2, params, fbody, stc, supertype, superargs);
+        return new FuncBodyDeclaration(type, id, id2, params, fbody, stc, supertype, superargs, hasbody);
     } else if (t.text == "," || t.text == "=" || t.text == ";")
     {
         auto ids = [id];

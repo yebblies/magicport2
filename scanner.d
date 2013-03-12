@@ -56,8 +56,8 @@ class Scanner : Visitor
             funcDeclarationsTakingLoc[ast.id] = ast;
         foreach(p; ast.params)
             visit(p);
-        if (ast.fbody)
-            visit(ast.fbody);
+        foreach(s; ast.fbody)
+            visit(s);
         if (ast.supertype)
             visit(ast.supertype);
         foreach(a; ast.superargs)
@@ -70,8 +70,8 @@ class Scanner : Visitor
         visit(ast.type);
         foreach(p; ast.params)
             visit(p);
-        if (ast.fbody)
-            visit(ast.fbody);
+        foreach(s; ast.fbody)
+            visit(s);
         if (ast.supertype)
             visit(ast.supertype);
         foreach(a; ast.superargs)
@@ -669,8 +669,9 @@ void funcBodies(Scanner scan)
                 auto tf2 = new FunctionType(fb.type, fb.params);
                 if (typeMatch(tf1, tf2))
                 {
-                    assert(!fd.fbody && fb.fbody);
+                    assert(!fd.hasbody && fb.hasbody);
                     fd.fbody = fb.fbody;
+                    fd.hasbody = true;
                     if (fb.superargs)
                         fd.superargs = fb.superargs;
                     foreach(i; 0..tf1.params.length)
@@ -733,7 +734,7 @@ void findProto(Declaration[] decls, Scanner scan)
     {
         foreach(f2; scan.funcDeclarations)
         {
-            if (!f2.fbody && f1.id == f2.id)
+            if (!f2.hasbody && f1.id == f2.id)
             {
                 auto tf1 = new FunctionType(f1.type, f1.params);
                 auto tf2 = new FunctionType(f2.type, f2.params);
@@ -741,7 +742,7 @@ void findProto(Declaration[] decls, Scanner scan)
                 if (typeMatch(tf1, tf2))
                 {
                     f2.skip = true;
-                    if (f1.fbody)
+                    if (f1.hasbody)
                     {
                         foreach(i; 0..tf1.params.length)
                         {

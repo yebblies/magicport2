@@ -203,11 +203,13 @@ class DPrinter : Visitor
 
     override void visitFuncDeclaration(FuncDeclaration ast)
     {
+        auto stackclassessave = stackclasses;
+        scope(exit) stackclasses = stackclassessave;
         auto fdsave = fd;
         scope(exit) fd = fdsave;
         fd = ast;
         if (ast.id == "operator new") return;
-        if (!P && !ast.fbody && ast.skip) return;
+        if (!P && !ast.hasbody && ast.skip) return;
         auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue"];
         if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
@@ -228,9 +230,10 @@ class DPrinter : Visitor
         print(")");
         if (ast.superargs)
         {
-            assert(ast.fbody);
+            assert(ast.hasbody);
             println("");
             println("{");
+            indent++;
             print("super(");
             printArgs(ast.superargs);
             println(");");
@@ -243,12 +246,15 @@ class DPrinter : Visitor
             print("scope(failure) traceerr(\"");
             print(ast.id);
             println("\");");
-            visit(ast.fbody);
+            foreach(s; ast.fbody)
+                visit(s);
+            indent--;
             println("}");
-        } else if (ast.fbody)
+        } else if (ast.hasbody)
         {
             println("");
             println("{");
+            indent++;
             print("tracein(\"");
             print(ast.id);
             println("\");");
@@ -258,7 +264,9 @@ class DPrinter : Visitor
             print("scope(failure) traceerr(\"");
             print(ast.id);
             println("\");");
-            visit(ast.fbody);
+            foreach(s; ast.fbody)
+                visit(s);
+            indent--;
             println("}");
         } else {
             FuncBodyDeclaration fbody;

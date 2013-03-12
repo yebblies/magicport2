@@ -49,12 +49,23 @@ class FuncDeclaration : Declaration
     Type type;
     string id;
     Param[] params;
-    Statement fbody;
+    Statement[] fbody;
+    bool hasbody;
     STC stc;
     Type supertype;
     Expression[] superargs;
     string structid;
-    this(Type type, string id, Param[] params, Statement fbody, STC stc, Type supertype, Expression[] superargs) { this.type = type; this.id = id; this.params = params; this.fbody = fbody; this.stc = stc; this.supertype = supertype; this.superargs = superargs; }
+    this(Type type, string id, Param[] params, Statement[] fbody, STC stc, Type supertype, Expression[] superargs, bool hasbody)
+    {
+        this.type = type;
+        this.id = id;
+        this.params = params;
+        this.fbody = fbody;
+        this.stc = stc;
+        this.supertype = supertype;
+        this.superargs = superargs;
+        this.hasbody = hasbody;
+    }
     mixin(visitor_str);
     bool skip;
 }
@@ -65,12 +76,23 @@ class FuncBodyDeclaration : Declaration
     string id;
     string id2;
     Param[] params;
-    Statement fbody;
+    Statement[] fbody;
+    bool hasbody;
     STC stc;
     Type supertype;
     Expression[] superargs;
-    this(Type type, string id, string id2, Param[] params, Statement fbody, STC stc, Type supertype, Expression[] superargs)
-    { this.type = type; this.id = id; this.id2 = id2; this.params = params; this.fbody = fbody; this.stc = stc; this.supertype = supertype; this.superargs = superargs; }
+    this(Type type, string id, string id2, Param[] params, Statement[] fbody, STC stc, Type supertype, Expression[] superargs, bool hasbody)
+    {
+        this.type = type;
+        this.id = id;
+        this.id2 = id2;
+        this.params = params;
+        this.fbody = fbody;
+        this.stc = stc;
+        this.supertype = supertype;
+        this.superargs = superargs;
+        this.hasbody = hasbody;
+    }
     mixin(visitor_str);
 }
 
