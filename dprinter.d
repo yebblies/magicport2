@@ -423,6 +423,7 @@ class DPrinter : Visitor
                     println(";");
             } else {
                 if (ast.ids[i] == "LOG" || ast.ids[i] == "LOGSEMANTIC") return;
+                if (ast.ids[i].endsWith("_H")) return;
                 assert(ast.stc & STCconst);
                 print("enum ");
                 visitIdent(ast.ids[i]);
