@@ -147,7 +147,7 @@ Declaration parsePreprocessor()
             check("(");
             check("asmerr");
             check(")");
-            return new DummyDeclaration();
+            return new DummyDeclaration("#pragma SC noreturn(asmerr)");
         } else if (t.text == "pack")
         {
             nextToken();
@@ -161,11 +161,17 @@ Declaration parsePreprocessor()
             check(")");
             return new AlignDeclaration(v);
         }
+        auto line = t.line;
+        auto s = "#pragma ";
+        while(t.line == line && t.type != TOKeof)
+            s ~= nextToken();
+        return new DummyDeclaration(s);
     case "error":
         auto line = t.line;
+        auto s = "#error ";
         while(t.line == line && t.type != TOKeof)
-            nextToken();
-        return new DummyDeclaration();
+            s ~= nextToken();
+        return new DummyDeclaration(s);
     default:
         fail();
         assert(0);
@@ -582,20 +588,15 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
     bool destructor;
     if (t.text == "template")
     {
-        string s = nextToken();
-        s ~= " ";
-        s ~= check("<");
-        s ~= check("typename");
-        s ~= " ";
-        s ~= check("TYPE");
-        s ~= check(">");
-        s ~= " ";
-        s ~= check("struct");
-        s ~= " ";
-        s ~= check("ArrayBase");
-        s ~= check(";");
-        s ~= "\n";
-        return new DummyDeclaration(s);
+        nextToken();
+        check("<");
+        check("typename");
+        check("TYPE");
+        check(">");
+        check("struct");
+        check("ArrayBase");
+        check(";");
+        return new DummyDeclaration("template<typename TYPE> struct ArrayBase;");
     }
     else if (t.text == "~")
     {
@@ -718,7 +719,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             if (t.text == ";")
             {
                 nextToken();
-                return new DummyDeclaration(kind ~ " " ~ id ~ ";\n");
+                return new DummyDeclaration(kind ~ " " ~ id ~ ";");
             }
         }
     } else if (t.text == "enum")
@@ -757,7 +758,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
         while(t.text != ";")
             nextToken();
         nextToken();
-        return new DummyDeclaration("// friend");
+        return new DummyDeclaration("friend");
     }
 
     auto stc = parseStorageClasses();
@@ -801,7 +802,7 @@ getid:
     {
         nextToken();
         assert(cast(EnumType)type);
-        return new DummyDeclaration(type.id ~ ";\n");
+        return new DummyDeclaration(type.id ~ ";");
     }
     else
     {

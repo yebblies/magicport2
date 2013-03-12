@@ -305,6 +305,7 @@ class DPrinter : Visitor
                     writeln("Missing body - ", ast.id);
             }
         }
+        println("");
     }
 
     override void visitFuncBodyDeclaration(FuncBodyDeclaration ast)
@@ -565,11 +566,11 @@ class DPrinter : Visitor
             if (i != ast.params.length - 1)
                 print(", ");
         }
-        println(")");
-        print("{ return ");
+        print(") { return ");
         if (!ast.e)
         {
-            writeln(ast.id);
+            assert(0);
+            write(ast.id);
         }
         visit(ast.e);
         println("; }");
@@ -723,6 +724,9 @@ class DPrinter : Visitor
 
     override void visitDummyDeclaration(DummyDeclaration ast)
     {
+        print("/* ");
+        print(ast.s);
+        println(" */");
     }
 
     override void visitBitfieldDeclaration(BitfieldDeclaration ast)
@@ -1430,8 +1434,8 @@ class DPrinter : Visitor
             indent++;
             println("break;");
         }
-        println("}");
         indent--;
+        println("}");
     }
 
     override void visitCaseStatement(CaseStatement ast)
