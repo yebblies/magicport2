@@ -237,15 +237,18 @@ class DPrinter : Visitor
             print("super(");
             printArgs(ast.superargs);
             println(");");
-            print("tracein(\"");
-            print(ast.id);
-            println("\");");
-            print("scope(success) traceout(\"");
-            print(ast.id);
-            println("\");");
-            print("scope(failure) traceerr(\"");
-            print(ast.id);
-            println("\");");
+            if (0)
+            {
+                print("tracein(\"");
+                print(ast.id);
+                println("\");");
+                print("scope(success) traceout(\"");
+                print(ast.id);
+                println("\");");
+                print("scope(failure) traceerr(\"");
+                print(ast.id);
+                println("\");");
+            }
             foreach(s; ast.fbody)
                 visit(s);
             indent--;
@@ -665,6 +668,7 @@ class DPrinter : Visitor
             visit(d);
         indent--;
         println("};");
+        println("");
     }
 
     override void visitAnonStructDeclaration(AnonStructDeclaration ast)
