@@ -93,6 +93,7 @@ auto basicTypes = [
     "fpcmp_t",
     "ForeachDg",
     "FINALIZERPROC",
+    "sapply_fp_t",
     
     "TY",
     "StorageClass",
@@ -399,6 +400,9 @@ auto classTypes =
     "Ctxt",
     "String",
     "WIN32_FIND_DATAA",
+    "UsesEH",
+    "ComeFrom",
+    "HasCode",
 
     "ArrayBase",
     "Objects",

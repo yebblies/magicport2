@@ -33,8 +33,9 @@ auto frontsrc = [
     "declaration.h", "lexer.h", "expression.h", "statement.h", "doc.h", "doc.c", "macro.h",
     "macro.c", "hdrgen.h", "hdrgen.c", "arraytypes.h", "delegatize.c",
     "interpret.c", "ctfeexpr.c", "traits.c", "builtin.c", "clone.c", "lib.h", "libomf.c",
+    "scanomf.c",
     "arrayop.c", "aliasthis.h", "aliasthis.c", "json.h", "json.c",
-    "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sideeffect.c",
+    "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sapply.c", "sideeffect.c",
     "ctfe.h", "canthrow.c", "target.c", "target.h", "id.c", "id.h",
     "impcnvtab.c",
     "gluestub.c"
@@ -78,7 +79,7 @@ void main()
     foreach(fn; chain(rootsrc.map!(b => rootpath ~ b)(), frontsrc.map!(b => frontpath ~ b)()))
     {
         writeln("-- ", fn);
-        assert(fn.exists(), fn);
+        assert(fn.exists(), fn ~ " does not exist");
         auto pp = cast(string)read(fn);
         pp = preprocess.preprocess(Lexer(pp, fn), fn);
         //std.file.write("pre.txt", pp);
