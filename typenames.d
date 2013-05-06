@@ -70,6 +70,8 @@ auto basicTypes = [
     "uint32_t",
     "int64_t",
     "uint64_t",
+    "off_t",
+    "ssize_t",
 
     "fp_t",
     "icfp_t",
