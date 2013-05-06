@@ -11,11 +11,11 @@ import ast;
 Lexer tx;
 Token t;
 string currentfile;
-void error(T...)(string format, T args)
+void error(size_t line = __LINE__, T...)(string format, T args)
 {
     writef("Error: %s(%s): ", currentfile, t.line);
     writefln(format, args);
-    assert(0);
+    assert(0, "at: " ~ to!string(line));
     core.stdc.stdlib.exit(1);
 }
 void fail(size_t line = __LINE__)
@@ -1280,7 +1280,7 @@ Statement parseStatement()
         if (ndef)
             e = new NotExpr(e);
         auto l = level;
-        if (marker[$-1] == "{")
+        if (!marker.length || marker[$-1] == "{")
         {
             Statement[][] s;
             s.length = 1;
