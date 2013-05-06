@@ -154,6 +154,22 @@ class Scanner : Visitor
             case "GCC_SAFE_DMD":
             case "OUREH":
             case "_WIN64":
+            case "STRINGTABLE":
+            case "__MINGW32__":
+            case "LOGDEFAULTINIT":
+            case "LOGDOTEXP":
+            case "LOGM":
+            case "LOG_LEASTAS":
+            case "FIXBUG8863":
+            case "D1INOUT":
+            case "__GLIBC__":
+            case "CANINLINE_LOG":
+            case "MODULEINFO_IS_STRUCT":
+            case "POSIX":
+            case "MACINTOSH":
+            case "_POSIX_VERSION":
+            case "PATH_MAX":
+            case "TEXTUAL_ASSEMBLY_OUT":
                 return false;
             case "DMDV2":
             case "__DMC__":
@@ -167,6 +183,26 @@ class Scanner : Visitor
             case "UTIL_PH":
             case "SEH":
             case "MAGICPORT":
+            case "SNAN_DEFAULT_INIT":
+            case "BUG6652":
+            case "INTERFACE_VIRTUAL":
+            case "CCASTSYNTAX":
+            case "CARRAYDECL":
+                return true;
+            case "LOGSEMANTIC":
+            case "DOS386":
+            case "DOS16RM":
+            case "__SC__":
+            case "MEMMODELS":
+            case "HTOD":
+            case "SCPP":
+                return false;
+            case "MARS":
+            case "DM_TARGET_CPU_X86":
+            case "MMFIO":
+            case "LINEARALLOC":
+            case "_M_I86":
+            case "LONGLONG":
                 return true;
             default:
                 if (ie.id[$-2..$] == "_H") return false;
