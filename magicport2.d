@@ -81,7 +81,7 @@ void main()
         writeln("-- ", fn);
         assert(fn.exists(), fn ~ " does not exist");
         auto pp = cast(string)read(fn);
-        pp = preprocess.preprocess(Lexer(pp, fn), fn);
+        //pp = preprocess.preprocess(Lexer(pp, fn), fn);
         //std.file.write("pre.txt", pp);
         asts ~= parse(Lexer(pp, fn), fn);
         asts[$-1].visit(scan);
