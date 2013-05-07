@@ -406,6 +406,7 @@ auto classTypes =
     "ComeFrom",
     "HasCode",
     "ArgsCppMangleCtx",
+    "DArray",
 
     "ArrayBase",
     "Objects",
