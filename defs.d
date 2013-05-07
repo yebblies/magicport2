@@ -423,23 +423,7 @@ struct IntRange
     }
 }
 
-// Preprocessor symbols (sometimes used as values)
-
-enum TARGET_LINUX = 0;
-enum TARGET_OSX = 0;
-enum TARGET_FREEBSD = 0;
-enum TARGET_OPENBSD = 0;
-enum TARGET_SOLARIS = 0;
-enum TARGET_WINDOS = 1;
-
 enum I64 = false;
-
-enum _WIN32 = 1;
-enum linux = false;
-enum __APPLE__ = false;
-enum __FreeBSD__ = false;
-enum __OpenBSD__ = false;
-enum __sun = false;
 
 // complex_t
 
@@ -725,3 +709,87 @@ else
     void traceout(const char* s) {}
     void traceerr(const char* s) {}
 }
+
+// Preprocessor symbols (sometimes used as values)
+enum LOG = false;
+enum DEBUG = false;
+enum IN_GCC = false;
+enum MACHOBJ = false;
+enum DMDV1 = false;
+enum EXTRA_DEBUG = false;
+enum linux = false;
+enum __APPLE__ = false;
+enum __FreeBSD__ = false;
+enum __OpenBSD__ = false;
+enum __sun = false;
+enum SHOWPERFORMANCE = false;
+enum LOGASSIGN = false;
+enum TARGET_LINUX = false;
+enum TARGET_OSX = false;
+enum TARGET_FREEBSD = false;
+enum TARGET_OPENBSD = false;
+enum TARGET_SOLARIS = false;
+enum TARGET_NET = false;
+enum ASYNCREAD = false;
+enum WINDOWS_SEH = false;
+enum LITTLE_ENDIAN = false;
+enum ELFOBJ = false;
+enum _WINDLL = false;
+enum UNITTEST = false;
+enum CPP_MANGLE = false;
+enum __clang__ = false;
+enum __GNUC__ = false;
+enum __SVR4 = false;
+enum MEM_DEBUG = false;
+enum GCC_SAFE_DMD = false;
+enum OUREH = false;
+enum _WIN64 = false;
+enum STRINGTABLE = false;
+enum __MINGW32__ = false;
+enum LOGDEFAULTINIT = false;
+enum LOGDOTEXP = false;
+enum LOGM = false;
+enum LOG_LEASTAS = false;
+enum FIXBUG8863 = false;
+enum D1INOUT = false;
+enum __GLIBC__ = false;
+enum CANINLINE_LOG = false;
+enum MODULEINFO_IS_STRUCT = false;
+enum POSIX = false;
+enum MACINTOSH = false;
+enum _POSIX_VERSION = false;
+enum PATH_MAX = false;
+enum TEXTUAL_ASSEMBLY_OUT = false;
+
+enum DMDV2 = true;
+enum __DMC__ = true;
+enum TX86 = true;
+enum TARGET_WINDOS = true;
+enum SARRAYVALUE = true;
+enum _WIN32 = true;
+enum _MSC_VER = true;
+enum OMFOBJ = true;
+enum BREAKABI = true;
+enum UTIL_PH = true;
+enum SEH = true;
+enum MAGICPORT = true;
+enum SNAN_DEFAULT_INIT = true;
+enum BUG6652 = true;
+enum INTERFACE_VIRTUAL = true;
+enum CCASTSYNTAX = true;
+enum CARRAYDECL = true;
+
+enum LOGSEMANTIC = false;
+enum DOS386 = false;
+enum DOS16RM = false;
+enum __SC__ = false;
+enum MEMMODELS = false;
+enum HTOD = false;
+enum SCPP = false;
+
+enum MARS = true;
+enum DM_TARGET_CPU_X86 = true;
+enum MMFIO = true;
+enum LINEARALLOC = true;
+enum _M_I86 = true;
+enum LONGLONG = true;
