@@ -390,9 +390,4 @@ class Visitor
         assert(0);
     }
 
-    void visitDanglingElseStatement(DanglingElseStatement ast)
-    {
-        assert(0);
-    }
-
 };

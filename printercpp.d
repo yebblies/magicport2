@@ -913,10 +913,4 @@ class CppPrinter : Visitor
         println(":");
     }
 
-    override void visitDanglingElseStatement(DanglingElseStatement ast)
-    {
-        print(" else ");
-        visit(ast.sbody);
-    }
-
 };

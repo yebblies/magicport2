@@ -677,14 +677,6 @@ class LabelStatement : Statement
     mixin(visitor_str);
 }
 
-class DanglingElseStatement : Statement
-{
-    Statement sbody;
-    this(Statement sbody) { this.sbody = sbody; }
-    mixin(visitor_str);
-}
-
-
 bool typeMatch(Type t1, Type t2)
 {
     assert(t1);

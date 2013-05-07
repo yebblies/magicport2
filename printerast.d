@@ -692,11 +692,4 @@ class AstPrinter : Visitor
         print(")");
     }
 
-    override void visitDanglingElseStatement(DanglingElseStatement ast)
-    {
-        print("DanglingElseStatement(");
-        visit(ast.sbody);
-        print(")");
-    }
-
 }

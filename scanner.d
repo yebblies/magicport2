@@ -632,10 +632,6 @@ class Scanner : Visitor
     {
     }
 
-    override void visitDanglingElseStatement(DanglingElseStatement ast)
-    {
-        visit(ast.sbody);
-    }
 };
 
 

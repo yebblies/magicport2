@@ -1416,10 +1416,4 @@ class DPrinter : Visitor
         indent++;
     }
 
-    override void visitDanglingElseStatement(DanglingElseStatement ast)
-    {
-        print(" else ");
-        visit(ast.sbody);
-    }
-
 };
