@@ -322,6 +322,7 @@ class DPrinter : Visitor
     override void visitVarDeclaration(VarDeclaration ast)
     {
         if (ast.stc & STCextern) return;
+        if (ast.ids[0] == "ASYNCREAD") return;
         auto t0 = ast.types[0];
         bool allsame = t0 !is null;
         foreach(t; ast.types[1..$])
@@ -510,30 +511,26 @@ class DPrinter : Visitor
 
     override void visitVersionDeclaration(VersionDeclaration ast)
     {
-        auto conds = ast.es;
-        auto decls = ast.ds;
-        Declaration[] delse;
-        if (!conds[$-1])
+        foreach(i, c; ast.es)
         {
-            delse = decls[$-1];
-            conds = conds[0..$-1];
-            decls = decls[0..$-1];
-        }
-        
-        bool anytrue;
-        foreach(i, c; conds)
-        {
-            bool r;
-            if (eval(c))
+            if (c)
             {
-                anytrue = true;
-                visit(decls[i]);
-                break;
-            } else {
+                if (i)
+                    print(" else ");
+                print("static if (");
+                visit(c);
+                println(")");
             }
+            else
+            {
+                println("else");
+            }
+            println("{");
+            indent++;
+            visit(ast.ds[i]);
+            indent--;
+            println("}");
         }
-        if (!anytrue && delse)
-            visit(delse);
     }
 
     override void visitTypedefDeclaration(TypedefDeclaration ast)
@@ -1128,6 +1125,7 @@ class DPrinter : Visitor
             "unsigned int" : "uint",
             "unsigned long" : "uint",
             "_Complex long double" : "creal",
+            "volatile char" : "char",
         ];
         
         if (ast.id in map)
@@ -1252,162 +1250,28 @@ class DPrinter : Visitor
         }
     }
 
-    bool eval(Expression e)
-    {
-        if (auto le = cast(LitExpr)e)
-        {
-            switch(le.val)
-            {
-            case "1":
-                return true;
-            case "0":
-                return false;
-            default:
-                assert(0, le.val);
-            }
-        } else if (auto ie = cast(IdentExpr)e)
-        {
-            switch(ie.id)
-            {
-            case "LOG":
-            case "DEBUG":
-            case "IN_GCC":
-            case "MACHOBJ":
-            case "DMDV1":
-            case "EXTRA_DEBUG":
-            case "linux":
-            case "__APPLE__":
-            case "__FreeBSD__":
-            case "__OpenBSD__":
-            case "__sun":
-            case "SHOWPERFORMANCE":
-            case "LOGASSIGN":
-            case "TARGET_LINUX":
-            case "TARGET_OSX":
-            case "TARGET_FREEBSD":
-            case "TARGET_OPENBSD":
-            case "TARGET_SOLARIS":
-            case "TARGET_NET":
-            case "ASYNCREAD":
-            case "WINDOWS_SEH":
-            case "LITTLE_ENDIAN":
-            case "ELFOBJ":
-            case "_WINDLL":
-            case "UNITTEST":
-            case "CPP_MANGLE":
-            case "__clang__":
-            case "__GNUC__":
-            case "__SVR4":
-            case "MEM_DEBUG":
-            case "GCC_SAFE_DMD":
-            case "OUREH":
-            case "_WIN64":
-            case "STRINGTABLE":
-            case "__MINGW32__":
-            case "LOGDEFAULTINIT":
-            case "LOGDOTEXP":
-            case "LOGM":
-            case "LOG_LEASTAS":
-            case "FIXBUG8863":
-            case "D1INOUT":
-            case "__GLIBC__":
-            case "CANINLINE_LOG":
-            case "MODULEINFO_IS_STRUCT":
-            case "POSIX":
-            case "MACINTOSH":
-            case "_POSIX_VERSION":
-            case "PATH_MAX":
-            case "TEXTUAL_ASSEMBLY_OUT":
-                return false;
-            case "DMDV2":
-            case "__DMC__":
-            case "TX86":
-            case "TARGET_WINDOS":
-            case "SARRAYVALUE":
-            case "_WIN32":
-            case "_MSC_VER":
-            case "OMFOBJ":
-            case "BREAKABI":
-            case "UTIL_PH":
-            case "SEH":
-            case "MAGICPORT":
-            case "SNAN_DEFAULT_INIT":
-            case "BUG6652":
-            case "INTERFACE_VIRTUAL":
-            case "CCASTSYNTAX":
-            case "CARRAYDECL":
-                return true;
-            case "LOGSEMANTIC":
-            case "DOS386":
-            case "DOS16RM":
-            case "__SC__":
-            case "MEMMODELS":
-            case "HTOD":
-            case "SCPP":
-                return false;
-            case "MARS":
-            case "DM_TARGET_CPU_X86":
-            case "MMFIO":
-            case "LINEARALLOC":
-            case "_M_I86":
-            case "LONGLONG":
-                return true;
-            default:
-                if (ie.id[$-2..$] == "_H") return false;
-                assert(0, ie.id);
-            }
-        } else if (auto ne = cast(NotExpr)e)
-        {
-            return !eval(ne.e);
-        } else if (auto aae = cast(AndAndExpr)e)
-        {
-            return eval(aae.e1) && eval(aae.e2);
-        } else if (auto ooe = cast(OrOrExpr)e)
-        {
-            return eval(ooe.e1) || eval(ooe.e2);
-        } else if (auto ce = cast(CallExpr)e)
-        {
-            auto ie = cast(IdentExpr)ce.func;
-            assert(ie);
-            assert(ie.id == "defined");
-            assert(ce.args.length == 1);
-            return eval(ce.args[0]);
-        } else if (auto ae = cast(AssignExpr)e)
-        {
-            ae.visit(this);
-            assert(0);
-        }
-        assert(0, typeid(e).toString());
-    }
-
     override void visitVersionStatement(VersionStatement ast)
     {
-        auto conds = ast.cond;
-        auto stats = ast.s;
-        Statement[] selse;
-        if (!conds[$-1])
+        foreach(i, c; ast.cond)
         {
-            selse = stats[$-1];
-            conds = conds[0..$-1];
-            stats = stats[0..$-1];
-        }
-        
-        bool anytrue;
-        foreach(i, c; conds)
-        {
-            bool r;
-            if (eval(c))
+            if (c)
             {
-                anytrue = true;
-                visit(stats[i]);
-                break;
-            } else {
+                if (i)
+                    print(" else ");
+                print("static if (");
+                visit(c);
+                println(")");
             }
+            else
+            {
+                println("else");
+            }
+            println("{");
+            indent++;
+            visit(ast.s[i]);
+            indent--;
+            println("}");
         }
-        if (!anytrue && selse)
-            visit(selse);
-        if (ast.selse)
-            visit(ast.selse);
     }
 
     override void visitIfStatement(IfStatement ast)
@@ -1548,7 +1412,7 @@ class DPrinter : Visitor
     {
         indent--;
         visitIdent(ast.id);
-        println(":");
+        println(": {}");
         indent++;
     }
 
