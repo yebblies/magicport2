@@ -15,8 +15,8 @@ void error(size_t line = __LINE__, T...)(string format, T args)
 {
     writef("Error: %s(%s): ", currentfile, t.line);
     writefln(format, args);
-    assert(0, "at: " ~ to!string(line));
     core.stdc.stdlib.exit(1);
+    assert(0, "at: " ~ to!string(line));
 }
 void fail(size_t line = __LINE__)
 {
