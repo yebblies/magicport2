@@ -405,6 +405,7 @@ auto classTypes =
     "UsesEH",
     "ComeFrom",
     "HasCode",
+    "ArgsCppMangleCtx",
 
     "ArrayBase",
     "Objects",
