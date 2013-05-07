@@ -615,8 +615,9 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
     } else if ((t.text == "#if" || t.text == "#ifdef" || t.text == "#ifndef") && !inExpr)
     {
         auto ndef = (t.text == "#ifndef");
+        auto def = (t.text == "#ifdef" || t.text == "#ifndef");
         nextToken();
-        auto e = parseExpr();
+        auto e = def ? new IdentExpr(parseIdent()) : parseExpr();
         if (ndef)
             e = new NotExpr(e);
         auto l = level;
@@ -1275,8 +1276,9 @@ Statement parseStatement()
         return parseThrowStatement();
     case "#if", "#ifdef", "#ifndef":
         auto ndef = (t.text == "#ifndef");
+        auto def = (t.text == "#ifdef" || t.text == "#ifndef");
         nextToken();
-        auto e = parseExpr();
+        auto e = def ? new IdentExpr(parseIdent()) : parseExpr();
         if (ndef)
             e = new NotExpr(e);
         auto l = level;
