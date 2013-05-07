@@ -1266,8 +1266,8 @@ Statement parseStatement()
         return parseWhileStatement();
     case "goto":
         return parseGotoStatement();
-    case "else":
-        return parseDanglingElseStatement();
+    // case "else":
+        // return parseDanglingElseStatement();
     case "do":
         return parseDoWhileStatement();
     case "try":
@@ -1471,13 +1471,13 @@ Statement parseGotoStatement()
     return new GotoStatement(id);
 }
 
-Statement parseDanglingElseStatement()
-{
-    debug(PARSE) writeln("parseDanglingElseStatement");
-    check("else");
-    auto sbody = parseStatement();
-    return new DanglingElseStatement(sbody);
-}
+// Statement parseDanglingElseStatement()
+// {
+    // debug(PARSE) writeln("parseDanglingElseStatement");
+    // check("else");
+    // auto sbody = parseStatement();
+    // return new DanglingElseStatement(sbody);
+// }
 
 Statement parseTryCatchStatement()
 {
