@@ -244,6 +244,11 @@ class DPrinter : Visitor
             ["TypeAArray", null],
             ["Dsymbol", "toImport"],
             ["Module", null],
+            ["TypeStruct", null],
+            ["ClassDeclaration", "toVtblSymbol"],
+            [null, "toDebug"],
+            [null, "toElemDtor"],
+            [null, "toDt2"],
         ];
         foreach(m; matchlist)
         {
