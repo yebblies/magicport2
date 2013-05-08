@@ -213,6 +213,9 @@ class DPrinter : Visitor
         auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue"];
         if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
+        auto forcefinal = ["elementType", "checkNestedReference", "ctfeSemantic", "ctfeInterpret"];
+        if (forcefinal.canFind(ast.id))
+            print("final ");
         print("extern(C++) ");
         visit(ast.stc);
         if (ast.type.id == ast.id)
