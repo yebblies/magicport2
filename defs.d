@@ -684,6 +684,10 @@ version=trace;
 
 version(trace)
 {
+    void trace(size_t line = __LINE__)
+    {
+        printf("%d\n", line);
+    }
     void tracein(const char* s, size_t line = __LINE__)
     {
         if (tracedepth < 0)
