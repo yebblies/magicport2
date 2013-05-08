@@ -240,6 +240,10 @@ class DPrinter : Visitor
             ["ClassReferenceExp", null],
             ["DsymbolTable", null],
             ["Mem", null],
+            ["ClassDeclaration", "toDt"],
+            ["TypeAArray", null],
+            ["Dsymbol", "toImport"],
+            ["Module", null],
         ];
         foreach(m; matchlist)
         {
