@@ -38,7 +38,7 @@ auto frontsrc = [
     "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sapply.c", "sideeffect.c",
     "ctfe.h", "canthrow.c", "target.c", "target.h", "id.c", "id.h",
     "impcnvtab.c",
-    "gluestub.c"
+    //"gluestub.c"
 ];
 
 // "aav.c", "aav.h", "array.c", "async.c", "async.h", "man.c", "response.c",

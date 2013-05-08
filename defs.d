@@ -466,6 +466,16 @@ struct block;
 struct dt_t;
 struct IRState;
 
+extern extern(C++) void backend_init();
+extern extern(C++) void backend_term();
+extern extern(C++) void obj_start(char *srcfile);
+extern extern(C++) void obj_end(Library library, File objfile);
+extern extern(C++) void obj_write_deferred(Library library);
+extern extern(C++) Expression createTypeInfoArray(Scope sc, Expression *args, size_t dim);
+extern extern(C++) int os_critsecsize64();
+extern extern(C++) int os_critsecsize32();
+extern extern(C++) Library LibMSCoff_factory();
+
 // Util
 
 void util_progress() { assert(0); }
