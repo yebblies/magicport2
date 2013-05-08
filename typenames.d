@@ -407,6 +407,7 @@ auto classTypes =
     "HasCode",
     "ArgsCppMangleCtx",
     "DArray",
+    "Compiler",
 
     "ArrayBase",
     "Objects",
