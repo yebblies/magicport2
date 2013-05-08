@@ -213,11 +213,43 @@ class DPrinter : Visitor
         auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue"];
         if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
-        auto forcefinal = ["elementType", "checkNestedReference", "ctfeSemantic", "ctfeInterpret", "searchLabel", "setUnsafe", "hasNestedFrameRefs",
-            "needsClosure", "needsAutoDtor", "findGetMembers", "isCOMclass", "functionSemantic", "isFuncHidden"];
-        auto forcefinalclass = ["OutBuffer", "Scope", "File", "CallExp", "TypePointer", "ClassReferenceExp", "DsymbolTable"];
-        if (forcefinal.canFind(ast.id) || P && forcefinalclass.canFind(P.id))
-            print("final ");
+        auto matchlist =
+        [
+            [null, "elementType"],
+            [null, "checkNestedReference"],
+            [null, "ctfeSemantic"],
+            [null, "ctfeInterpret"],
+            [null, "searchLabel"],
+            [null, "setUnsafe"],
+            [null, "hasNestedFrameRefs"],
+            [null, "needsClosure"],
+            [null, "needsAutoDtor"],
+            [null, "findGetMembers"],
+            [null, "isCOMclass"],
+            [null, "functionSemantic"],
+            [null, "isFuncHidden"],
+            [null, "canTakeAddressOf"],
+            [null, "isAnonymous"],
+            [null, "inTemplateInstance"],
+            ["OutBuffer", null],
+            ["Scope", null],
+            ["File", null],
+            ["CallExp", null],
+            ["CallExp", null],
+            ["TypePointer", null],
+            ["ClassReferenceExp", null],
+            ["DsymbolTable", null],
+            ["Mem", null],
+        ];
+        foreach(m; matchlist)
+        {
+            if ((m[0] is null || P && m[0] == P.id) &&
+                (m[1] is null || m[1] == ast.id))
+            {
+                print("final ");
+                break;
+            }
+        }
         if (ast.type.id != ast.id && ast.id[0] != '~')
             print("extern(C++) ");
         visit(ast.stc);
