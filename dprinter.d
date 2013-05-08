@@ -249,6 +249,18 @@ class DPrinter : Visitor
             [null, "toDebug"],
             [null, "toElemDtor"],
             [null, "toDt2"],
+            [null, "toInitializer"],
+            [null, "toDtElem"],
+            [null, "getInternalTypeInfo"],
+            [null, "baseVtblOffset"],
+            [null, "toSymbolX"],
+            [null, "toElemBin"],
+            [null, "buildClosure"],
+            [null, "retStyle"],
+            ["StructDeclaration", "toDt"],
+            [null, "toThunkSymbol"],
+            [null, "getTypeInfo"],
+            ["StructLiteralExp", null],
         ];
         foreach(m; matchlist)
         {
