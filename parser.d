@@ -1319,6 +1319,8 @@ Statement parseStatement()
             fail();
     case "#":
         return new ExpressionStatement(new DeclarationExpr(parseDecl(null, true)));
+    case "__try":
+        return parseTryCatchStatementX();
     default:
         return parseExpressionStatement();
     }
@@ -1478,6 +1480,17 @@ Statement parseGotoStatement()
     // auto sbody = parseStatement();
     // return new DanglingElseStatement(sbody);
 // }
+
+Statement parseTryCatchStatementX()
+{
+    debug(PARSE) writeln("parseTryCatchStatementX");
+    check("__try");
+    auto s = parseStatement();
+    check("__except");
+    auto p = parseArgs();
+    auto c = parseStatement();
+    return s;
+}
 
 Statement parseTryCatchStatement()
 {
