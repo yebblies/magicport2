@@ -199,22 +199,24 @@ public:
 
 // root.rmem
 
-struct mem
+struct Mem
 {
     import core.memory;
-    static char* strdup(const char *p)
+extern(C++):
+    char* strdup(const char *p)
     {
         return p[0..strlen(p)+1].dup.ptr;
     }
-    static void free(void *p) {}
-    static void mark(void *pointer) {}
-    static void* malloc(size_t n) { return GC.malloc(n); }
-    static void* calloc(size_t size, size_t n) { return GC.calloc(size, n); }
-    static void* realloc(void *p, size_t size) { return GC.realloc(p, size); }
-    static void _init() {}
-    static void setStackBottom(void *bottom) {}
-    static void addroots(char* pStart, char* pEnd) {}
+    void free(void *p) {}
+    void mark(void *pointer) {}
+    void* malloc(size_t n) { return GC.malloc(n); }
+    void* calloc(size_t size, size_t n) { return GC.calloc(size, n); }
+    void* realloc(void *p, size_t size) { return GC.realloc(p, size); }
+    void _init() {}
+    void setStackBottom(void *bottom) {}
+    void addroots(char* pStart, char* pEnd) {}
 }
+extern(C++) Mem mem;
 
 // root.response
 
