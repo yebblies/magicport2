@@ -213,6 +213,7 @@ class DPrinter : Visitor
         auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue"];
         if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
+        print("extern(C++) ");
         visit(ast.stc);
         if (ast.type.id == ast.id)
         {
@@ -536,8 +537,12 @@ class DPrinter : Visitor
     override void visitTypedefDeclaration(TypedefDeclaration ast)
     {
         if (auto ft = cast(FunctionType)ast.t)
+        {
             if (ft.cdecl)
                 print("extern(C) ");
+            else
+                print("extern(C++) ");
+        }
         print("alias ");
         visit(ast.t);
         print(" ");
@@ -1145,6 +1150,10 @@ class DPrinter : Visitor
         if (ast.id.length > 7 && ast.id[0..7] == "struct ")
         {
             visitIdent(ast.id[7..$]);
+        }
+        else if (ast.id.length > 6 && ast.id[0..6] == "class ")
+        {
+            visitIdent(ast.id[6..$]);
         } else {
             visitIdent(ast.id);
         }

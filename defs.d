@@ -54,11 +54,11 @@ extern extern(C) uint _end;
 
 class _Object
 {
-    int dyncast() { assert(0); }
-    int equals(_Object) { assert(0); }
-    int compare(_Object) { assert(0); }
-    char *toChars() { assert(0); }
-    void print()
+    extern(C++) int dyncast() { assert(0); }
+    extern(C++) int equals(_Object) { assert(0); }
+    extern(C++) int compare(_Object) { assert(0); }
+    extern(C++) char *toChars() { assert(0); }
+    extern(C++) void print()
     {
         printf("%s %p\n", toChars(), this);
     }
@@ -177,7 +177,7 @@ public:
         memset(data,0,dim * (data[0]).sizeof);
     }
     void pop() { assert(0); }
-    int apply(int function(T, void*) fp, void* param)
+    extern(C++) int apply(int function(T, void*) fp, void* param)
     {
         static if (is(typeof(T.init.apply(fp, null))))
         {
@@ -514,8 +514,8 @@ struct String
 
 // root.speller
 
-void* speller(const char*, void* function(void*, const(char)*), Scope, const char*) { assert(0); }
-void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*) { assert(0); }
+extern(C++) void* speller(const char*, void* function(void*, const(char)*), Scope, const char*) { assert(0); }
+extern(C++) void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*) { assert(0); }
 
 const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
@@ -667,7 +667,14 @@ void main(string[] args)
     foreach(i, a; args)
         argv[i] = cast(const(char)*)(a ~ '\0').ptr;
     global = new Global();
-    xmain(argc, argv);
+    try
+    {
+        xmain(argc, argv);
+    }
+    catch (Error e)
+    {
+        printf("Error: %.*s\n", e.msg);
+    }
 }
 
 int tracedepth;
