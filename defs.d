@@ -233,11 +233,14 @@ void browse(const char*) { assert(0); }
 
 struct Port
 {
+extern(C++):
     static bool isNan(double r) { return !(r == r); }
     static real fmodl(real a, real b) { return a % b; }
     enum nan = double.nan;
     static int memicmp(const char* s1, const char* s2, size_t n) { return .memicmp(s1, s2, n); }
     static char* strupr(const char* s) { return .strupr(s); }
+    static int isSignallingNan(double r) { return isNan(r) && !(((cast(ubyte*)&r)[6]) & 8); }
+    static int isSignallingNan(real r) { return isNan(r) && !(((cast(ubyte*)&r)[7]) & 0x40); }
     enum ldbl_max = real.max;
     enum infinity = double.infinity;
 }
@@ -541,7 +544,7 @@ private:
     StringValue*[const(char)[]] table;
 
 public:
-    void _init(size_t size = 37)
+    extern(C++) void _init(size_t size = 37)
     {
     }
     ~this()
