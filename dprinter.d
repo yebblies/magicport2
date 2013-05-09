@@ -156,6 +156,11 @@ class DPrinter : Visitor
             print("null");
             return;
         }
+        if (s == "__IMPORT__")
+        {
+            print("\"v\" ~ import(\"VERSION\")");
+            return;
+        }
         auto list =
         [
             "import", "module", "version", "align", "dchar", "ref", "scope", "wchar", "pragma",

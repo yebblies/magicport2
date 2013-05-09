@@ -81,6 +81,7 @@ void main()
         writeln("-- ", fn);
         assert(fn.exists(), fn ~ " does not exist");
         auto pp = cast(string)read(fn);
+        pp = pp.replace("\"v\"\n#include \"verstr.h\"\n    ;", "__IMPORT__;");
         //pp = preprocess.preprocess(Lexer(pp, fn), fn);
         //std.file.write("pre.txt", pp);
         asts ~= parse(Lexer(pp, fn), fn);
