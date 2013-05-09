@@ -10,7 +10,7 @@ import ast;
 import visitor;
 import scanner;
 
-auto parentlessclasses = ["Scope", "Section", "DocComment", "Global", "Condition", "TemplateParameter", "Lexer", "Object", "Macro", "Library"];
+auto parentlessclasses = ["Scope", "Section", "DocComment", "Global", "Condition", "TemplateParameter", "Lexer", "_Object", "Macro", "Library"];
 
 class DPrinter : Visitor
 {
@@ -161,7 +161,7 @@ class DPrinter : Visitor
             "import", "module", "version", "align", "dchar", "ref", "scope", "wchar", "pragma",
             "body", "real", "alias", "is", "invariant", "TypeInfo", "in", "byte", "debug", "inout",
             "override", "final", "toString", "delegate", "cast", "mangleof", "stringof",
-            "enum", "foreach", "finally", "super", "unittest", "Object", "init", "tupleof",
+            "enum", "foreach", "finally", "super", "unittest", "init", "tupleof",
             "Throwable"
         ];
         print(list.canFind(s) ? '_' ~ s : s);
