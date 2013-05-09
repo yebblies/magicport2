@@ -10,7 +10,7 @@ import ast;
 import visitor;
 import scanner;
 
-auto parentlessclasses = ["Scope", "Section", "DocComment", "Global", "Condition", "TemplateParameter", "Lexer", "_Object", "Macro", "Library"];
+auto parentlessclasses = ["Scope", "Section", "DocComment", "Condition", "TemplateParameter", "Lexer", "_Object", "Macro", "Library"];
 
 class DPrinter : Visitor
 {

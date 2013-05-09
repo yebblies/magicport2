@@ -672,7 +672,7 @@ void main(string[] args)
     auto argv = (new const(char)*[](argc)).ptr;
     foreach(i, a; args)
         argv[i] = cast(const(char)*)(a ~ '\0').ptr;
-    global = new Global();
+
     try
     {
         xmain(argc, argv);
