@@ -459,6 +459,10 @@ class DPrinter : Visitor
             }
             print("extern(C++) __gshared ");
         }
+        else if (ast.types.length == 1 && !(ast.stc & STCconst) && !D2 && !fd)
+        {
+            print("extern(C++) __gshared ");
+        }
         foreach(i; 0..ast.types.length)
         {
             if (ast.types[i])
