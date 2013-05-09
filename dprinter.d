@@ -279,6 +279,7 @@ class DPrinter : Visitor
             [null, "constOf"],
             [null, "getImpl"],
             ["ClassDeclaration", "isAbstract"],
+            ["FuncDeclaration", "isAbstract"],
             [null, "isPOD"],
             ["Type", "merge"],
             ["Type", "mutableOf"],
@@ -287,6 +288,7 @@ class DPrinter : Visitor
             [null, "merge2"],
             [null, "isMember2"],
             ["AggregateDeclaration", "isNested"],
+            ["FileName", null],
         ];
         foreach(m; matchlist)
         {
