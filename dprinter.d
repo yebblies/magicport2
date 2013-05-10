@@ -809,9 +809,32 @@ class DPrinter : Visitor
         println("}");
     }
 
+    // override void visitEnumDeclaration(EnumDeclaration ast)
+    // {
+        // println("enum");
+        // println("{");
+        // foreach(i; 0..ast.members.length)
+        // {
+            // visitIdent(ast.members[i]);
+            // if (ast.vals[i])
+            // {
+                // print(" = ");
+                // visit(ast.vals[i]);
+            // }
+            // println(",");
+        // }
+        // println("};");
+        // print("alias uint ");
+        // visitIdent(ast.id);
+        // if (!E)
+            // println(";");
+    // }
+
     override void visitEnumDeclaration(EnumDeclaration ast)
     {
-        println("enum");
+        print("enum ");
+        visitIdent(ast.id);
+        println(" : int");
         println("{");
         foreach(i; 0..ast.members.length)
         {
@@ -824,10 +847,16 @@ class DPrinter : Visitor
             println(",");
         }
         println("};");
-        print("alias uint ");
-        visitIdent(ast.id);
-        if (!E)
+        foreach(i; 0..ast.members.length)
+        {
+            print("alias ");
+            visitIdent(ast.members[i]);
+            print(" = ");
+            visitIdent(ast.id);
+            print(".");
+            visitIdent(ast.members[i]);
             println(";");
+        }
     }
 
     override void visitDummyDeclaration(DummyDeclaration ast)
