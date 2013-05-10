@@ -294,11 +294,15 @@ class DPrinter : Visitor
             [null, "isMember2"],
             ["AggregateDeclaration", "isNested"],
             ["FileName", null],
+            ["Type", "size"],
         ];
         foreach(m; matchlist)
         {
-            if ((m[0] is null || P && m[0] == P.id) &&
-                (m[1] is null || m[1] == ast.id))
+            if (m[0] == "Type" && m[1] == "size" && ast.params.length != 0)
+            {
+            }
+            else if ((m[0] is null || P && m[0] == P.id) &&
+                     (m[1] is null || m[1] == ast.id))
             {
                 print("final ");
                 break;
