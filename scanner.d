@@ -702,7 +702,7 @@ void funcBodies(Scanner scan)
                 auto tf2 = new FunctionType(fb.type, fb.params);
                 if (typeMatch(tf1, tf2))
                 {
-                    assert(!fd.hasbody && fb.hasbody);
+                    assert(!fd.hasbody && fb.hasbody, fd.id);
                     fd.fbody = fb.fbody;
                     fd.hasbody = true;
                     if (fb.superargs)
