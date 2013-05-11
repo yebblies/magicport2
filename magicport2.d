@@ -18,6 +18,7 @@ import preprocess;
 // "iasm.c",
 // "eh.c",
 // "tocsym.c", "s2ir.c", "todt.c", "e2ir.c", "toobj.c", "glue.c", "toctype.c", "msc.c", "typinf.c", "tocvdebug.c", "irstate.c", "irstate.h", "toir.h", "toir.c",
+// "libomf.c", "scanomf.c",
 
 auto frontsrc = [
     "mars.c", "enum.c", "struct.c", "dsymbol.c", "import.c", "utf.h",
@@ -32,8 +33,7 @@ auto frontsrc = [
     "mars.h", "module.h", "mtype.h", "dsymbol.h",
     "declaration.h", "lexer.h", "expression.h", "statement.h", "doc.h", "doc.c", "macro.h",
     "macro.c", "hdrgen.h", "hdrgen.c", "arraytypes.h", "delegatize.c",
-    "interpret.c", "ctfeexpr.c", "traits.c", "builtin.c", "clone.c", "lib.h", "libomf.c",
-    "scanomf.c",
+    "interpret.c", "ctfeexpr.c", "traits.c", "builtin.c", "clone.c", "lib.h",
     "arrayop.c", "aliasthis.h", "aliasthis.c", "json.h", "json.c",
     "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sapply.c", "sideeffect.c",
     "ctfe.h", "canthrow.c", "target.c", "target.h", "id.c", "id.h",
