@@ -862,13 +862,15 @@ func:
                 check(")");
                 check(")");
             }
-            Expression[] superargs;
-            Type supertype;
+            CallExpr[] initlist;
             if (t.text == ":" && constructor)
             {
-                nextToken();
-                supertype = parseType();
-                superargs = parseArgs();
+                do
+                {
+                    nextToken();
+                    auto iid = parseIdent();
+                    initlist ~= new CallExpr(new IdentExpr(iid), parseArgs());
+                } while (t.text == ",");
             }
             Statement[] fbody;
             bool hasbody;
@@ -895,7 +897,7 @@ func:
                 inFunc--;
             } else
                 fail();
-            return new FuncDeclaration(type, id, params, fbody, stc, supertype, superargs, hasbody);
+            return new FuncDeclaration(type, id, params, fbody, stc, initlist, hasbody);
         } else {
             auto args = parseArgs();
             return new ConstructDeclaration(type, id, args);
@@ -935,13 +937,15 @@ memberfunc:
             return new StaticMemberVarDeclaration(type, id, id2);
         }
         auto params = parseParams();
-        Expression[] superargs;
-        Type supertype;
-        if ((constructor || destructor) && t.text == ":")
+        CallExpr[] initlist;
+        if (t.text == ":" && constructor)
         {
-            nextToken();
-            supertype = parseType();
-            superargs = parseArgs();
+            do
+            {
+                nextToken();
+                auto iid = parseIdent();
+                initlist ~= new CallExpr(new IdentExpr(iid), parseArgs());
+            } while (t.text == ",");
         }
         // Just skip pre/post conditions for now
         if (t.text == "__in")
@@ -976,7 +980,7 @@ memberfunc:
             inFunc--;
         } else
             fail();
-        return new FuncBodyDeclaration(type, id, id2, params, fbody, stc, supertype, superargs, hasbody);
+        return new FuncBodyDeclaration(type, id, id2, params, fbody, stc, initlist, hasbody);
     } else if (t.text == "," || t.text == "=" || t.text == ";")
     {
         auto ids = [id];

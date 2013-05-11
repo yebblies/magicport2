@@ -105,7 +105,7 @@ class AstPrinter : Visitor
         visit(ast.params);
         visit(ast.fbody);
         visit(ast.stc);
-        visit(ast.superargs);
+        visit(ast.initlist);
         print(")");
     }
 
@@ -118,7 +118,7 @@ class AstPrinter : Visitor
         visit(ast.params);
         visit(ast.fbody);
         visit(ast.stc);
-        visit(ast.superargs);
+        visit(ast.initlist);
         print(")");
     }
 

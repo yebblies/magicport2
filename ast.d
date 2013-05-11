@@ -52,18 +52,16 @@ class FuncDeclaration : Declaration
     Statement[] fbody;
     bool hasbody;
     STC stc;
-    Type supertype;
-    Expression[] superargs;
+    CallExpr[] initlist;
     string structid;
-    this(Type type, string id, Param[] params, Statement[] fbody, STC stc, Type supertype, Expression[] superargs, bool hasbody)
+    this(Type type, string id, Param[] params, Statement[] fbody, STC stc, CallExpr[] initlist, bool hasbody)
     {
         this.type = type;
         this.id = id;
         this.params = params;
         this.fbody = fbody;
         this.stc = stc;
-        this.supertype = supertype;
-        this.superargs = superargs;
+        this.initlist = initlist;
         this.hasbody = hasbody;
     }
     mixin(visitor_str);
@@ -79,9 +77,8 @@ class FuncBodyDeclaration : Declaration
     Statement[] fbody;
     bool hasbody;
     STC stc;
-    Type supertype;
-    Expression[] superargs;
-    this(Type type, string id, string id2, Param[] params, Statement[] fbody, STC stc, Type supertype, Expression[] superargs, bool hasbody)
+    CallExpr[] initlist;
+    this(Type type, string id, string id2, Param[] params, Statement[] fbody, STC stc, CallExpr[] initlist, bool hasbody)
     {
         this.type = type;
         this.id = id;
@@ -89,8 +86,7 @@ class FuncBodyDeclaration : Declaration
         this.params = params;
         this.fbody = fbody;
         this.stc = stc;
-        this.supertype = supertype;
-        this.superargs = superargs;
+        this.initlist = initlist;
         this.hasbody = hasbody;
     }
     mixin(visitor_str);

@@ -114,18 +114,20 @@ class CppPrinter : Visitor
         print('(');
         printParams(ast.params);
         print(')');
-        if (ast.superargs)
+        if (ast.initlist.length)
         {
             print(" : ");
-            visit(ast.supertype);
-            print("(");
-            printArgs(ast.superargs);
-            print(")");
+            foreach(i, x; ast.initlist)
+            {
+                if (i)
+                    print(", ");
+                visit(x);
+            }
         }
         if (ast.stc & STCabstract)
         {
             print(" = 0");
-            assert(!ast.fbody && !ast.superargs);
+            assert(!ast.fbody && !ast.initlist.length);
         }
         if (ast.fbody)
         {
@@ -151,13 +153,15 @@ class CppPrinter : Visitor
         print('(');
         printParams(ast.params);
         print(')');
-        if (ast.superargs)
+        if (ast.initlist.length)
         {
             print(" : ");
-            visit(ast.supertype);
-            print("(");
-            printArgs(ast.superargs);
-            print(")");
+            foreach(i, x; ast.initlist)
+            {
+                if (i)
+                    print(", ");
+                visit(x);
+            }
         }
         if (ast.fbody)
         {

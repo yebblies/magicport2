@@ -58,10 +58,12 @@ class Scanner : Visitor
             visit(p);
         foreach(s; ast.fbody)
             visit(s);
-        if (ast.supertype)
-            visit(ast.supertype);
-        foreach(a; ast.superargs)
-            visit(a);
+        foreach(i; ast.initlist)
+        {
+            visit(i.func);
+            foreach(a; i.args)
+                visit(a);
+        }
     }
 
     override void visitFuncBodyDeclaration(FuncBodyDeclaration ast)
@@ -72,10 +74,12 @@ class Scanner : Visitor
             visit(p);
         foreach(s; ast.fbody)
             visit(s);
-        if (ast.supertype)
-            visit(ast.supertype);
-        foreach(a; ast.superargs)
-            visit(a);
+        foreach(i; ast.initlist)
+        {
+            visit(i.func);
+            foreach(a; i.args)
+                visit(a);
+        }
     }
 
     override void visitStaticMemberVarDeclaration(StaticMemberVarDeclaration ast)
@@ -705,8 +709,8 @@ void funcBodies(Scanner scan)
                     assert(!fd.hasbody && fb.hasbody, fd.id);
                     fd.fbody = fb.fbody;
                     fd.hasbody = true;
-                    if (fb.superargs)
-                        fd.superargs = fb.superargs;
+                    if (fb.initlist)
+                        fd.initlist = fb.initlist;
                     foreach(i; 0..tf1.params.length)
                     {
                         if (tf2.params[i].id)

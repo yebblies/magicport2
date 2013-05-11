@@ -9,6 +9,7 @@ import tokens;
 import ast;
 import visitor;
 import scanner;
+import typenames;
 
 auto parentlessclasses = ["Scope", "Section", "DocComment", "Condition", "TemplateParameter", "Lexer", "_Object", "Macro", "Library"];
 
@@ -325,26 +326,28 @@ class DPrinter : Visitor
         print("(");
         printParams(ast.params);
         print(")");
-        if (ast.superargs)
+        if (ast.initlist.length)
         {
             assert(ast.hasbody);
             println("");
             println("{");
             indent++;
-            print("super(");
-            printArgs(ast.superargs);
-            println(");");
-            if (0)
+            if (ast.initlist.length == 1 && classTypes.canFind((cast(IdentExpr)ast.initlist[0].func).id))
             {
-                print("tracein(\"");
-                print(ast.id);
-                println("\");");
-                print("scope(success) traceout(\"");
-                print(ast.id);
-                println("\");");
-                print("scope(failure) traceerr(\"");
-                print(ast.id);
-                println("\");");
+                print("super(");
+                printArgs(ast.initlist[0].args);
+                println(");");
+            }
+            else
+            {
+                foreach(i; ast.initlist)
+                {
+                    visit(i.func);
+                    print(" = ");
+                    assert(i.args.length == 1);
+                    visit(i.args);
+                    print(";");
+                }
             }
             foreach(s; ast.fbody)
                 visit(s);
