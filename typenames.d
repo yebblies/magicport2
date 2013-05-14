@@ -408,6 +408,7 @@ auto classTypes =
     "ArgsCppMangleCtx",
     "DArray",
     "Compiler",
+    "ArrayOp",
 
     "ArrayBase",
     "Objects",
