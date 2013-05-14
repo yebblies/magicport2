@@ -690,9 +690,14 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             return new AnonStructDeclaration(kind, id, d);
         }
         auto id = parseIdent();
+        if (kind == "class")
+            assert(classTypes.canFind(id), "class " ~ id ~ " is not in the class types list");
+        else
+            assert(structTypes.canFind(id), kind ~ " " ~ id ~ " is not in the struct types list");
         string s;
         if (t.text == ":")
         {
+            assert(kind == "class", "non-class " ~ id ~ " is using inheritance");
             nextToken();
             if (t.text == "public")
                 nextToken();
@@ -728,7 +733,10 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
         nextToken();
         string id;
         if (t.type == TOKid)
+        {
             id = parseIdent();
+            //writeln(id);
+        }
         if (t.text == "{")
         {
             enter("{");
@@ -1131,7 +1139,7 @@ Type parseBasicType(bool flag = false)
     }
     if (basicTypes.canFind(t.text))
         return new BasicType(parseIdent());
-    else if (classTypes.canFind(t.text))
+    else if (classTypes.canFind(t.text) || structTypes.canFind(t.text))
     {
         Type tx = new ClassType(parseIdent());
         if (t.text == "::" && flag)
@@ -1165,6 +1173,8 @@ bool isType()
     if (basicTypes.canFind(t.text))
         return true;
     else if (classTypes.canFind(t.text))
+        return true;
+    else if (structTypes.canFind(t.text))
         return true;
     else
     {
