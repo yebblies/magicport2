@@ -553,14 +553,14 @@ public:
         table = null;
     }
 
-    StringValue *lookup(const(char)* s, size_t len)
+    extern(C++) StringValue *lookup(const(char)* s, size_t len)
     {
         auto p = s[0..len] in table;
         if (p)
             return *p;
         return null;
     }
-    StringValue *insert(const(char)* s, size_t len)
+    extern(C++) StringValue *insert(const(char)* s, size_t len)
     {
         auto key = s[0..len];
         auto p = key in table;
@@ -569,7 +569,7 @@ public:
         key = key ~ '\0';
         return (table[key[0..$-1]] = new StringValue(null, key));
     }
-    StringValue *update(const(char)* s, size_t len)
+    extern(C++) StringValue *update(const(char)* s, size_t len)
     {
         //printf("StringTable::update %d %.*s\n", len, len, s);
         auto key = s[0..len];
@@ -579,9 +579,6 @@ public:
         key = key ~ '\0';
         return (table[key[0..$-1]] = new StringValue(null, key));
     }
-
-private:
-    void **search(const char *s, size_t len);
 };
 
 // hacks to support cloning classed with memcpy
