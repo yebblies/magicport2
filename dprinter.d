@@ -296,6 +296,10 @@ class DPrinter : Visitor
             ["AggregateDeclaration", "isNested"],
             ["FileName", null],
             ["Type", "size"],
+            [null, "leastAsSpecialized"],
+            [null, "isPure"],
+            [null, "error"],
+            [null, "deprecation"],
         ];
         foreach(m; matchlist)
         {
