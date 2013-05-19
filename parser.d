@@ -594,9 +594,9 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
         check("TYPE");
         check(">");
         check("struct");
-        check("ArrayBase");
+        check("Array");
         check(";");
-        return new DummyDeclaration("template<typename TYPE> struct ArrayBase;");
+        return new DummyDeclaration("template<typename TYPE> struct Array;");
     }
     else if (t.text == "~")
     {

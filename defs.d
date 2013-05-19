@@ -67,7 +67,7 @@ class _Object
 
 // root.Array
 
-struct ArrayBase(U)
+struct Array(U)
 {
     static if (!is(U == class))
         alias U* T;
