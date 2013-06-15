@@ -55,7 +55,7 @@ extern extern(C) uint _end;
 class _Object
 {
     extern(C++) int dyncast() { assert(0); }
-    extern(C++) int equals(_Object) { assert(0); }
+    extern(C++) bool equals(_Object) { assert(0); }
     extern(C++) int compare(_Object) { assert(0); }
     extern(C++) char *toChars() { assert(0); }
     extern(C++) void toBuffer(OutBuffer buf) { assert(0); }
