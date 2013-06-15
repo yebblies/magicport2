@@ -413,6 +413,7 @@ auto structTypes =
     "Id",
     "BaseClass",
     "ModuleDeclaration",
+    "CompiledCtfeFunction",
 
     "LINK",
     "PREC",
@@ -423,6 +424,7 @@ auto structTypes =
     "PURE",
     "TRUST",
     "RET",
+    "PKG",
 ];
 
 auto classTypes =
