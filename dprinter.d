@@ -920,6 +920,15 @@ class DPrinter : Visitor
 
     override void visitCallExpr(CallExpr ast)
     {
+        if (ast.args.length == 2)
+        {
+            auto ae = cast(AddrExpr)ast.args[0];
+            auto te = cast(IdentExpr)ast.args[1];
+            if (ae && te && te.id == "this")
+            {
+                ast.args[1] = new AddrExpr(te);
+            }
+        }
         visit(ast.func);
         print("(");
         printArgs(ast.args);
