@@ -300,6 +300,7 @@ class DPrinter : Visitor
             [null, "isPure"],
             [null, "error"],
             [null, "deprecation"],
+            [null, "immutableOf"],
         ];
         foreach(m; matchlist)
         {
