@@ -1,18 +1,20 @@
 
 // c library
 
-public import core.stdc.stdarg;
-public import core.stdc.stdio;
-public import core.stdc.stdlib;
-import core.stdc.string : strcmp, strlen, strncmp, strchr, memcmp, memset, memmove, strdup, strcpy, strcat, xmemcmp = memcmp;
-public import core.stdc.ctype;
-public import core.stdc.errno;
-public import core.stdc.limits;
-public import core.sys.windows.windows;
-public import core.stdc.math;
-public import core.stdc.time;
-public import core.stdc.stdint;
+public import core.stdc.stdarg : va_list, va_start, va_end;
+public import core.stdc.stdio : printf, sprintf, fprintf, vprintf, fputs, fwrite, _vsnprintf, putchar, remove, _snprintf, fflush, stdout, stderr;
+public import core.stdc.stdlib : malloc, free, alloca, exit, EXIT_FAILURE, EXIT_SUCCESS, strtol, strtoull, getenv;
+public import core.stdc.ctype : isspace, isdigit, isalnum, isprint, isalpha, isxdigit, islower, tolower;
+public import core.stdc.errno : errno, EEXIST, ERANGE;
+public import core.stdc.limits : INT_MAX;
+public import core.stdc.math : sinl, cosl, tanl, sqrtl, fabsl;
+public import core.stdc.time : time_t, ctime, time;
+public import core.stdc.stdint : int64_t, uint64_t, int32_t, uint32_t, int16_t, uint16_t, int8_t, uint8_t;
 public import core.stdc.float_;
+
+private import core.stdc.string : strcmp, strlen, strncmp, strchr, memset, memmove, strdup, strcpy, strcat, xmemcmp = memcmp, xmemcpy = memcpy;
+
+public import core.sys.windows.windows;
 
 // generated source
 
@@ -31,8 +33,8 @@ alias GetFullPathNameA GetFullPathName;
 
 // So we can accept string literals
 int memcmp(const char* a, const char* b, size_t len) { return .xmemcmp(a, b, len); }
+int memcmp(const void* a, const void* b, size_t len) { return .xmemcmp(a, b, len); }
 int memcmp(void* a, void* b, size_t len) { return .xmemcmp(a, b, len); }
-__gshared extern(C) const(char)* __locale_decpoint;
 
 // Not defined for some reason
 extern(C) int stricmp(const char*, const char*);
@@ -42,10 +44,8 @@ extern(C) int spawnl(int, const char*, const char*, const char*, const char*);
 extern(C) int spawnv(int, const char*, const char**);
 extern(C) int mkdir(const char*);
 alias mkdir _mkdir;
-extern(C) int memicmp(const char*, const char*, size_t);
-extern(C) char* strupr(const char*);
-extern(C) ushort _rotl(ushort, int);
-extern(C) ushort _rotr(ushort, int);
+private extern(C) int memicmp(const char*, const char*, size_t);
+private extern(C) char* strupr(const char*);
 
 extern extern(C) uint _xi_a;
 extern extern(C) uint _end;
@@ -132,7 +132,7 @@ public:
             reserve(d);
             if (dim != index)
                 memmove(data + index + d, data + index, (dim - index) * (*data).sizeof);
-            memcpy(data + index, a.data, d * (*data).sizeof);
+            xmemcpy(data + index, a.data, d * (*data).sizeof);
             dim += d;
         }
     }
@@ -163,7 +163,7 @@ public:
     {
         auto a = new typeof(this)();
         a.setDim(dim);
-        memcpy(a.data, data, dim * (void *).sizeof);
+        xmemcpy(a.data, data, dim * (void *).sizeof);
         return a;
     }
     void shift(T ptr)
@@ -234,16 +234,16 @@ void browse(const char*) { assert(0); }
 
 struct Port
 {
+    enum nan = double.nan;
+    enum ldbl_max = real.max;
+    enum infinity = double.infinity;
 extern(C++):
     static bool isNan(double r) { return !(r == r); }
     static real fmodl(real a, real b) { return a % b; }
-    enum nan = double.nan;
     static int memicmp(const char* s1, const char* s2, size_t n) { return .memicmp(s1, s2, n); }
     static char* strupr(const char* s) { return .strupr(s); }
     static int isSignallingNan(double r) { return isNan(r) && !(((cast(ubyte*)&r)[6]) & 8); }
     static int isSignallingNan(real r) { return isNan(r) && !(((cast(ubyte*)&r)[7]) & 0x40); }
-    enum ldbl_max = real.max;
-    enum infinity = double.infinity;
     static float strtof(const(char)* p, char** endp) { return strtof(p, endp); }
     static double strtod(const(char)* p, char** endp) { return strtod(p, endp); }
     static real strtold(const(char)* p, char** endp) { return strtold(p, endp); }
@@ -432,8 +432,6 @@ struct IntRange
     }
 }
 
-enum I64 = false;
-
 // complex_t
 
 real creall(creal x) { return x.re; }
@@ -481,13 +479,9 @@ extern extern(C++) void obj_start(char *srcfile);
 extern extern(C++) void obj_end(Library library, File objfile);
 extern extern(C++) void obj_write_deferred(Library library);
 extern extern(C++) Expression createTypeInfoArray(Scope sc, Expression *args, size_t dim);
-extern extern(C++) int os_critsecsize64();
-extern extern(C++) int os_critsecsize32();
-extern extern(C++) Library LibMSCoff_factory();
 
 // Util
 
-void util_progress() { assert(0); }
 int binary(char *, const(char)**, size_t) { assert(0); }
 
 struct AA;
@@ -516,15 +510,10 @@ _Object* _aaGet(AA** aa, _Object o)
     return k in *x;
 }
 
-struct String
-{
-    static size_t calcHash(const char*) { assert(0); }
-}
-
 // root.speller
 
-extern(C++) void* speller(const char*, void* function(void*, const(char)*), Scope, const char*) { assert(0); }
-extern(C++) void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*) { assert(0); }
+extern(C++) void* speller(const char*, void* function(void*, const(char)*), Scope, const char*) { return null; }
+extern(C++) void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*) { return null; }
 
 const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
@@ -586,10 +575,9 @@ public:
 
 // hacks to support cloning classed with memcpy
 
-static import stdstring = core.stdc.string;
-import typenames;
+import typenames : typeTypes, expTypes;
 
-void* memcpy()(void* dest, const void* src, size_t size) { return stdstring.memcpy(dest, src, size); }
+void* memcpy()(void* dest, const void* src, size_t size) { return xmemcpy(dest, src, size); }
 Type memcpy(T : Type)(ref T dest, T src, size_t size)
 {
     dest = cast(T)src.clone();;
@@ -633,12 +621,6 @@ Expression memcpy(T : Expression)(ref T dest, T src, size_t size)
 }
 void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size) { assert(0); }
 
-// something is wrong with strtof/d/ld
-
-extern(C) float strtof(const(char)* p, char** endp);
-extern(C) double strtod(const(char)* p, char** endp);
-extern(C) real strtold(const(char)* p, char** endp);
-
 void copyMembers(T : Type)(T dest, T src)
 {
     static if (!is(T == _Object))
@@ -671,7 +653,7 @@ void main(string[] args)
     int argc = cast(int)args.length;
     auto argv = (new const(char)*[](argc)).ptr;
     foreach(i, a; args)
-        argv[i] = cast(const(char)*)(a ~ '\0').ptr;
+        argv[i] = (a ~ '\0').ptr;
 
     try
     {
@@ -738,85 +720,31 @@ else
 }
 
 // Preprocessor symbols (sometimes used as values)
-enum LOG = false;
 enum DEBUG = false;
-enum IN_GCC = false;
-enum MACHOBJ = false;
-enum DMDV1 = false;
-enum EXTRA_DEBUG = false;
+
 enum linux = false;
 enum __APPLE__ = false;
 enum __FreeBSD__ = false;
 enum __OpenBSD__ = false;
 enum __sun = false;
-enum SHOWPERFORMANCE = false;
-enum LOGASSIGN = false;
+enum MACINTOSH = false;
+enum _WIN32 = true;
+
+enum IN_GCC = false;
+enum __DMC__ = true;
+enum _MSC_VER = true;
+
+enum LOG = false;
+enum ASYNCREAD = false;
+enum UNITTEST = false;
+enum STRINGTABLE = false;
+enum CANINLINE_LOG = false;
+enum TEXTUAL_ASSEMBLY_OUT = false;
+enum LOGSEMANTIC = false;
+
 enum TARGET_LINUX = false;
 enum TARGET_OSX = false;
 enum TARGET_FREEBSD = false;
 enum TARGET_OPENBSD = false;
 enum TARGET_SOLARIS = false;
-enum TARGET_NET = false;
-enum ASYNCREAD = false;
-enum WINDOWS_SEH = false;
-enum LITTLE_ENDIAN = false;
-enum ELFOBJ = false;
-enum _WINDLL = false;
-enum UNITTEST = false;
-enum CPP_MANGLE = false;
-enum __clang__ = false;
-enum __GNUC__ = false;
-enum __SVR4 = false;
-enum MEM_DEBUG = false;
-enum GCC_SAFE_DMD = false;
-enum OUREH = false;
-enum _WIN64 = false;
-enum STRINGTABLE = false;
-enum __MINGW32__ = false;
-enum LOGDEFAULTINIT = false;
-enum LOGDOTEXP = false;
-enum LOGM = false;
-enum LOG_LEASTAS = false;
-enum FIXBUG8863 = false;
-enum D1INOUT = false;
-enum __GLIBC__ = false;
-enum CANINLINE_LOG = false;
-enum MODULEINFO_IS_STRUCT = false;
-enum POSIX = false;
-enum MACINTOSH = false;
-enum _POSIX_VERSION = false;
-enum PATH_MAX = false;
-enum TEXTUAL_ASSEMBLY_OUT = false;
-
-enum DMDV2 = true;
-enum __DMC__ = true;
-enum TX86 = true;
 enum TARGET_WINDOS = true;
-enum SARRAYVALUE = true;
-enum _WIN32 = true;
-enum _MSC_VER = true;
-enum OMFOBJ = true;
-enum BREAKABI = true;
-enum UTIL_PH = true;
-enum SEH = true;
-enum MAGICPORT = true;
-enum SNAN_DEFAULT_INIT = true;
-enum BUG6652 = true;
-enum INTERFACE_VIRTUAL = true;
-enum CCASTSYNTAX = true;
-enum CARRAYDECL = true;
-
-enum LOGSEMANTIC = false;
-enum DOS386 = false;
-enum DOS16RM = false;
-enum __SC__ = false;
-enum MEMMODELS = false;
-enum HTOD = false;
-enum SCPP = false;
-
-enum MARS = true;
-enum DM_TARGET_CPU_X86 = true;
-enum MMFIO = true;
-enum LINEARALLOC = true;
-enum _M_I86 = true;
-enum LONGLONG = true;
