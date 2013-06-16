@@ -313,8 +313,7 @@ class DPrinter : Visitor
                 break;
             }
         }
-        if (!(ast.type.id == ast.id && ast.id[0] == '~'))
-            print("extern(C++) ");
+        print("extern(C++) ");
         visit(ast.stc);
         if (ast.type.id == ast.id)
         {
