@@ -216,7 +216,7 @@ class DPrinter : Visitor
         fd = ast;
         if (ast.id == "operator new") return;
         if (!P && !ast.hasbody && ast.skip) return;
-        auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue"];
+        auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue", "OutBuffer"];
         if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
         auto matchlist =
@@ -517,10 +517,6 @@ class DPrinter : Visitor
                     this.inittype = ast.types[i];
                     visit(ast.inits[i]);
                     inittype = null;
-                }
-                else if (ast.types[i].id == "OutBuffer")
-                {
-                    print(" = new OutBuffer()");
                 }
                 else if (cast(ArrayType)ast.types[i] && (cast(ArrayType)ast.types[i]).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
                 {

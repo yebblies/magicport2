@@ -414,6 +414,7 @@ auto structTypes =
     "BaseClass",
     "ModuleDeclaration",
     "CompiledCtfeFunction",
+    "OutBuffer",
 
     "LINK",
     "PREC",
@@ -434,7 +435,6 @@ auto classTypes =
     "String",
     "FileName",
     "Bits",
-    "OutBuffer",
 
     "Section",
     "ParamSection",

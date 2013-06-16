@@ -655,7 +655,7 @@ Module collapse(Module[] mods, Scanner scan)
     
     funcBodies(scan);
 
-    bufAddr(scan);
+    //bufAddr(scan);
 
     return new Module("dmd.d", decls);
 }
