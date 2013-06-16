@@ -244,6 +244,9 @@ extern(C++):
     static int isSignallingNan(real r) { return isNan(r) && !(((cast(ubyte*)&r)[7]) & 0x40); }
     enum ldbl_max = real.max;
     enum infinity = double.infinity;
+    static float strtof(const(char)* p, char** endp) { return strtof(p, endp); }
+    static double strtod(const(char)* p, char** endp) { return strtod(p, endp); }
+    static real strtold(const(char)* p, char** endp) { return strtold(p, endp); }
 }
 
 // IntRange
