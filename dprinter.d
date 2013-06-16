@@ -625,7 +625,7 @@ class DPrinter : Visitor
             if (c)
             {
                 if (i)
-                    print(" else ");
+                    print("else ");
                 print("static if (");
                 visit(c);
                 println(")");
@@ -1412,7 +1412,7 @@ class DPrinter : Visitor
             if (c)
             {
                 if (i)
-                    print(" else ");
+                    print("else ");
                 print("static if (");
                 visit(c);
                 println(")");
