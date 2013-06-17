@@ -608,7 +608,8 @@ extern(C++):
     void write(_Object obj);
     void fill0(size_t nbytes);
     void _align(size_t size);
-    void vprintf(const(char)* format, va_list args);
+    void vprintf(const(char)* format, va_list args) { vprintf(format, cast(char*)args); }
+    void vprintf(const(char)* format, char* args);
     void printf(const(char)* format, ...);
     void bracket(char left, char right);
     size_t bracket(size_t i, const(char)* left, size_t j, const(char)* right);
