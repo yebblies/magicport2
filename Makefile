@@ -3,10 +3,15 @@ SRC=magicport2.d ast.d scanner.d tokens.d parser.d printerast.d printercpp.d dpr
 
 DFLAGS=-g
 
+LIBS=..\dmdgit\src\glue.lib ..\dmdgit\src\backend.lib ..\dmdgit\src\outbuffer.obj
+# LIBS=..\dmdgit\src\gluestub.obj ..\dmdgit\src\backend.lib
+
+COMPILER=
+
 run: magicport2.exe
 	magicport2
-	..\dmdgit\src\dmd -g -J..\dmdgit -magicport port/dmd defs -d -ofport\dmd.exe ..\dmdgit\src\glue.lib ..\dmdgit\src\backend.lib
-	port\dmd -g -J..\dmdgit -magicport port/dmd defs -d -ofport\dmdx.exe ..\dmdgit\src\glue.lib ..\dmdgit\src\backend.lib
+	..\dmdgit\src\dmd -g -J..\dmdgit -magicport port/dmd defs -d -ofport\dmd.exe  $(LIBS)
+	port\dmd          -g -J..\dmdgit -magicport port/dmd defs -d -ofport\dmdx.exe $(LIBS)
 
 magicport2.exe : $(SRC)
 	dmd $(SRC) $(DFLAGS)

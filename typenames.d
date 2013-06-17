@@ -415,6 +415,9 @@ auto structTypes =
     "ModuleDeclaration",
     "CompiledCtfeFunction",
     "OutBuffer",
+    "File",
+    "String",
+    "FileName",
 
     "LINK",
     "PREC",
@@ -430,11 +433,7 @@ auto structTypes =
 
 auto classTypes =
 [
-    "File",
     "Scope",
-    "String",
-    "FileName",
-    "Bits",
 
     "Section",
     "ParamSection",

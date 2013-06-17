@@ -601,6 +601,10 @@ class DPrinter : Visitor
 
     override void visitConstructDeclaration(ConstructDeclaration ast)
     {
+        if (ast.type.id == "File" && ast.args.length == 1 && cast(IdentExpr)ast.args[0] && (cast(IdentExpr)ast.args[0]).id == "this")
+        {
+            ast.args[0] = new AddrExpr(ast.args[0]);
+        }
         stackclasses ~= ast.id;
         visit(ast.type);
         if (!isClass(ast.type))
@@ -1179,18 +1183,16 @@ class DPrinter : Visitor
         {
             visit((cast(PtrExpr)ast.args[0]).e);
             print(".makeCopy()");
+            return;
         }
-        else
-        {
-            assert(!ast.dim);
-            lparen(ast);
-            print("new ");
-            visit(ast.t);
-            print("(");
-            printArgs(ast.args);
-            print(")");
-            rparen(ast);
-        }
+        assert(!ast.dim);
+        lparen(ast);
+        print("new ");
+        visit(ast.t);
+        print("(");
+        printArgs(ast.args);
+        print(")");
+        rparen(ast);
     }
 
     override void visitOuterScopeExpr(OuterScopeExpr ast)

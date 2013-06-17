@@ -45,7 +45,8 @@ auto frontsrc = [
 // "speller.c", "speller.h", "thread.h", "stringtable.h", "stringtable.c"
 
 auto rootsrc = [
-    "root.h", "root.c"
+    "filename.h", "filename.c",
+    "file.h", "file.c",
 ];
 
 enum frontpath = r"..\dmdgit\src\";
