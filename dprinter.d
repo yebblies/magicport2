@@ -35,6 +35,7 @@ class DPrinter : Visitor
 
     int indent;
     bool wasnl;
+    int inexternc;
 
     void print(string arg)
     {
@@ -314,7 +315,8 @@ class DPrinter : Visitor
                 break;
             }
         }
-        print("extern(C++) ");
+        if (!inexternc)
+            print("extern(C++) ");
         visit(ast.stc);
         if (ast.type.id == ast.id)
         {
@@ -811,8 +813,10 @@ class DPrinter : Visitor
     override void visitExternCDeclaration(ExternCDeclaration ast)
     {
         println("extern(C) {");
+        inexternc++;
         foreach(d; ast.decls)
             visit(d);
+        inexternc--;
         println("}");
     }
 
