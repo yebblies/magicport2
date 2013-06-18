@@ -52,11 +52,11 @@ extern extern(C) uint _end;
 
 // root.Object
 
-class _Object
+class RootObject
 {
     extern(C++) int dyncast() { assert(0); }
-    extern(C++) bool equals(_Object) { assert(0); }
-    extern(C++) int compare(_Object) { assert(0); }
+    extern(C++) bool equals(RootObject) { assert(0); }
+    extern(C++) int compare(RootObject) { assert(0); }
     extern(C++) char *toChars() { assert(0); }
     extern(C++) void toBuffer(OutBuffer* buf) { assert(0); }
     extern(C++) void print()
@@ -485,23 +485,23 @@ extern extern(C++) Expression createTypeInfoArray(Scope sc, Expression *args, si
 int binary(char *, const(char)**, size_t) { assert(0); }
 
 struct AA;
-_Object _aaGetRvalue(AA* aa, _Object o)
+RootObject _aaGetRvalue(AA* aa, RootObject o)
 {
     tracein("_aaGetRvalue");
     scope(success) traceout("_aaGetRvalue");
     scope(failure) traceerr("_aaGetRvalue");
-    auto x = *cast(_Object[void*]*)&aa;
+    auto x = *cast(RootObject[void*]*)&aa;
     auto k = cast(void*)o;
     if (auto p = k in x)
         return *p;
     return null;
 }
-_Object* _aaGet(AA** aa, _Object o)
+RootObject* _aaGet(AA** aa, RootObject o)
 {
     tracein("_aaGet");
     scope(success) traceout("_aaGet");
     scope(failure) traceerr("_aaGet");
-    auto x = *cast(_Object[void*]**)&aa;
+    auto x = *cast(RootObject[void*]**)&aa;
     auto k = cast(void*)o;
     if (auto p = k in *x)
         return p;
@@ -605,7 +605,7 @@ extern(C++):
     void writeUTF16(uint w);
     void write4(uint w);
     void write(OutBuffer *buf);
-    void write(_Object obj);
+    void write(RootObject obj);
     void fill0(size_t nbytes);
     void _align(size_t size);
     void vprintf(const(char)* format, va_list args) { vprintf(format, cast(char*)args); }
@@ -671,7 +671,7 @@ void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size) { assert(0); }
 
 void copyMembers(T : Type)(T dest, T src)
 {
-    static if (!is(T == _Object))
+    static if (!is(T == RootObject))
     {
         foreach(i, v; dest.tupleof)
             dest.tupleof[i] = src.tupleof[i];
@@ -681,7 +681,7 @@ void copyMembers(T : Type)(T dest, T src)
 }
 void copyMembers(T : Expression)(T dest, T src)
 {
-    static if (!is(T == _Object))
+    static if (!is(T == RootObject))
     {
         foreach(i, v; dest.tupleof)
             dest.tupleof[i] = src.tupleof[i];
@@ -689,7 +689,7 @@ void copyMembers(T : Expression)(T dest, T src)
             copyMembers!(U)(dest, src);
    }
 }
-void copyMembers(T : _Object)(T dest, T src)
+void copyMembers(T : RootObject)(T dest, T src)
 {
 }
 

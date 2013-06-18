@@ -476,7 +476,7 @@ auto classTypes =
     "Files",
 
     "Object",
-    "_Object",
+    "RootObject",
     "Dsymbol",
     "DsymbolTable",
     "ScopeDsymbol",

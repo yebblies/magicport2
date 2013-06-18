@@ -11,7 +11,7 @@ import visitor;
 import scanner;
 import typenames;
 
-auto parentlessclasses = ["Scope", "Section", "DocComment", "Condition", "TemplateParameter", "Lexer", "_Object", "Macro", "Library"];
+auto parentlessclasses = ["Scope", "Section", "DocComment", "Condition", "TemplateParameter", "Lexer", "RootObject", "Macro", "Library"];
 
 class DPrinter : Visitor
 {
@@ -769,7 +769,7 @@ class DPrinter : Visitor
             visitIdent(ast.superid);
         }
         else if (isclass)
-            print(" : _Object");
+            print(" : RootObject");
         println("");
         println("{");
         if (align1)
