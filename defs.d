@@ -2,7 +2,7 @@
 // c library
 
 public import core.stdc.stdarg : va_list, va_start, va_end;
-public import core.stdc.stdio : printf, sprintf, fprintf, vprintf, fputs, fwrite, _vsnprintf, putchar, remove, _snprintf, fflush, stdout, stderr;
+public import core.stdc.stdio : printf, sprintf, fprintf, vprintf, vfprintf, fputs, fwrite, _vsnprintf, putchar, remove, _snprintf, fflush, stdout, stderr;
 public import core.stdc.stdlib : malloc, free, alloca, exit, EXIT_FAILURE, EXIT_SUCCESS, strtol, strtoull, getenv;
 public import core.stdc.ctype : isspace, isdigit, isalnum, isprint, isalpha, isxdigit, islower, tolower;
 public import core.stdc.errno : errno, EEXIST, ERANGE;
@@ -782,12 +782,11 @@ enum _WIN32 = true;
 
 enum IN_GCC = false;
 enum __DMC__ = true;
-enum _MSC_VER = true;
+enum _MSC_VER = false;
 
 enum LOG = false;
 enum ASYNCREAD = false;
 enum UNITTEST = false;
-enum STRINGTABLE = false;
 enum CANINLINE_LOG = false;
 enum TEXTUAL_ASSEMBLY_OUT = false;
 enum LOGSEMANTIC = false;
