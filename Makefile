@@ -10,8 +10,8 @@ COMPILER=
 
 run: magicport2.exe
 	magicport2
-	..\dmdgit\src\dmd -g -J..\dmdgit -magicport port/dmd defs -d -ofport\dmd.exe  $(LIBS)
-	port\dmd          -g -J..\dmdgit -magicport port/dmd defs -d -ofport\dmdx.exe $(LIBS)
+	..\dmdgit\src\dmd -g -J..\dmdgit -magicport port/dmd defs -d -ofport\dmd.exe  $(LIBS) -debug
+	port\dmd          -g -J..\dmdgit -magicport port/dmd defs -d -ofport\dmdx.exe $(LIBS) -debug
 
 magicport2.exe : $(SRC)
 	dmd $(SRC) $(DFLAGS)

@@ -627,9 +627,17 @@ class DPrinter : Visitor
             {
                 if (i)
                     print("else ");
-                print("static if (");
-                visit(c);
-                println(")");
+                auto ie = cast(IdentExpr)c;
+                if (ie && ie.id == "DEBUG")
+                {
+                    println("debug");
+                }
+                else
+                {
+                    print("static if (");
+                    visit(c);
+                    println(")");
+                }
             }
             else
             {
@@ -1414,9 +1422,17 @@ class DPrinter : Visitor
             {
                 if (i)
                     print("else ");
-                print("static if (");
-                visit(c);
-                println(")");
+                auto ie = cast(IdentExpr)c;
+                if (ie && ie.id == "DEBUG")
+                {
+                    println("debug");
+                }
+                else
+                {
+                    print("static if (");
+                    visit(c);
+                    println(")");
+                }
             }
             else
             {

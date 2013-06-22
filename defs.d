@@ -770,8 +770,6 @@ else
 }
 
 // Preprocessor symbols (sometimes used as values)
-enum DEBUG = false;
-
 enum linux = false;
 enum __APPLE__ = false;
 enum __FreeBSD__ = false;
