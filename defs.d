@@ -235,8 +235,10 @@ void browse(const char*) { assert(0); }
 struct Port
 {
     enum nan = double.nan;
-    enum ldbl_max = real.max;
     enum infinity = double.infinity;
+    enum ldbl_max = real.max;
+    enum ldbl_nan = real.nan;
+    enum ldbl_infinity = real.infinity;
 extern(C++):
     static bool isNan(double r) { return !(r == r); }
     static real fmodl(real a, real b) { return a % b; }
