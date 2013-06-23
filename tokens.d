@@ -5,7 +5,7 @@ import std.string;
 import std.algorithm;
 import std.stdio;
 
-enum
+enum TokenType
 {
     TOKstring,
     TOKop,
@@ -15,7 +15,13 @@ enum
     TOKkey,
     TOKeof
 };
-alias int TokenType;
+alias TokenType.TOKstring TOKstring;
+alias TokenType.TOKop     TOKop;
+alias TokenType.TOKchar   TOKchar;
+alias TokenType.TOKnum    TOKnum;
+alias TokenType.TOKid     TOKid;
+alias TokenType.TOKkey    TOKkey;
+alias TokenType.TOKeof    TOKeof;
 
 struct Token
 {
