@@ -232,6 +232,12 @@ void browse(const char*) { assert(0); }
 
 // root.port
 
+__gshared extern(C) const(char)* __locale_decpoint;
+
+extern(C) float strtof(const(char)* p, char** endp);
+extern(C) double strtod(const(char)* p, char** endp);
+extern(C) real strtold(const(char)* p, char** endp);
+
 struct Port
 {
     enum nan = double.nan;
@@ -246,9 +252,30 @@ extern(C++):
     static char* strupr(const char* s) { return .strupr(s); }
     static int isSignallingNan(double r) { return isNan(r) && !(((cast(ubyte*)&r)[6]) & 8); }
     static int isSignallingNan(real r) { return isNan(r) && !(((cast(ubyte*)&r)[7]) & 0x40); }
-    static float strtof(const(char)* p, char** endp) { return strtof(p, endp); }
-    static double strtod(const(char)* p, char** endp) { return strtod(p, endp); }
-    static real strtold(const(char)* p, char** endp) { return strtold(p, endp); }
+    static float strtof(const(char)* p, char** endp)
+    {
+        auto save = __locale_decpoint;
+        __locale_decpoint = ".";
+        auto r = .strtof(p, endp);
+        __locale_decpoint = save;
+        return r;
+    }
+    static double strtod(const(char)* p, char** endp)
+    {
+        auto save = __locale_decpoint;
+        __locale_decpoint = ".";
+        auto r = .strtod(p, endp);
+        __locale_decpoint = save;
+        return r;
+    }
+    static real strtold(const(char)* p, char** endp)
+    {
+        auto save = __locale_decpoint;
+        __locale_decpoint = ".";
+        auto r = .strtold(p, endp);
+        __locale_decpoint = save;
+        return r;
+    }
 }
 
 // IntRange
