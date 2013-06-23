@@ -705,14 +705,14 @@ void main(string[] args)
     foreach(i, a; args)
         argv[i] = (a ~ '\0').ptr;
 
-    try
-    {
+    // try
+    // {
         xmain(argc, argv);
-    }
-    catch (Error e)
-    {
-        printf("Error: %.*s\n", e.msg);
-    }
+    // }
+    // catch (Error e)
+    // {
+        // printf("Error: %.*s\n", e.msg);
+    // }
 }
 
 int tracedepth;
