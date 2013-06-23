@@ -722,11 +722,11 @@ version=trace;
 
 version(trace)
 {
-    void trace(size_t line = __LINE__)
+    void trace(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__)
     {
-        printf("%d\n", line);
+        printf("%.*s:%d\n", pretty.length, pretty.ptr, line);
     }
-    void tracein(const char* s, size_t line = __LINE__)
+    void tracein(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__)
     {
         if (tracedepth < 0)
             return;
@@ -734,12 +734,12 @@ version(trace)
         {
             foreach(i; 0..tracedepth*2)
                 putchar(' ');
-            printf("+ %s %d\n", s, line);
+            printf("+ %.*s:%d\n", pretty.length, pretty.ptr, line);
         }
         tracedepth++;
     }
 
-    void traceout(const char* s, size_t line = __LINE__)
+    void traceout(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__)
     {
         if (tracedepth < 0)
             return;
@@ -748,25 +748,26 @@ version(trace)
         {
             foreach(i; 0..tracedepth*2)
                 putchar(' ');
-            printf("- %s %d\n", s, line);
+            printf("+ %.*s:%d\n", pretty.length, pretty.ptr, line);
         }
     }
 
-    void traceerr(const char* s, size_t line = __LINE__)
+    void traceerr(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__)
     {
         if (tracedepth < 0)
             return;
         tracedepth--;
         foreach(i; 0..tracedepth*2)
             putchar(' ');
-        printf("! %s %d\n", s, line);
+        printf("! %.*s:%d\n", pretty.length, pretty.ptr, line);
     }
 }
 else
 {
-    void tracein(const char* s) {}
-    void traceout(const char* s) {}
-    void traceerr(const char* s) {}
+    void trace() {}
+    void tracein() {}
+    void traceout() {}
+    void traceerr() {}
 }
 
 // Preprocessor symbols (sometimes used as values)

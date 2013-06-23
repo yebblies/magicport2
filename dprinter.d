@@ -337,6 +337,9 @@ class DPrinter : Visitor
             println("");
             println("{");
             indent++;
+            println("tracein();");
+            println("scope(success) traceout();");
+            println("scope(failure) traceerr();");
             if (ast.initlist.length == 1 && classTypes.canFind((cast(IdentExpr)ast.initlist[0].func).id))
             {
                 print("super(");
@@ -347,11 +350,12 @@ class DPrinter : Visitor
             {
                 foreach(i; ast.initlist)
                 {
+                    print("this.");
                     visit(i.func);
                     print(" = ");
                     assert(i.args.length == 1);
                     visit(i.args);
-                    print(";");
+                    println(";");
                 }
             }
             foreach(s; ast.fbody)
@@ -363,15 +367,9 @@ class DPrinter : Visitor
             println("");
             println("{");
             indent++;
-            print("tracein(\"");
-            print(ast.id);
-            println("\");");
-            print("scope(success) traceout(\"");
-            print(ast.id);
-            println("\");");
-            print("scope(failure) traceerr(\"");
-            print(ast.id);
-            println("\");");
+            println("tracein();");
+            println("scope(success) traceout();");
+            println("scope(failure) traceerr();");
             foreach(s; ast.fbody)
                 visit(s);
             indent--;
@@ -1279,6 +1277,7 @@ class DPrinter : Visitor
             "longlong" : "long",
             "ulonglong" : "ulong",
             "longdouble" : "real",
+            "volatile_longdouble" : "real",
             "unsigned long long" : "ulong",
             "unsigned short" : "ushort",
             "unsigned" : "uint",
