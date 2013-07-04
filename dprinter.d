@@ -301,6 +301,7 @@ class DPrinter : Visitor
             [null, "error"],
             [null, "deprecation"],
             [null, "immutableOf"],
+            [null, "mangleExact"],
         ];
         foreach(m; matchlist)
         {

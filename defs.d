@@ -3,7 +3,7 @@
 
 public import core.stdc.stdarg : va_list, va_start, va_end;
 public import core.stdc.stdio : printf, sprintf, fprintf, vprintf, vfprintf, fputs, fwrite, _vsnprintf, putchar, remove, _snprintf, fflush, stdout, stderr;
-public import core.stdc.stdlib : malloc, free, alloca, exit, EXIT_FAILURE, EXIT_SUCCESS, strtol, strtoull, getenv;
+public import core.stdc.stdlib : malloc, free, alloca, exit, EXIT_FAILURE, EXIT_SUCCESS, strtol, strtoull, getenv, calloc;
 public import core.stdc.ctype : isspace, isdigit, isalnum, isprint, isalpha, isxdigit, islower, tolower;
 public import core.stdc.errno : errno, EEXIST, ERANGE;
 public import core.stdc.limits : INT_MAX;
@@ -246,6 +246,28 @@ struct Port
     enum ldbl_nan = real.nan;
     enum ldbl_infinity = real.infinity;
 extern(C++):
+    static real snan;
+    static this()
+    {
+        /*
+         * Use a payload which is different from the machine NaN,
+         * so that uninitialised variables can be
+         * detected even if exceptions are disabled.
+         */
+        ushort* us = cast(ushort *)&snan;
+        us[0] = 0;
+        us[1] = 0;
+        us[2] = 0;
+        us[3] = 0xA000;
+        us[4] = 0x7FFF;
+
+        /*
+         * Although long doubles are 10 bytes long, some
+         * C ABIs pad them out to 12 or even 16 bytes, so
+         * leave enough space in the snan array.
+         */
+        assert(Target.realsize <= snan.sizeof);
+    }
     static bool isNan(double r) { return !(r == r); }
     static real fmodl(real a, real b) { return a % b; }
     static int memicmp(const char* s1, const char* s2, size_t n) { return .memicmp(s1, s2, n); }
@@ -798,6 +820,8 @@ else
 }
 
 // Preprocessor symbols (sometimes used as values)
+enum DDMD = true;
+
 enum linux = false;
 enum __APPLE__ = false;
 enum __FreeBSD__ = false;
