@@ -274,6 +274,7 @@ extern(C++):
     static char* strupr(const char* s) { return .strupr(s); }
     static int isSignallingNan(double r) { return isNan(r) && !(((cast(ubyte*)&r)[6]) & 8); }
     static int isSignallingNan(real r) { return isNan(r) && !(((cast(ubyte*)&r)[7]) & 0x40); }
+    static int isInfinity(double r) { return r is double.infinity || r is -double.infinity; }
     static float strtof(const(char)* p, char** endp)
     {
         auto save = __locale_decpoint;
