@@ -690,10 +690,10 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             return new AnonStructDeclaration(kind, id, d);
         }
         auto id = parseIdent();
-        if (kind == "class")
-            assert(classTypes.canFind(id), "class " ~ id ~ " is not in the class types list");
-        else
-            assert(structTypes.canFind(id), kind ~ " " ~ id ~ " is not in the struct types list");
+        if (kind == "class" && !classTypes.canFind(id))
+            error("class %s is not in the class types list", id);
+        else if (kind != "class" && !structTypes.canFind(id))
+            error("%s %s is not in the struct types list", kind, id);
         string s;
         if (t.text == ":")
         {

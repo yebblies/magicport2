@@ -418,6 +418,7 @@ auto structTypes =
     "File",
     "String",
     "FileName",
+    "N",
 
     "LINK",
     "PREC",
