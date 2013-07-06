@@ -927,7 +927,12 @@ class DPrinter : Visitor
 
     override void visitDotIdExpr(DotIdExpr ast)
     {
-        visit(ast.e);
+        // bypass this -> &this for lhs
+        auto ie = cast(IdentExpr)ast.e;
+        if (ie && ie.id == "this")
+            print("this");
+        else
+            visit(ast.e);
         print(".");
         visitIdent(ast.id);
     }
