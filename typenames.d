@@ -419,6 +419,7 @@ auto structTypes =
     "String",
     "FileName",
     "N",
+    "Scope",
 
     "LINK",
     "PREC",
@@ -434,8 +435,6 @@ auto structTypes =
 
 auto classTypes =
 [
-    "Scope",
-
     "Section",
     "ParamSection",
     "MacroSection",

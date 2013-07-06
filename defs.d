@@ -530,7 +530,7 @@ extern extern(C++) void backend_term();
 extern extern(C++) void obj_start(char *srcfile);
 extern extern(C++) void obj_end(Library library, File* objfile);
 extern extern(C++) void obj_write_deferred(Library library);
-extern extern(C++) Expression createTypeInfoArray(Scope sc, Expression *args, size_t dim);
+extern extern(C++) Expression createTypeInfoArray(Scope* sc, Expression *args, size_t dim);
 
 // Util
 
@@ -564,7 +564,7 @@ RootObject* _aaGet(AA** aa, RootObject o)
 
 // root.speller
 
-extern(C++) void* speller(const char*, void* function(void*, const(char)*), Scope, const char*) { return null; }
+extern(C++) void* speller(const char*, void* function(void*, const(char)*), Scope*, const char*) { return null; }
 extern(C++) void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*) { return null; }
 
 const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
@@ -768,7 +768,7 @@ void main(string[] args)
 int tracedepth;
 
 version=trace;
-//version=fulltrace;
+// version=fulltrace;
 
 version(trace)
 {

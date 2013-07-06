@@ -22,6 +22,7 @@ class Scanner : Visitor
     NewExpr[] newExprs;
     ConstructDeclaration[] constructDeclarations;
     string agg;
+    StructDeclaration scopedecl;
 
     this()
     {
@@ -270,6 +271,8 @@ class Scanner : Visitor
         agg = ast.id;
         if (ast.superid)
             structsUsingInheritance ~= ast;
+        if (ast.id == "Scope")
+            scopedecl = ast;
         foreach(d; ast.decls)
             visit(d);
     }
@@ -657,6 +660,8 @@ Module collapse(Module[] mods, Scanner scan)
 
     //bufAddr(scan);
 
+    scopeCtor(scan);
+
     return new Module("dmd.d", decls);
 }
 
@@ -877,6 +882,45 @@ void fixMain(Declaration[] decls, Scanner scan)
             assert(!found);
             fd.id = "xmain";
             found = true;
+        }
+    }
+}
+
+void scopeCtor(Scanner scan)
+{
+    foreach(f; scan.funcDeclarations)
+    {
+        if (f.type.id == f.id && f.id == "Scope" && f.params.length == 0)
+        {
+            Init[string] inits;
+            foreach(s; f.fbody)
+            {
+                auto es = cast(ExpressionStatement)s;
+                assert(es);
+                auto ae = cast(AssignExpr)es.e;
+                assert(ae);
+                auto de = cast(DotIdExpr)ae.e1;
+                assert(de);
+                auto te = cast(IdentExpr)de.e;
+                assert(te);
+                assert(te.id == "this");
+                inits[de.id] = new ExprInit(ae.e2);
+            }
+            foreach(m; scan.scopedecl.decls)
+            {
+                auto vd = cast(VarDeclaration)m;
+                if (vd)
+                {
+                    assert(vd.types.length == 1);
+                    assert(!vd.inits[0]);
+                    auto p = vd.ids[0] in inits;
+                    if (p)
+                    {
+                        vd.inits[0] = *p;
+                    }
+                }
+            }
+            return;
         }
     }
 }

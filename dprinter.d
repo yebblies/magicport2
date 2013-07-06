@@ -11,7 +11,7 @@ import visitor;
 import scanner;
 import typenames;
 
-auto parentlessclasses = ["Scope", "Section", "DocComment", "Condition", "TemplateParameter", "Lexer", "RootObject", "Macro", "Library"];
+auto parentlessclasses = ["Section", "Condition", "TemplateParameter", "Lexer", "RootObject", "Library"];
 
 class DPrinter : Visitor
 {
@@ -217,7 +217,7 @@ class DPrinter : Visitor
         fd = ast;
         if (ast.id == "operator new") return;
         if (!P && !ast.hasbody && ast.skip) return;
-        auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue", "OutBuffer"];
+        auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue", "OutBuffer", "Scope", "DocComment"];
         if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
         auto matchlist =
@@ -601,10 +601,6 @@ class DPrinter : Visitor
 
     override void visitConstructDeclaration(ConstructDeclaration ast)
     {
-        if (ast.type.id == "File" && ast.args.length == 1 && cast(IdentExpr)ast.args[0] && (cast(IdentExpr)ast.args[0]).id == "this")
-        {
-            ast.args[0] = new AddrExpr(ast.args[0]);
-        }
         stackclasses ~= ast.id;
         visit(ast.type);
         if (!isClass(ast.type))
@@ -918,6 +914,14 @@ class DPrinter : Visitor
 
     override void visitIdentExpr(IdentExpr ast)
     {
+        if (ast.id == "this" && P)
+        {
+            if (P && structTypes.canFind(P.id))
+            {
+                print("(&this)");
+                return;
+            }
+        }
         visitIdent(ast.id);
     }
 
@@ -930,15 +934,6 @@ class DPrinter : Visitor
 
     override void visitCallExpr(CallExpr ast)
     {
-        if (ast.args.length == 2)
-        {
-            auto ae = cast(AddrExpr)ast.args[0];
-            auto te = cast(IdentExpr)ast.args[1];
-            if (ae && te && te.id == "this")
-            {
-                ast.args[1] = new AddrExpr(te);
-            }
-        }
         visit(ast.func);
         print("(");
         printArgs(ast.args);
@@ -1189,12 +1184,6 @@ class DPrinter : Visitor
 
     override void visitNewExpr(NewExpr ast)
     {
-        if (ast.t.id == "Scope" && ast.args.length == 1 && cast(PtrExpr)ast.args[0])
-        {
-            visit((cast(PtrExpr)ast.args[0]).e);
-            print(".makeCopy()");
-            return;
-        }
         assert(!ast.dim);
         lparen(ast);
         print("new ");
