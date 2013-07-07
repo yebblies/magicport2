@@ -719,7 +719,12 @@ Expression memcpy(T : Expression)(ref T dest, T src, size_t size)
     }
     return dest;
 }
-void* memcpy(T : VarDeclaration)(ref T dest, T src, size_t size) { assert(0); }
+T memcpy(T : VarDeclaration)(ref T dest, T src, size_t size)
+{
+    dest = new VarDeclaration(src.loc, src.type, src.ident, src._init);
+    copyMembers(dest, src);
+    return dest;
+}
 
 void copyMembers(T : Type)(T dest, T src)
 {
@@ -740,6 +745,13 @@ void copyMembers(T : Expression)(T dest, T src)
         static if (!is(T == Expression) && is(T U == super))
             copyMembers!(U)(dest, src);
    }
+}
+void copyMembers(T : Declaration)(T dest, T src)
+{
+    foreach(i, v; dest.tupleof)
+        dest.tupleof[i] = src.tupleof[i];
+    static if (!is(T == Declaration) && is(T U == super))
+        copyMembers!(U)(dest, src);
 }
 void copyMembers(T : RootObject)(T dest, T src)
 {
