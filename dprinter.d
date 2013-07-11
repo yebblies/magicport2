@@ -451,7 +451,7 @@ class DPrinter : Visitor
                     realarray = true;
         if (fd && !(ast.stc & STCstatic) && !cast(AnonStructDeclaration)D2)
             realarray = false;
-        if (ast.types.length == 1 && cast(ArrayType)ast.types[0] && (cast(ArrayType)ast.types[0]).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
+        if (ast.types.length == 1 && !ast.inits[0] && cast(ArrayType)ast.types[0] && (cast(ArrayType)ast.types[0]).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
         {
             auto at = cast(ArrayType)ast.types[0];
             visit((ast.stc & STCstatic) | STCvirtual);
