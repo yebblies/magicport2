@@ -3,7 +3,7 @@
 
 public import core.stdc.stdarg : va_list, va_start, va_end;
 public import core.stdc.stdio : printf, sprintf, fprintf, vprintf, vfprintf, fputs, fwrite, _vsnprintf, putchar, remove, _snprintf, fflush, stdout, stderr;
-public import core.stdc.stdlib : malloc, free, alloca, exit, EXIT_FAILURE, EXIT_SUCCESS, strtol, strtoull, getenv, calloc;
+public import core.stdc.stdlib : alloca, exit, EXIT_FAILURE, EXIT_SUCCESS, strtol, strtoull, getenv;
 public import core.stdc.ctype : isspace, isdigit, isalnum, isprint, isalpha, isxdigit, islower, tolower;
 public import core.stdc.errno : errno, EEXIST, ERANGE;
 public import core.stdc.limits : INT_MAX;
@@ -213,7 +213,7 @@ extern(C++):
     void* malloc(size_t n) { return GC.malloc(n); }
     void* calloc(size_t size, size_t n) { return GC.calloc(size, n); }
     void* realloc(void *p, size_t size) { return GC.realloc(p, size); }
-    void _init() {}
+    void _init() { GC.disable(); }
     void setStackBottom(void *bottom) {}
     void addroots(char* pStart, char* pEnd) {}
 }
@@ -303,6 +303,8 @@ extern(C++):
 
 // IntRange
 
+enum UINT64_MAX = 0xFFFFFFFFFFFFFFFFUL;
+
 struct SignExtendedNumber
 {
     ulong value;
@@ -389,11 +391,7 @@ struct IntRange
 {
     SignExtendedNumber imin, imax;
 
-    this(dinteger_t)
-    {
-        assert(0);
-    }
-    this(const ref SignExtendedNumber a)
+    this(SignExtendedNumber a)
     {
         imin = a;
         imax = a;
@@ -440,7 +438,27 @@ struct IntRange
     }
     IntRange castUnsigned(uinteger_t mask)
     {
-        assert(0);
+        // .... 0x1eff ] [0x1f00 .. 0x1fff] [0 .. 0xff] [0x100 .. 0x1ff] [0x200 ....
+        //
+        // regular unsigned type. We just need to see if ir steps across the
+        //  boundary of validRange. If yes, ir will represent the whole validRange,
+        //  otherwise, we just take the modulus.
+        // e.g. [0x105, 0x107] & 0xff == [5, 7]
+        //      [0x105, 0x207] & 0xff == [0, 0xff]
+        uinteger_t minChunk = imin.value & ~mask;
+        uinteger_t maxChunk = imax.value & ~mask;
+        if (minChunk == maxChunk && imin.negative == imax.negative)
+        {
+            imin.value &= mask;
+            imax.value &= mask;
+        }
+        else
+        {
+            imin.value = 0;
+            imax.value = mask;
+        }
+        imin.negative = imax.negative = false;
+        return this;
     }
     IntRange castDchar()
     {
@@ -448,13 +466,25 @@ struct IntRange
     }
     IntRange _cast(Type type)
     {
-        assert(0);
+        if (!type.isintegral())
+            return this;
+        else if (!type.isunsigned())
+            return castSigned(type.sizemask());
+        else if (type.toBasetype().ty == Tdchar)
+            return castDchar();
+        else
+            return castUnsigned(type.sizemask());
     }
     IntRange castUnsigned(Type type)
     {
-        assert(0);
+        if (!type.isintegral())
+            return castUnsigned(UINT64_MAX);
+        else if (type.toBasetype().ty == Tdchar)
+            return castDchar();
+        else
+            return castUnsigned(type.sizemask());
     }
-    bool contains(const ref IntRange a)
+    bool contains(IntRange a)
     {
         return imin <= a.imin && imax >= a.imax;
     }
@@ -761,6 +791,7 @@ void main(string[] args)
 {
     scope(success) exit(0);
     scope(failure) tracedepth = -1;
+    __locale_decpoint = ".";
 
     int argc = cast(int)args.length;
     auto argv = (new const(char)*[](argc)).ptr;
