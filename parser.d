@@ -826,19 +826,18 @@ getid:
     }
     
     id = parseIdent();
-    while (true)
+    Type parseArrayPost(Type prev)
     {
-        if (t.text == "[")
-        {
-            nextToken();
-            Expression dim;
-            if (t.text != "]")
-                dim = parseExpr();
-            check("]");
-            type = new ArrayType(type, dim);
-        } else 
-            break;
+        if (t.text != "[")
+            return prev;
+        nextToken();
+        Expression dim;
+        if (t.text != "]")
+            dim = parseExpr();
+        check("]");
+        return new ArrayType(parseArrayPost(prev), dim);
     }
+    type = parseArrayPost(type);
     
     if (t.text == ":")
     {
