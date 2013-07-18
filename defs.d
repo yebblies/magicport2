@@ -76,7 +76,7 @@ struct Array(U)
 
 public:
     size_t dim;
-    void** data;
+    T* data;
 
 private:
     size_t allocdim;
@@ -96,7 +96,7 @@ public:
             }
         }
         reserve(1);
-        data[dim++] = cast(void*)ptr;
+        data[dim++] = ptr;
     }
     void append(typeof(this)* a)
     {
@@ -110,11 +110,11 @@ public:
             if (allocdim == 0)
             {   // Not properly initialized, someone memset it to zero
                 allocdim = nentries;
-                data = cast(void **)mem.malloc(allocdim * (*data).sizeof);
+                data = cast(T*)mem.malloc(allocdim * (*data).sizeof);
             }
             else
             {   allocdim = dim + nentries;
-                data = cast(void **)mem.realloc(data, allocdim * (*data).sizeof);
+                data = cast(T*)mem.realloc(data, allocdim * (*data).sizeof);
             }
         }
     }
@@ -140,7 +140,7 @@ public:
     {
         reserve(1);
         memmove(data + index + 1, data + index, (dim - index) * (*data).sizeof);
-        data[index] = cast(void*)ptr;
+        data[index] = ptr;
         dim++;
     }
     void setDim(size_t newdim)
@@ -153,11 +153,11 @@ public:
     }
     ref T opIndex(size_t i)
     {
-        return tdata()[i];
+        return data[i];
     }
     T* tdata()
     {
-        return cast(T*)data;
+        return data;
     }
     typeof(this)* copy()
     {
@@ -170,7 +170,7 @@ public:
     {
         reserve(1);
         memmove(data + 1, data, dim * (*data).sizeof);
-        data[0] = cast(void*)ptr;
+        data[0] = ptr;
         dim++;
     }
     void zero()
@@ -183,7 +183,7 @@ public:
         static if (is(typeof(T.init.apply(fp, null))))
         {
             for (size_t i = 0; i < dim; i++)
-            {   T e = tdata()[i];
+            {   T e = data[i];
 
                 if (e)
                 {
