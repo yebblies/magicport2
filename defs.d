@@ -211,7 +211,7 @@ extern(C++):
     void free(void *p) {}
     void mark(void *pointer) {}
     void* malloc(size_t n) { return GC.malloc(n); }
-    void* calloc(size_t size, size_t n) { return GC.calloc(size, n); }
+    void* calloc(size_t size, size_t n) { return GC.calloc(size * n); }
     void* realloc(void *p, size_t size) { return GC.realloc(p, size); }
     void _init() { GC.disable(); }
     void setStackBottom(void *bottom) {}
