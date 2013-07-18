@@ -420,6 +420,7 @@ auto structTypes =
     "FileName",
     "N",
     "Scope",
+    "TemplateOverloadSet",
 
     "LINK",
     "PREC",
@@ -635,6 +636,7 @@ auto classTypes =
     "DtorExpStatement",
     "DebugStatement",
     "SwitchErrorStatement",
+    "ErrorStatement",
     "Statement",
 
     expTypes.expand,
