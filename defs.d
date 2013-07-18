@@ -113,7 +113,7 @@ public:
                 data = cast(T*)mem.malloc(allocdim * (*data).sizeof);
             }
             else
-            {   allocdim = dim + nentries;
+            {   allocdim = (dim + nentries) * 2;
                 data = cast(T*)mem.realloc(data, allocdim * (*data).sizeof);
             }
         }
