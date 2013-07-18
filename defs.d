@@ -305,6 +305,12 @@ extern(C++):
 
 enum UINT64_MAX = 0xFFFFFFFFFFFFFFFFUL;
 
+static uinteger_t copySign(uinteger_t x, bool sign)
+{
+    // return sign ? -x : x;
+    return (x - cast(uinteger_t)sign) ^ -cast(uinteger_t)sign;
+}
+
 struct SignExtendedNumber
 {
     ulong value;
@@ -351,37 +357,138 @@ struct SignExtendedNumber
     }
     SignExtendedNumber opNeg() const
     {
-        assert(0);
+        if (value == 0)
+            return SignExtendedNumber(-cast(ulong)negative);
+        else
+            return SignExtendedNumber(-value, !negative);
     }
-    SignExtendedNumber opAdd(const ref SignExtendedNumber a) const
+    SignExtendedNumber opAdd(const SignExtendedNumber a) const
     {
-        assert(0);
+        uinteger_t sum = value + a.value;
+        bool carry = sum < value && sum < a.value;
+        if (negative != a.negative)
+            return SignExtendedNumber(sum, !carry);
+        else if (negative)
+            return SignExtendedNumber(carry ? sum : 0, true);
+        else
+            return SignExtendedNumber(carry ? UINT64_MAX : sum, false);
     }
-    SignExtendedNumber opSub(const ref SignExtendedNumber a) const
+    SignExtendedNumber opSub(const SignExtendedNumber a) const
     {
-        assert(0);
+        if (a.isMinimum())
+            return negative ? SignExtendedNumber(value, false) : max();
+        else
+            return this + (-a);
     }
-    SignExtendedNumber opMul(const ref SignExtendedNumber a) const
+    SignExtendedNumber opMul(const SignExtendedNumber a) const
     {
-        assert(0);
+        // perform *saturated* multiplication, otherwise we may get bogus ranges
+        //  like 0x10 * 0x10 == 0x100 == 0.
+
+        /* Special handling for zeros:
+            INT65_MIN * 0 = 0
+            INT65_MIN * + = INT65_MIN
+            INT65_MIN * - = INT65_MAX
+            0 * anything = 0
+        */
+        if (value == 0)
+        {
+            if (!negative)
+                return this;
+            else if (a.negative)
+                return max();
+            else
+                return a.value == 0 ? a : this;
+        }
+        else if (a.value == 0)
+            return a * this;   // don't duplicate the symmetric case.
+
+        SignExtendedNumber rv;
+        // these are != 0 now surely.
+        uinteger_t tAbs = copySign(value, negative);
+        uinteger_t aAbs = copySign(a.value, a.negative);
+        rv.negative = negative != a.negative;
+        if (UINT64_MAX / tAbs < aAbs)
+            rv.value = rv.negative-1;
+        else
+            rv.value = copySign(tAbs * aAbs, rv.negative);
+        return rv;
     }
-    SignExtendedNumber opDiv(const ref SignExtendedNumber a) const
+    SignExtendedNumber opDiv(const SignExtendedNumber a) const
     {
-        assert(0);
+        /* special handling for zeros:
+            INT65_MIN / INT65_MIN = 1
+            anything / INT65_MIN = 0
+            + / 0 = INT65_MAX  (eh?)
+            - / 0 = INT65_MIN  (eh?)
+        */
+        if (a.value == 0)
+        {
+            if (a.negative)
+                return SignExtendedNumber(value == 0 && negative);
+            else
+                return extreme(negative);
+        }
+
+        uinteger_t aAbs = copySign(a.value, a.negative);
+        uinteger_t rvVal;
+
+        if (!isMinimum())
+            rvVal = copySign(value, negative) / aAbs;
+        // Special handling for INT65_MIN
+        //  if the denominator is not a power of 2, it is same as UINT64_MAX / x.
+        else if (aAbs & (aAbs-1))
+            rvVal = UINT64_MAX / aAbs;
+        // otherwise, it's the same as reversing the bits of x.
+        else
+        {
+            if (aAbs == 1)
+                return extreme(!a.negative);
+            rvVal = 1UL << 63;
+            aAbs >>= 1;
+            if (aAbs & 0xAAAAAAAAAAAAAAAAUL) rvVal >>= 1;
+            if (aAbs & 0xCCCCCCCCCCCCCCCCUL) rvVal >>= 2;
+            if (aAbs & 0xF0F0F0F0F0F0F0F0UL) rvVal >>= 4;
+            if (aAbs & 0xFF00FF00FF00FF00UL) rvVal >>= 8;
+            if (aAbs & 0xFFFF0000FFFF0000UL) rvVal >>= 16;
+            if (aAbs & 0xFFFFFFFF00000000UL) rvVal >>= 32;
+        }
+        bool rvNeg = negative != a.negative;
+        rvVal = copySign(rvVal, rvNeg);
+
+        return SignExtendedNumber(rvVal, rvVal != 0 && rvNeg);
     }
-    SignExtendedNumber opMod(const ref SignExtendedNumber a) const
+    SignExtendedNumber opMod(const SignExtendedNumber a) const
     {
-        assert(0);
+        if (a.value == 0)
+            return !a.negative ? a : isMinimum() ? SignExtendedNumber(0) : this;
+
+        uinteger_t aAbs = copySign(a.value, a.negative);
+        uinteger_t rvVal;
+
+        // a % b == sgn(a) * abs(a) % abs(b).
+        if (!isMinimum())
+            rvVal = copySign(value, negative) % aAbs;
+        // Special handling for INT65_MIN
+        //  if the denominator is not a power of 2, it is same as UINT64_MAX%x + 1.
+        else if (aAbs & (aAbs - 1))
+            rvVal = UINT64_MAX % aAbs + 1;
+        //  otherwise, the modulus is trivially zero.
+        else
+            rvVal = 0;
+
+        rvVal = copySign(rvVal, negative);
+        return SignExtendedNumber(rvVal, rvVal != 0 && negative);
     }
     ref SignExtendedNumber opAddAssign(int a)
     {
         assert(0);
     }
-    SignExtendedNumber opShl(const ref SignExtendedNumber a)
+    SignExtendedNumber opShl(const SignExtendedNumber a)
     {
         assert(0);
     }
-    SignExtendedNumber opShr(const ref SignExtendedNumber a)
+    SignExtendedNumber opShr(const SignExtendedNumber a)
     {
         assert(0);
     }
