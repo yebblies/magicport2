@@ -1183,6 +1183,10 @@ class DPrinter : Visitor
         print("cast(");
         visit(ast.t);
         print(")");
+        auto pt = cast(PointerType)ast.t;
+        auto ct = pt ? cast(ClassType)pt.next : null;
+        if (ct && classTypes.canFind(ct.id))
+            print("cast(void*)");
         visit(ast.e);
         rparen(ast);
     }
