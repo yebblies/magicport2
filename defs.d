@@ -315,17 +315,17 @@ struct SignExtendedNumber
 {
     ulong value;
     bool negative;
-    static SignExtendedNumber fromInteger(uinteger_t value)
+    static SignExtendedNumber fromInteger(uinteger_t value_)
     {
-        assert(0);
+        return SignExtendedNumber(value_, value_ >> 63);
     }
     static SignExtendedNumber extreme(bool minimum)
     {
-        assert(0);
+        return SignExtendedNumber(minimum-1, minimum);
     }
     static SignExtendedNumber max()
     {
-        assert(0);
+        return SignExtendedNumber(UINT64_MAX, false);
     }
     static SignExtendedNumber min()
     {
@@ -337,7 +337,7 @@ struct SignExtendedNumber
     }
     bool opEquals(const ref SignExtendedNumber a) const
     {
-        assert(0);
+        return value == a.value && negative == a.negative;
     }
     int opCmp(const ref SignExtendedNumber a) const
     {
@@ -482,15 +482,56 @@ struct SignExtendedNumber
     }
     ref SignExtendedNumber opAddAssign(int a)
     {
-        assert(0);
+        assert(a == 1);
+        if (value != UINT64_MAX)
+            ++ value;
+        else if (negative)
+        {
+            value = 0;
+            negative = false;
+        }
+        return this;
     }
     SignExtendedNumber opShl(const SignExtendedNumber a)
     {
-        assert(0);
+        // assume left-shift the shift-amount is always unsigned. Thus negative
+        //  shifts will give huge result.
+        if (value == 0)
+            return this;
+        else if (a.negative)
+            return extreme(negative);
+
+        uinteger_t v = copySign(value, negative);
+
+        // compute base-2 log of 'v' to determine the maximum allowed bits to shift.
+        // Ref: http://graphics.stanford.edu/~seander/bithacks.html#IntegerLog
+
+        // Why is this a size_t? Looks like a bug.
+        size_t r, s;
+
+        r = (v > 0xFFFFFFFFUL) << 5; v >>= r;
+        s = (v > 0xFFFFUL    ) << 4; v >>= s; r |= s;
+        s = (v > 0xFFUL      ) << 3; v >>= s; r |= s;
+        s = (v > 0xFUL       ) << 2; v >>= s; r |= s;
+        s = (v > 0x3UL       ) << 1; v >>= s; r |= s;
+                                               r |= (v >> 1);
+
+        uinteger_t allowableShift = 63 - r;
+        if (a.value > allowableShift)
+            return extreme(negative);
+        else
+            return SignExtendedNumber(value << a.value, negative);
     }
     SignExtendedNumber opShr(const SignExtendedNumber a)
     {
-        assert(0);
+        if (a.negative || a.value > 64)
+            return negative ? SignExtendedNumber(-1, true) : SignExtendedNumber(0);
+        else if (isMinimum())
+            return a.value == 0 ? this : SignExtendedNumber(-1UL << (64-a.value), true);
+
+        uinteger_t x = value ^ -cast(int)negative;
+        x >>= a.value;
+        return SignExtendedNumber(x ^ -cast(int)negative, negative);
     }
 }
 
@@ -531,13 +572,26 @@ struct IntRange
         }
         return IntRange(lower, upper);
     }
+    static IntRange fromNumbers2(SignExtendedNumber* numbers)
+    {
+        if (numbers[0] < numbers[1])
+            return IntRange(numbers[0], numbers[1]);
+        else
+            return IntRange(numbers[1], numbers[0]);
+    }
     static IntRange fromNumbers4(SignExtendedNumber* numbers)
     {
-        assert(0);
+        IntRange ab = fromNumbers2(numbers);
+        IntRange cd = fromNumbers2(numbers + 2);
+        if (cd.imin < ab.imin)
+            ab.imin = cd.imin;
+        if (cd.imax > ab.imax)
+            ab.imax = cd.imax;
+        return ab;
     }
     static IntRange widest()
     {
-        assert(0);
+        return IntRange(SignExtendedNumber.min(), SignExtendedNumber.max());
     }
     IntRange castSigned(uinteger_t mask)
     {
@@ -606,7 +660,14 @@ struct IntRange
     }
     IntRange castDchar()
     {
-        assert(0);
+        // special case for dchar. Casting to dchar means "I'll ignore all
+        //  invalid characters."
+        castUnsigned(0xFFFFFFFFUL);
+        if (imin.value > 0x10FFFFUL)   // ??
+            imin.value = 0x10FFFFUL;   // ??
+        if (imax.value > 0x10FFFFUL)
+            imax.value = 0x10FFFFUL;
+        return this;
     }
     IntRange _cast(Type type)
     {
