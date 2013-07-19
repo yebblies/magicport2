@@ -506,7 +506,7 @@ struct IntRange
     this(SignExtendedNumber lower, SignExtendedNumber upper)
     {
         imin = lower;
-        imax = lower;
+        imax = upper;
     }
 
     static IntRange fromType(Type type)
@@ -613,7 +613,11 @@ struct IntRange
     }
     ref const(IntRange) dump(const(char)* funcName, Expression e) const
     {
-        assert(0);
+        printf("[(%c)%#018llx, (%c)%#018llx] @ %s ::: %s\n",
+               imin.negative?'-':'+', cast(ulong)imin.value,
+               imax.negative?'-':'+', cast(ulong)imax.value,
+               funcName, e.toChars());
+        return this;
     }
     IntRange splitBySign(ref IntRange negRange, ref bool hasNegRange, ref IntRange nonNegRange, ref bool hasNonNegRange) const
     {
