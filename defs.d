@@ -541,7 +541,44 @@ struct IntRange
     }
     IntRange castSigned(uinteger_t mask)
     {
-        assert(0);
+        // .... 0x1e7f ] [0x1e80 .. 0x1f7f] [0x1f80 .. 0x7f] [0x80 .. 0x17f] [0x180 ....
+        //
+        // regular signed type. We use a technique similar to the unsigned version,
+        //  but the chunk has to be offset by 1/2 of the range.
+        uinteger_t halfChunkMask = mask >> 1;
+        uinteger_t minHalfChunk = imin.value & ~halfChunkMask;
+        uinteger_t maxHalfChunk = imax.value & ~halfChunkMask;
+        int minHalfChunkNegativity = imin.negative; // 1 = neg, 0 = nonneg, -1 = chunk containing ::max
+        int maxHalfChunkNegativity = imax.negative;
+        if (minHalfChunk & mask)
+        {
+            minHalfChunk += halfChunkMask+1;
+            if (minHalfChunk == 0)
+                -- minHalfChunkNegativity;
+        }
+        if (maxHalfChunk & mask)
+        {
+            maxHalfChunk += halfChunkMask+1;
+            if (maxHalfChunk == 0)
+                -- maxHalfChunkNegativity;
+        }
+        if (minHalfChunk == maxHalfChunk && minHalfChunkNegativity == maxHalfChunkNegativity)
+        {
+            imin.value &= mask;
+            imax.value &= mask;
+            // sign extend if necessary.
+            imin.negative = imin.value & ~halfChunkMask;
+            imax.negative = imax.value & ~halfChunkMask;
+            halfChunkMask += 1;
+            imin.value = (imin.value ^ halfChunkMask) - halfChunkMask;
+            imax.value = (imax.value ^ halfChunkMask) - halfChunkMask;
+        }
+        else
+        {
+            imin = SignExtendedNumber(~halfChunkMask, true);
+            imax = SignExtendedNumber(halfChunkMask, false);
+        }
+        return this;
     }
     IntRange castUnsigned(uinteger_t mask)
     {
@@ -597,19 +634,34 @@ struct IntRange
     }
     bool containsZero() const
     {
-        assert(0);
+        return (imin.negative && !imax.negative)
+            || (!imin.negative && imin.value == 0);
     }
     IntRange absNeg() const
     {
-        assert(0);
+        if (imax.negative)
+            return this;
+        else if (!imin.negative)
+            return IntRange(-imax, -imin);
+        else
+        {
+            SignExtendedNumber imaxAbsNeg = -imax;
+            return IntRange(imaxAbsNeg < imin ? imaxAbsNeg : imin,
+                            SignExtendedNumber(0));
+        }
     }
     IntRange unionWidth(const ref IntRange other) const
     {
-        assert(0);
+        return IntRange(imin < other.imin ? imin : other.imin,
+                        imax > other.imax ? imax : other.imax);
     }
-    IntRange unionOrAssign(IntRange other, ref bool union_)
+    void unionOrAssign(IntRange other, ref bool union_)
     {
-        assert(0);
+        if (!union_ || imin > other.imin)
+            imin = other.imin;
+        if (!union_ || imax < other.imax)
+            imax = other.imax;
+        union_ = true;
     }
     ref const(IntRange) dump(const(char)* funcName, Expression e) const
     {
@@ -619,9 +671,20 @@ struct IntRange
                funcName, e.toChars());
         return this;
     }
-    IntRange splitBySign(ref IntRange negRange, ref bool hasNegRange, ref IntRange nonNegRange, ref bool hasNonNegRange) const
+    void splitBySign(ref IntRange negRange, ref bool hasNegRange, ref IntRange nonNegRange, ref bool hasNonNegRange) const
     {
-        assert(0);
+        hasNegRange = imin.negative;
+        if (hasNegRange)
+        {
+            negRange.imin = imin;
+            negRange.imax = imax.negative ? imax : SignExtendedNumber(-1, true);
+        }
+        hasNonNegRange = !imax.negative;
+        if (hasNonNegRange)
+        {
+            nonNegRange.imin = imin.negative ? SignExtendedNumber(0) : imin;
+            nonNegRange.imax = imax;
+        }
     }
 }
 
