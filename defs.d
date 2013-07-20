@@ -16,6 +16,8 @@ private import core.stdc.string : strcmp, strlen, strncmp, strchr, memset, memmo
 
 public import core.sys.windows.windows;
 
+private import core.memory;
+
 // generated source
 
 import dmd;
@@ -52,21 +54,25 @@ extern extern(C) uint _end;
 
 // root.Object
 
+extern(C++)
 class RootObject
 {
-    extern(C++) int dyncast() { assert(0); }
-    extern(C++) bool equals(RootObject) { assert(0); }
-    extern(C++) int compare(RootObject) { assert(0); }
-    extern(C++) char *toChars() { assert(0); }
-    extern(C++) void toBuffer(OutBuffer* buf) { assert(0); }
-    extern(C++) void print()
+    void dtor() { assert(0); }
+    bool equals(RootObject) { assert(0); }
+    hash_t hashCode() { assert(0); }
+    int compare(RootObject) { assert(0); }
+    void print()
     {
         printf("%s %p\n", toChars(), this);
     }
+    char *toChars() { assert(0); }
+    void toBuffer(OutBuffer* buf) { assert(0); }
+    int dyncast() { assert(0); }
 }
 
 // root.Array
 
+extern(C++)
 struct Array(U)
 {
     static if (!is(U == class))
@@ -178,7 +184,7 @@ public:
         memset(data,0,dim * (data[0]).sizeof);
     }
     void pop() { assert(0); }
-    extern(C++) int apply(int function(T, void*) fp, void* param)
+    int apply(int function(T, void*) fp, void* param)
     {
         static if (is(typeof(T.init.apply(fp, null))))
         {
@@ -200,10 +206,9 @@ public:
 
 // root.rmem
 
+extern(C++)
 struct Mem
 {
-    import core.memory;
-extern(C++):
     char* strdup(const char *p)
     {
         return p[0..strlen(p)+1].dup.ptr;
@@ -238,6 +243,7 @@ extern(C) float strtof(const(char)* p, char** endp);
 extern(C) double strtod(const(char)* p, char** endp);
 extern(C) real strtold(const(char)* p, char** endp);
 
+extern(C++)
 struct Port
 {
     enum nan = double.nan;
@@ -245,7 +251,6 @@ struct Port
     enum ldbl_max = real.max;
     enum ldbl_nan = real.nan;
     enum ldbl_infinity = real.infinity;
-extern(C++):
     static real snan;
     static this()
     {
@@ -848,13 +853,14 @@ public:
     const(char)* toDchars() const { return value.ptr; }
 };
 
+extern(C++)
 struct StringTable
 {
 private:
     StringValue*[const(char)[]] table;
 
 public:
-    extern(C++) void _init(size_t size = 37)
+    void _init(size_t size = 37)
     {
     }
     ~this()
@@ -862,14 +868,14 @@ public:
         table = null;
     }
 
-    extern(C++) StringValue *lookup(const(char)* s, size_t len)
+    StringValue *lookup(const(char)* s, size_t len)
     {
         auto p = s[0..len] in table;
         if (p)
             return *p;
         return null;
     }
-    extern(C++) StringValue *insert(const(char)* s, size_t len)
+    StringValue *insert(const(char)* s, size_t len)
     {
         auto key = s[0..len];
         auto p = key in table;
@@ -878,7 +884,7 @@ public:
         key = key ~ '\0';
         return (table[key[0..$-1]] = new StringValue(null, key));
     }
-    extern(C++) StringValue *update(const(char)* s, size_t len)
+    StringValue *update(const(char)* s, size_t len)
     {
         //printf("StringTable::update %d %.*s\n", len, len, s);
         auto key = s[0..len];
@@ -892,6 +898,7 @@ public:
 
 // root.outbuffer
 
+extern(C++)
 struct OutBuffer
 {
     ubyte* data;
@@ -901,7 +908,6 @@ struct OutBuffer
     int doindent;
     int level;
     int notlinehead;
-extern(C++):
     char *extractData();
     void mark();
 
@@ -947,79 +953,28 @@ Type memcpy(T : Type)(ref T dest, T src, size_t size)
 {
     dest = cast(T)src.clone();;
     assert(dest);
-    assert(typeid(dest) == typeid(src));
-    switch(typeid(src).toString())
-    {
-        foreach(s; typeTypes.expand)
-        {
-            case "dmd." ~ s:
-                mixin("copyMembers!(" ~ s ~ ")(cast(" ~ s ~ ")dest, cast(" ~ s ~ ")src);");
-                return dest;
-        }
-    default:
-        assert(0, "Cannot copy type " ~ typeid(src).toString());
-    }
+    xmemcpy(cast(void*)dest, cast(void*)src, GC.sizeOf(cast(void*)dest));
     return dest;
 }
 T memcpy(T : Parameter)(ref T dest, T src, size_t size)
 {
     dest = new Parameter(src.storageClass, src.type, src.ident, src.defaultArg);
+    assert(dest);
+    xmemcpy(cast(void*)dest, cast(void*)src, GC.sizeOf(cast(void*)dest));
     return dest;
 }
 Expression memcpy(T : Expression)(ref T dest, T src, size_t size)
 {
     dest = cast(T)src.clone();;
     assert(dest);
-    assert(typeid(dest) == typeid(src), typeid(src).toString());
-    switch(typeid(src).toString())
-    {
-        foreach(s; expTypes.expand)
-        {
-            case "dmd." ~ s:
-                mixin("copyMembers!(" ~ s ~ ")(cast(" ~ s ~ ")dest, cast(" ~ s ~ ")src);");
-                return dest;
-        }
-    default:
-        assert(0, "Cannot copy expression " ~ typeid(src).toString());
-    }
+    xmemcpy(cast(void*)dest, cast(void*)src, GC.sizeOf(cast(void*)dest));
     return dest;
 }
 T memcpy(T : VarDeclaration)(ref T dest, T src, size_t size)
 {
     dest = new VarDeclaration(src.loc, src.type, src.ident, src._init);
-    copyMembers(dest, src);
+    xmemcpy(cast(void*)dest, cast(void*)src, GC.sizeOf(cast(void*)dest));
     return dest;
-}
-
-void copyMembers(T : Type)(T dest, T src)
-{
-    static if (!is(T == RootObject))
-    {
-        foreach(i, v; dest.tupleof)
-            dest.tupleof[i] = src.tupleof[i];
-        static if (!is(T == Type) && is(T U == super))
-            copyMembers!(U)(dest, src);
-   }
-}
-void copyMembers(T : Expression)(T dest, T src)
-{
-    static if (!is(T == RootObject))
-    {
-        foreach(i, v; dest.tupleof)
-            dest.tupleof[i] = src.tupleof[i];
-        static if (!is(T == Expression) && is(T U == super))
-            copyMembers!(U)(dest, src);
-   }
-}
-void copyMembers(T : Declaration)(T dest, T src)
-{
-    foreach(i, v; dest.tupleof)
-        dest.tupleof[i] = src.tupleof[i];
-    static if (!is(T == Declaration) && is(T U == super))
-        copyMembers!(U)(dest, src);
-}
-void copyMembers(T : RootObject)(T dest, T src)
-{
 }
 
 void main(string[] args)
