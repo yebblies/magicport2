@@ -302,6 +302,7 @@ class DPrinter : Visitor
             [null, "deprecation"],
             [null, "immutableOf"],
             [null, "mangleExact"],
+            [null, "isCPPclass"],
         ];
         foreach(m; matchlist)
         {
