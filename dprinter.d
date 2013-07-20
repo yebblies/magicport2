@@ -85,7 +85,7 @@ class DPrinter : Visitor
     }
     void visit()(int stc)
     {
-        static immutable names = ["static", "enum", "extern", "extern(C)", "virtual", "__cdecl", "abstract", "__inline", "register"];
+        static immutable names = ["static __gshared", "enum", "extern", "extern(C)", "virtual", "__cdecl", "abstract", "__inline", "register"];
         bool one;
         assert(!(stc & STCconst));
         /*if (!(stc & STCvirtual))
@@ -169,7 +169,7 @@ class DPrinter : Visitor
             "body", "real", "alias", "is", "invariant", "TypeInfo", "in", "byte", "debug", "inout",
             "override", "final", "toString", "delegate", "cast", "mangleof", "stringof",
             "enum", "foreach", "finally", "super", "unittest", "init", "tupleof",
-            "Throwable"
+            "Throwable", "typeinfo"
         ];
         print(list.canFind(s) ? '_' ~ s : s);
     }
@@ -533,7 +533,7 @@ class DPrinter : Visitor
                     ast.inits[0] = vd.xinit;
                 }
             }
-            print("extern(C++) __gshared ");
+            print("extern(C++) ");
         }
         else if (ast.types.length == 1 && !(ast.stc & STCconst) && !D2 && !fd)
         {
