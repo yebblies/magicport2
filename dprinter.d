@@ -761,7 +761,7 @@ class DPrinter : Visitor
         if (ast.superid || parentlessclasses.canFind(ast.id))
             isclass = true;
         if (isclass)
-            print("class");
+            print("extern(C++) class");
         else
             print(ast.kind);
         print(" ");
