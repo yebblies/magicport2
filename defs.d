@@ -49,8 +49,8 @@ alias mkdir _mkdir;
 private extern(C) int memicmp(const char*, const char*, size_t);
 private extern(C) char* strupr(const char*);
 
-extern extern(C) uint _xi_a;
-extern extern(C) uint _end;
+extern extern(C) __gshared uint _xi_a;
+extern extern(C) __gshared uint _end;
 
 // root.Object
 
@@ -222,7 +222,7 @@ struct Mem
     void setStackBottom(void *bottom) {}
     void addroots(char* pStart, char* pEnd) {}
 }
-extern(C++) Mem mem;
+extern(C++) __gshared Mem mem;
 
 // root.response
 
@@ -251,7 +251,7 @@ struct Port
     enum ldbl_max = real.max;
     enum ldbl_nan = real.nan;
     enum ldbl_infinity = real.infinity;
-    static real snan;
+    static __gshared real snan;
     static this()
     {
         /*
@@ -837,7 +837,7 @@ RootObject* _aaGet(AA** aa, RootObject o)
 extern(C++) void* speller(const char*, void* function(void*, const(char)*), Scope*, const char*) { return null; }
 extern(C++) void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*) { return null; }
 
-const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+extern(C++) __gshared const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
 // root.stringtable
 
@@ -998,7 +998,7 @@ void main(string[] args)
     // }
 }
 
-int tracedepth;
+__gshared int tracedepth;
 
 version=trace;
 // version=fulltrace;
