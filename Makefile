@@ -14,11 +14,11 @@ gen: magicport2.exe
 	magicport2
 
 build1: port\dmd.exe
-port\dmd.exe: port\dmd.d defs.d
-	$(COMPILER) -J..\dmdgit -magicport port/dmd defs -d -ofport\dmd.exe  $(LIBS) -debug -gc
+port\dmd.exe: port\dmd.d defs.d $(LIBS)
+	$(COMPILER) -J..\dmdgit -magicport port/dmd defs -d -ofport\dmd.exe  $(LIBS) -debug -gc -vtls
 
 build2: port\dmdx.exe
-port\dmdx.exe: port\dmd.d defs.d port\dmd.exe
+port\dmdx.exe: port\dmd.d defs.d port\dmd.exe $(LIBS)
 	port\dmd          -J..\dmdgit -magicport port/dmd defs -d -ofport\dmdx.exe $(LIBS) -debug -gc
 
 magicport2.exe : $(SRC)
