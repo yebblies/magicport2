@@ -533,7 +533,7 @@ class DPrinter : Visitor
                     ast.inits[0] = vd.xinit;
                 }
             }
-            print("extern(C++) ");
+            print("extern(C++) __gshared ");
         }
         else if (ast.types.length == 1 && !(ast.stc & STCconst) && !D2 && !fd)
         {
