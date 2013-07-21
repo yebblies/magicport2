@@ -8,7 +8,7 @@ LIBS=..\dmdgit\src\glue.lib ..\dmdgit\src\backend.lib ..\dmdgit\src\outbuffer.ob
 
 COMPILER=..\dmdgit\src\dmd.exe
 
-default: gen build1 build2
+default: gen build1 build2 build3
 
 gen: magicport2.exe
 	magicport2
@@ -20,6 +20,10 @@ port\dmd.exe: port\dmd.d defs.d $(LIBS)
 build2: port\dmdx.exe
 port\dmdx.exe: port\dmd.d defs.d port\dmd.exe $(LIBS)
 	port\dmd          -J..\dmdgit -magicport port/dmd defs -d -ofport\dmdx.exe $(LIBS) -debug -gc
+
+build3: port\dmdxx.exe
+port\dmdxx.exe: port\dmd.d defs.d port\dmdx.exe $(LIBS)
+	port\dmdx          -J..\dmdgit -magicport port/dmd defs -d -ofport\dmdxx.exe $(LIBS) -debug -gc
 
 magicport2.exe : $(SRC)
 	$(COMPILER) $(SRC) $(DFLAGS)
