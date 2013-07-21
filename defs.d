@@ -58,7 +58,10 @@ extern(C++)
 class RootObject
 {
     void dtor() { assert(0); }
-    bool equals(RootObject) { assert(0); }
+    bool equals(RootObject o)
+    {
+        return o is this;
+    }
     hash_t hashCode() { assert(0); }
     int compare(RootObject) { assert(0); }
     void print()
