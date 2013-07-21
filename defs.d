@@ -804,7 +804,13 @@ extern extern(C++) Expression createTypeInfoArray(Scope* sc, Expression *args, s
 
 // Util
 
-int binary(char *, const(char)**, size_t) { assert(0); }
+int binary(char* p, const(char)** tab, size_t n)
+{
+    for (int i = 0; i < n; ++i)
+        if (!strcmp(p, tab[i]))
+            return i;
+    return -1;
+}
 
 struct AA;
 RootObject _aaGetRvalue(AA* aa, RootObject o)
