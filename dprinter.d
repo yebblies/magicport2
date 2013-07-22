@@ -148,30 +148,23 @@ class DPrinter : Visitor
     
     void visitIdent(string s)
     {
-        if (s == "I")
+        switch(s)
         {
-            print("1i");
-            return;
-        }
-        if (s == "NULL")
-        {
-            print("null");
-            return;
-        }
-        if (s == "__IMPORT__")
-        {
-            print("\"v\" ~ import(\"VERSION\")");
-            return;
-        }
-        auto list =
-        [
-            "import", "module", "version", "align", "dchar", "ref", "scope", "wchar", "pragma",
+        case "I": print("1i"); return;
+        case "NULL": print("null"); return;
+        case "__IMPORT__": print("\"v\" ~ import(\"VERSION\")"); return;
+        case "import", "module", "version", "align", "dchar", "ref", "scope", "wchar", "pragma",
             "body", "real", "alias", "is", "invariant", "TypeInfo", "in", "byte", "debug", "inout",
             "override", "final", "toString", "delegate", "cast", "mangleof", "stringof",
             "enum", "foreach", "finally", "super", "unittest", "init", "tupleof",
-            "Throwable", "typeinfo"
-        ];
-        print(list.canFind(s) ? '_' ~ s : s);
+            "Throwable", "typeinfo":
+            print("_");
+            print(s);
+            return;
+        default:
+            print(s);
+            return;
+        }
     }
     
     override void visitModule(Module ast)
