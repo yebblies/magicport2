@@ -1335,10 +1335,7 @@ Statement parseStatement()
                     s[$-1] ~= parseStatement();
             }
             assert(l == level);
-            Statement selse;
-            if (t.text == "else")
-                selse = parseStatement();
-            return new VersionStatement(cond, s, selse);
+            return new VersionStatement(cond, s);
         }
         else
             fail();

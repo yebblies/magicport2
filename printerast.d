@@ -157,13 +157,13 @@ class AstPrinter : Visitor
     override void visitVersionDeclaration(VersionDeclaration ast)
     {
         print("VersionDeclataion(");
-        assert(ast.es.length == ast.ds.length);
+        assert(ast.cond.length == ast.members.length);
         depth++;
-        foreach(i; 0..ast.es.length)
+        foreach(i; 0..ast.cond.length)
         {
             print("Body(");
-            visit(ast.es[i]);
-            visit(ast.ds[i]);
+            visit(ast.cond[i]);
+            visit(ast.members[i]);
             print(")");
         }
         depth--;
@@ -597,13 +597,13 @@ class AstPrinter : Visitor
     override void visitVersionStatement(VersionStatement ast)
     {
         print("VersionStatement(");
-        assert(ast.cond.length == ast.s.length);
+        assert(ast.cond.length == ast.members.length);
         depth++;
         foreach(i; 0..ast.cond.length)
         {
             print("Body(");
             visit(ast.cond[i]);
-            visit(ast.s[i]);
+            visit(ast.members[i]);
             print(")");
         }
         depth--;

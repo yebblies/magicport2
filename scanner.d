@@ -233,12 +233,12 @@ class Scanner : Visitor
     }
     override void visitVersionDeclaration(VersionDeclaration ast)
     {
-        foreach(e; ast.es)
+        foreach(e; ast.cond)
             if (e)
                 visit(e);
-        foreach(i, ds; ast.ds)
+        foreach(i, ds; ast.members)
         {
-            if (!ast.es[i] || eval(ast.es[i]))
+            if (!ast.cond[i] || eval(ast.cond[i]))
             {
                 foreach(d; ds)
                     visit(d);
@@ -575,7 +575,7 @@ class Scanner : Visitor
         foreach(e; ast.cond)
             if (e)
                 visit(e);
-        foreach(ss; ast.s)
+        foreach(ss; ast.members)
             foreach(s; ss)
                 visit(s);
     }
@@ -850,8 +850,8 @@ Declaration[] resolveVersions(Declaration[] decls)
 
 Declaration[] pickWinner(VersionDeclaration ast)
 {
-    auto conds = ast.es;
-    auto decls = ast.ds;
+    auto conds = ast.cond;
+    auto decls = ast.members;
     Declaration[] delse;
     if (!conds[$-1])
     {

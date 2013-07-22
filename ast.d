@@ -124,9 +124,9 @@ class ConstructDeclaration : Declaration
 
 class VersionDeclaration : Declaration
 {
-    Expression[] es;
-    Declaration[][] ds;
-    this(Expression[] es, Declaration[][] ds) { this.es = es; this.ds = ds; }
+    Expression[] cond;
+    Declaration[][] members;
+    this(Expression[] cond, Declaration[][] members) { this.cond = cond; this.members = members; }
     mixin(visitor_str);
 }
 
@@ -593,9 +593,8 @@ class ExpressionStatement : Statement
 class VersionStatement : Statement
 {
     Expression[] cond;
-    Statement[][] s;
-    Statement selse;
-    this(Expression[] cond, Statement[][] s, Statement selse) { this.cond = cond; this.s = s; this.selse = selse; }
+    Statement[][] members;
+    this(Expression[] cond, Statement[][] members) { this.cond = cond; this.members = members; }
     mixin(visitor_str);
 }
 

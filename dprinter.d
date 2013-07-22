@@ -670,9 +670,9 @@ class DPrinter : Visitor
         print(")");
     }
 
-    override void visitVersionDeclaration(VersionDeclaration ast)
+    void versionCommon(T)(T ast)
     {
-        foreach(i, c; ast.es)
+        foreach(i, c; ast.cond)
         {
             if (c)
             {
@@ -696,10 +696,15 @@ class DPrinter : Visitor
             }
             println("{");
             indent++;
-            visit(ast.ds[i]);
+            visit(ast.members[i]);
             indent--;
             println("}");
         }
+    }
+
+    override void visitVersionDeclaration(VersionDeclaration ast)
+    {
+        versionCommon(ast);
     }
 
     override void visitTypedefDeclaration(TypedefDeclaration ast)
@@ -1479,34 +1484,7 @@ class DPrinter : Visitor
 
     override void visitVersionStatement(VersionStatement ast)
     {
-        foreach(i, c; ast.cond)
-        {
-            if (c)
-            {
-                if (i)
-                    print("else ");
-                auto ie = cast(IdentExpr)c;
-                if (ie && ie.id == "DEBUG")
-                {
-                    println("debug");
-                }
-                else
-                {
-                    print("static if (");
-                    visit(c);
-                    println(")");
-                }
-            }
-            else
-            {
-                println("else");
-            }
-            println("{");
-            indent++;
-            visit(ast.s[i]);
-            indent--;
-            println("}");
-        }
+        versionCommon(ast);
     }
 
     override void visitIfStatement(IfStatement ast)

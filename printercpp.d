@@ -272,18 +272,18 @@ class CppPrinter : Visitor
 
     override void visitVersionDeclaration(VersionDeclaration ast)
     {
-        foreach(i; 0..ast.es.length)
+        foreach(i; 0..ast.cond.length)
         {
             if (i == 0)
                 print("#if ");
-            else if (ast.es[i])
+            else if (ast.cond[i])
                 print("#elif ");
             else
                 print("#else");
-            if (ast.es[i])
-                visit(ast.es[i]);
+            if (ast.cond[i])
+                visit(ast.cond[i]);
             println();
-            visit(ast.ds[i]);
+            visit(ast.members[i]);
         }
         println("#endif");
     }
@@ -820,12 +820,10 @@ class CppPrinter : Visitor
             if (ast.cond[i])
                 visit(ast.cond[i]);
             println();
-            visit(ast.s[i]);
+            visit(ast.members[i]);
         }
-        assert(ast.s.length == ast.cond.length);
+        assert(ast.members.length == ast.cond.length);
         println("#endif");
-        if (ast.selse)
-            visit(ast.selse);
     }
 
     override void visitIfStatement(IfStatement ast)
