@@ -1014,6 +1014,7 @@ version=trace;
 
 version(trace)
 {
+    enum dmd_trace_code = "tracein(); scope(success) traceout(); scope(failure) traceerr();";
     void trace(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__)
     {
         printf("%.*s:%d\n", pretty.length, pretty.ptr, line);
@@ -1056,6 +1057,7 @@ version(trace)
 }
 else
 {
+    enum dmd_trace_code = "";
     void trace() {}
     void tracein() {}
     void traceout() {}
