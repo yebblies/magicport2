@@ -47,7 +47,7 @@ class DPrinter : Visitor
     }
     void println(string arg)
     {
-        if (wasnl)
+        if (wasnl && arg.length)
             foreach(i; 0..indent)
                 target("    ");
         target(arg);
