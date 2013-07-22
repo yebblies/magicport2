@@ -1265,9 +1265,9 @@ class DPrinter : Visitor
     {
         lparen(ast);
         visit(ast.cond);
-        print("?");
+        print(" ? ");
         visit(ast.e1);
-        print(":");
+        print(" : ");
         visit(ast.e2);
         rparen(ast);
     }
