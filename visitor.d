@@ -90,6 +90,11 @@ class Visitor
         assert(0);
     }
 
+    void visitErrorDeclaration(ErrorDeclaration ast)
+    {
+        assert(0);
+    }
+
     void visitBitfieldDeclaration(BitfieldDeclaration ast)
     {
         assert(0);

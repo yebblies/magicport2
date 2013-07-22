@@ -167,11 +167,23 @@ Declaration parsePreprocessor()
             s ~= nextToken();
         return new DummyDeclaration(s);
     case "error":
+        nextToken();
         auto line = t.line;
-        auto s = "#error ";
-        while(t.line == line && t.type != TOKeof)
-            s ~= nextToken();
-        return new DummyDeclaration(s);
+        string s;
+        if (t.type == TOKstring)
+        {
+            s = nextToken();
+        }
+        else
+        {
+            s = nextToken();
+            while(t.line == line && t.type != TOKeof)
+            {
+                s ~= " " ~ nextToken();
+            }
+            s = "\"" ~ s ~ "\"";
+        }
+        return new ErrorDeclaration(new LitExpr(s));
     default:
         fail();
         assert(0);

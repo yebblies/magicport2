@@ -937,6 +937,15 @@ class DPrinter : Visitor
         println(" */");
     }
 
+    override void visitErrorDeclaration(ErrorDeclaration ast)
+    {
+        print("static assert(0, ");
+        visit(ast.e);
+        print(")");
+        if (!E)
+            println(";");
+    }
+
     override void visitBitfieldDeclaration(BitfieldDeclaration ast)
     {
         assert(0);

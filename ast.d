@@ -208,6 +208,13 @@ class DummyDeclaration : Declaration
     mixin(visitor_str);
 }
 
+class ErrorDeclaration : Declaration
+{
+    Expression e;
+    this(Expression e) { this.e = e; }
+    mixin(visitor_str);
+}
+
 class BitfieldDeclaration : Declaration
 {
     Type type;

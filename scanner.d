@@ -300,6 +300,10 @@ class Scanner : Visitor
     {
     }
 
+    override void visitErrorDeclaration(ErrorDeclaration ast)
+    {
+    }
+
     override void visitBitfieldDeclaration(BitfieldDeclaration ast)
     {
         visit(ast.type);
