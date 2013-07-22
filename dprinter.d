@@ -375,7 +375,7 @@ class DPrinter : Visitor
         }
         if (!virtual && !(ast.stc & STCabstract))
             print("final ");
-        if (!inexternc)
+        if (!inexternc && (!P || !classTypes.canFind(P.id)))
             print("extern(C++) ");
         visit(ast.stc);
         if (ast.type.id == ast.id)
