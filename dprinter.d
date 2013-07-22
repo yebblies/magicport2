@@ -946,8 +946,10 @@ class DPrinter : Visitor
 
     override void visitProtDeclaration(ProtDeclaration ast)
     {
+        indent--;
         print(ast.id);
         println(":");
+        indent++;
     }
 
     override void visitAlignDeclaration(AlignDeclaration ast)
