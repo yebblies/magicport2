@@ -78,7 +78,7 @@ void main()
     
     auto superast = collapse(asts, scan);
     
-    auto f = File("port\\dmd.d", "w");
+    auto f = File("port\\dmd.d", "wb");
     f.writeln("\nimport defs;\n");
     superast.visit(new DPrinter((string s) { f.write(s); }, scan));
 }
