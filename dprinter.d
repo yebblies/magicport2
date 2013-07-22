@@ -905,6 +905,7 @@ class DPrinter : Visitor
         visitIdent(ast.id);
         println(" : int");
         println("{");
+        indent++;
         foreach(i; 0..ast.members.length)
         {
             visitIdent(ast.members[i]);
@@ -915,7 +916,8 @@ class DPrinter : Visitor
             }
             println(",");
         }
-        println("};");
+        indent--;
+        println("}");
         foreach(i; 0..ast.members.length)
         {
             print("alias ");
