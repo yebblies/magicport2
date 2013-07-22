@@ -679,9 +679,37 @@ class DPrinter : Visitor
                 if (i)
                     print("else ");
                 auto ie = cast(IdentExpr)c;
-                if (ie && ie.id == "DEBUG")
+                auto le = cast(LitExpr)c;
+                if (ie)
                 {
-                    println("debug");
+                    switch(ie.id)
+                    {
+                    case "DEBUG":          println("debug"); break;
+                    case "UNITTEST":       println("version(unittest)"); break;
+
+                    case "_WIN32":         println("version(Windows)"); break;
+                    case "POSIX":          println("version(Posix)"); break;
+                    case "linux":          println("version(linux)"); break;
+                    case "__APPLE__":
+                    case "MACINTOSH":      println("version(OSX)"); break;
+                    case "__FreeBSD__":    println("version(FreeBSD)"); break;
+                    case "__OpenBSD__":    println("version(OpenBSD)"); break;
+                    case "__sun":          println("version(Solaris)"); break;
+
+                    case "__DMC__":        println("version(DigitalMars)"); break;
+                    case "IN_GCC":         println("version(GNU)"); break;
+
+                    default:               println("static if (" ~ ie.id ~ ")"); break;
+                    }
+                }
+                else if (le)
+                {
+                    switch(le.val)
+                    {
+                    case "0": println("version(none)"); break;
+                    case "1": println("version(all)"); break;
+                    default:            println("static if (" ~ ie.id ~ ")"); break;
+                    }
                 }
                 else
                 {

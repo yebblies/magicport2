@@ -1065,18 +1065,22 @@ else
 }
 
 // Preprocessor symbols (sometimes used as values)
+template xversion(string s)
+{
+    enum xversion = mixin("{ version(" ~ s ~ ") return true; else return false; }")();
+}
+
 enum DDMD = true;
 
-enum linux = false;
-enum __APPLE__ = false;
-enum __FreeBSD__ = false;
-enum __OpenBSD__ = false;
-enum __sun = false;
-enum MACINTOSH = false;
-enum _WIN32 = true;
+enum linux = xversion!"linux";
+enum __APPLE__ = xversion!"OSX";
+enum __FreeBSD__ = xversion!"FreeBSD";
+enum __OpenBSD__ = xversion!"OpenBSD";
+enum __sun = xversion!"Solaris";
+enum _WIN32 = xversion!"Windows";
 
-enum IN_GCC = false;
-enum __DMC__ = true;
+enum IN_GCC = xversion!"GNU";
+enum __DMC__ = xversion!"DigitalMars";
 enum _MSC_VER = false;
 
 enum LOG = false;
