@@ -837,7 +837,7 @@ class DPrinter : Visitor
         foreach(d; ast.decls)
             visit(d);
         indent--;
-        println("};");
+        println("}");
         println("");
     }
 
