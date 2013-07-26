@@ -1041,7 +1041,7 @@ version(trace)
         {
             foreach(i; 0..tracedepth*2)
                 putchar(' ');
-            printf("+ %.*s:%d\n", pretty.length, pretty.ptr, line);
+            printf("- %.*s:%d\n", pretty.length, pretty.ptr, line);
         }
     }
 
