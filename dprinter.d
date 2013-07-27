@@ -369,7 +369,7 @@ class DPrinter : Visitor
                 break;
             }
         }
-        if (!virtual && !(ast.stc & STCabstract))
+        if (!virtual && !(ast.stc & STCabstract) && P)
             print("final ");
         if (!inexternc && (!P || !classTypes.canFind(P.id)))
             print("extern(C++) ");
