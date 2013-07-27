@@ -1416,9 +1416,12 @@ class DPrinter : Visitor
 
     override void visitReturnStatement(ReturnStatement ast)
     {
-        print("return ");
+        print("return");
         if (ast.e)
+        {
+            print(" ");
             visit(ast.e);
+        }
         println(";");
     }
 
