@@ -210,6 +210,7 @@ class DPrinter : Visitor
         scope(exit) fd = fdsave;
         fd = ast;
         if (ast.id == "operator new") return;
+        if (ast.id == "main") return;
         if (!P && !ast.hasbody && ast.skip) return;
         auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue", "OutBuffer", "Scope", "DocComment"];
         if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))

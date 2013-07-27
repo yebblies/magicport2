@@ -987,7 +987,7 @@ T memcpy(T : VarDeclaration)(ref T dest, T src, size_t size)
     return dest;
 }
 
-void main(string[] args)
+int main(string[] args)
 {
     scope(success) exit(0);
     scope(failure) tracedepth = -1;
@@ -998,14 +998,7 @@ void main(string[] args)
     foreach(i, a; args)
         argv[i] = (a ~ '\0').ptr;
 
-    // try
-    // {
-        xmain(argc, argv);
-    // }
-    // catch (Error e)
-    // {
-        // printf("Error: %.*s\n", e.msg);
-    // }
+    return tryMain(argc, argv);
 }
 
 __gshared int tracedepth;

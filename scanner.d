@@ -522,8 +522,6 @@ Module collapse(Module[] mods, Scanner scan)
     decls = removeDuplicates(decls);
     findProto(decls, scan);
     
-    fixMain(decls, scan);
-
     //zeroToLoc(scan);
     
     funcBodies(scan);
@@ -722,20 +720,6 @@ Declaration[] resolveVersions(Declaration[] decls)
         r ~= d;
     }
     return r;
-}
-
-void fixMain(Declaration[] decls, Scanner scan)
-{
-    bool found;
-    foreach(fd; scan.funcDeclarations)
-    {
-        if (fd.id == "main")
-        {
-            assert(!found);
-            fd.id = "xmain";
-            found = true;
-        }
-    }
 }
 
 void scopeCtor(Scanner scan)
