@@ -60,11 +60,6 @@ class Visitor
         assert(0);
     }
 
-    void visitMacroCallDeclaration(MacroCallDeclaration ast)
-    {
-        assert(0);
-    }
-
     void visitStructDeclaration(StructDeclaration ast)
     {
         assert(0);

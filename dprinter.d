@@ -781,20 +781,6 @@ class DPrinter : Visitor
     {
     }
 
-    override void visitMacroCallDeclaration(MacroCallDeclaration ast)
-    {
-        print("mixin(");
-        visitIdent(ast.id);
-        print("(");
-        foreach(i, id; ast.args)
-        {
-            print(id);
-            if (i != ast.args.length - 1)
-                print(", ");
-        }
-        println("));");
-    }
-
     override void visitStructDeclaration(StructDeclaration ast)
     {
         bool isclass;

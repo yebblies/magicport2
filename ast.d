@@ -155,14 +155,6 @@ class MacroUnDeclaration : Declaration
     mixin(visitor_str);
 }
 
-class MacroCallDeclaration : Declaration
-{
-    string id;
-    string[] args;
-    this(string id, string[] args) { this.id = id; this.args = args; }
-    mixin(visitor_str);
-}
-
 class StructDeclaration : Declaration
 {
     string kind;

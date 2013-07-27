@@ -338,19 +338,6 @@ class CppPrinter : Visitor
         println();
     }
 
-    override void visitMacroCallDeclaration(MacroCallDeclaration ast)
-    {
-        visit(ast.id);
-        print("(");
-        foreach(i, s; ast.args)
-        {
-            visit(s);
-            if (i != ast.args.length - 1)
-                print(", ");
-        }
-        print(")\n");
-    }
-
     override void visitStructDeclaration(StructDeclaration ast)
     {
         print(ast.kind);

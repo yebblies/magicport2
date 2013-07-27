@@ -194,13 +194,6 @@ class AstPrinter : Visitor
         print(")");
     }
 
-    override void visitMacroCallDeclaration(MacroCallDeclaration ast)
-    {
-        print("MacroDeclaration(");
-        visit(ast.id);
-        print(")");
-    }
-
     override void visitStructDeclaration(StructDeclaration ast)
     {
         print("StructDeclaration(");

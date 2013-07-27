@@ -260,10 +260,6 @@ class Scanner : Visitor
     {
     }
 
-    override void visitMacroCallDeclaration(MacroCallDeclaration ast)
-    {
-    }
-
     override void visitStructDeclaration(StructDeclaration ast)
     {
         auto aggsave = agg;

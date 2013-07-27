@@ -668,7 +668,6 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
         } while (t.text != ")");
         exit(")");
         assert(0, "No macros!");
-        return new MacroCallDeclaration(id, args);
     } else if (t.text == "typedef")
     {
         nextToken();
