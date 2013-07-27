@@ -1174,7 +1174,7 @@ class DPrinter : Visitor
 
     override void visitDeleteExpr(DeleteExpr ast)
     {
-        print("do {/*delete*/} while(0)");
+        print("/*delete*/");
     }
 
     override void visitNotExpr(NotExpr ast)
