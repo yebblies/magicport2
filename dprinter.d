@@ -1395,9 +1395,7 @@ class DPrinter : Visitor
                 visitIdent(ast.id);
             else
                 assert(!ast.def);
-            if (ast.def && ast.t.id == "Loc" && cast(LitExpr)ast.def && (cast(LitExpr)ast.def).val == "0")
-                print(" = Loc()");
-            else if (ast.def)
+            if (ast.def)
             {
                 print(" = ");
                 visit(ast.def);
