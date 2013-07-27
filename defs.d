@@ -1086,6 +1086,8 @@ enum _MSC_VER = false;
 
 enum LOG = false;
 enum ASYNCREAD = false;
+enum WINDOWS_SEH = false;
+enum OMFOBJ = true;
 enum UNITTEST = false;
 enum CANINLINE_LOG = false;
 enum TEXTUAL_ASSEMBLY_OUT = false;
@@ -1097,3 +1099,7 @@ enum TARGET_FREEBSD = false;
 enum TARGET_OPENBSD = false;
 enum TARGET_SOLARIS = false;
 enum TARGET_WINDOS = true;
+
+enum __GNUC__ = false;
+enum __MINGW32__ = false;
+enum GCC_SAFE_DMD = false;

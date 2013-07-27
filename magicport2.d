@@ -28,7 +28,6 @@ auto frontsrc = [
     "version.c", "inifile.c", "staticassert.c", "module.c", "scope.c", "dump.c",
     "init.h", "init.c", "attrib.h", "attrib.c", "opover.c", "class.c",
     "mangle.c", "func.c", "inline.c", "access.c",
-    "tk.c",
     "cppmangle.c", "identifier.h", "parse.h", "scope.h", "enum.h", "import.h",
     "mars.h", "module.h", "mtype.h", "dsymbol.h",
     "declaration.h", "lexer.h", "expression.h", "statement.h", "doc.h", "doc.c", "macro.h",

@@ -36,6 +36,7 @@ class DPrinter : Visitor
     int indent;
     bool wasnl;
     int inexternc;
+    bool instaticif;
 
     void print(string arg)
     {
@@ -477,6 +478,7 @@ class DPrinter : Visitor
     {
         if (ast.stc & STCextern) return;
         if (ast.ids[0] == "ASYNCREAD") return;
+        if (ast.ids[0] == "WINDOWS_SEH") return;
         auto t0 = ast.types[0];
         bool allsame = t0 !is null;
         foreach(t; ast.types[1..$])
@@ -672,8 +674,19 @@ class DPrinter : Visitor
             {
                 if (i)
                     print("else ");
+                auto ce = cast(CallExpr)c;
                 auto ie = cast(IdentExpr)c;
                 auto le = cast(LitExpr)c;
+                if (ce)
+                {
+                    auto fie = cast(IdentExpr)ce.func;
+                    if (fie && fie.id == "defined")
+                    {
+                        assert(ce.args.length == 1);
+                        ie = cast(IdentExpr)ce.args[0];
+                        assert(ie);
+                    }
+                }
                 if (ie)
                 {
                     switch(ie.id)
@@ -693,6 +706,9 @@ class DPrinter : Visitor
                     case "__DMC__":        println("version(DigitalMars)"); break;
                     case "IN_GCC":         println("version(GNU)"); break;
 
+                    case "DMDV1":          println("version(DMDV1)"); break;
+                    case "DMDV2":          println("version(DMDV2)"); break;
+
                     default:               println("static if (" ~ ie.id ~ ")"); break;
                     }
                 }
@@ -708,7 +724,9 @@ class DPrinter : Visitor
                 else
                 {
                     print("static if (");
+                    instaticif = true;
                     visit(c);
+                    instaticif = false;
                     println(")");
                 }
             }
@@ -731,6 +749,11 @@ class DPrinter : Visitor
 
     override void visitTypedefDeclaration(TypedefDeclaration ast)
     {
+        if (auto st = cast(ClassType)ast.t)
+        {
+            if (st.id == "union tree_node")
+                return;
+        }
         if (auto ft = cast(FunctionType)ast.t)
         {
             if (ft.cdecl)
@@ -747,6 +770,8 @@ class DPrinter : Visitor
 
     override void visitMacroDeclaration(MacroDeclaration ast)
     {
+        if (ast.id == "assert") return;
+
         auto tParams = ["T", "U", "V", "W", "X", "Y"];
 
         print("auto ");
@@ -969,10 +994,19 @@ class DPrinter : Visitor
 
     override void visitCallExpr(CallExpr ast)
     {
-        visit(ast.func);
-        print("(");
-        printArgs(ast.args);
-        print(")");
+        auto ie = cast(IdentExpr)ast.func;
+        if (instaticif && ie && ie.id == "defined")
+        {
+            assert(ast.args.length == 1);
+            visit(ast.args[0]);
+        }
+        else
+        {
+            visit(ast.func);
+            print("(");
+            printArgs(ast.args);
+            print(")");
+        }
     }
 
     override void visitCmpExpr(CmpExpr ast)
