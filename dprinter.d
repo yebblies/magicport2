@@ -86,7 +86,7 @@ class DPrinter : Visitor
     }
     void visit()(int stc)
     {
-        static immutable names = ["static __gshared", "enum", "extern", "extern(C)", "virtual", "__cdecl", "abstract", "__inline", "register"];
+        static immutable names = ["static", "enum", "extern", "extern(C)", "virtual", "__cdecl", "abstract", "__inline", "register"];
         bool one;
         assert(!(stc & STCconst));
         /*if (!(stc & STCvirtual))
@@ -516,6 +516,7 @@ class DPrinter : Visitor
             print("__array_storage");
             println(";");
         }
+        bool gshared;
         if (ast.types.length == 1 && (ast.stc & STCstatic) && !cast(FuncDeclaration)D2 && P)
         {
             foreach(vd; scan.staticMemberVarDeclarations)
@@ -526,11 +527,17 @@ class DPrinter : Visitor
                     ast.inits[0] = vd.xinit;
                 }
             }
-            print("extern(C++) __gshared ");
+            print("extern(C++) ");
+            if (!manifest) gshared = true;
         }
         else if (ast.types.length == 1 && !(ast.stc & STCconst) && !D2 && !fd)
         {
-            print("extern(C++) __gshared ");
+            print("extern(C++) ");
+            if (!manifest) gshared = true;
+        }
+        else if (ast.stc & STCstatic)
+        {
+            if (!manifest) gshared = true;
         }
         foreach(i; 0..ast.types.length)
         {
@@ -543,6 +550,8 @@ class DPrinter : Visitor
                     if (manifest)
                         print("enum ");
                     visit(ast.stc | STCvirtual);
+                    if (gshared)
+                        print("__gshared ");
                     if (realarray)
                     {
                         auto at = cast(ArrayType)ast.types[i];
@@ -607,7 +616,7 @@ class DPrinter : Visitor
                 {
                     if (E)
                         println(";");
-                    visit((ast.stc & STCstatic) | STCvirtual);
+                    //visit((ast.stc & STCstatic) | STCvirtual);
                     print("enum ");
                     print(ast.ids[0]);
                     print("__array_length = ");
@@ -624,7 +633,7 @@ class DPrinter : Visitor
             {
                 if (E)
                     println(";");
-                visit((ast.stc & STCstatic) | STCvirtual);
+                //visit((ast.stc & STCstatic) | STCvirtual);
                 print("enum ");
                 print(ast.ids[0]);
                 print("__array_length = ");

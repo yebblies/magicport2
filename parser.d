@@ -596,6 +596,7 @@ auto macroList =
 
 Declaration parseDecl(Type tx = null, bool inExpr = false)
 {
+    STC stc;
     debug(PARSE) writeln("parseDecl");
     bool destructor;
     if (t.text == "template")
@@ -781,7 +782,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
         return new DummyDeclaration("friend");
     }
 
-    auto stc = parseStorageClasses();
+    stc = parseStorageClasses();
     if (stc & STCexternc)
     {
         if (t.text == "{")

@@ -233,6 +233,13 @@ class AstPrinter : Visitor
         print(")");
     }
 
+    override void visitErrorDeclaration(ErrorDeclaration ast)
+    {
+        print("ErrorDeclaration(");
+        visit(ast.e);
+        print(")");
+    }
+
     override void visitProtDeclaration(ProtDeclaration ast)
     {
         print("ProtDeclaration(");
