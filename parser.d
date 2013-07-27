@@ -588,12 +588,6 @@ STC parseStorageClasses()
     }
 }
 
-auto macroList =
-[
-    "X", "BIN_INTERPRET", "BIN_INTERPRET2", "UNA_INTERPRET", "BIN_ASSIGN_INTERPRET",
-    "BIN_ASSIGN_INTERPRET_CTFE", "ASSIGNEXP"
-];
-
 Declaration parseDecl(Type tx = null, bool inExpr = false)
 {
     STC stc;
@@ -656,19 +650,6 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
         assert(l == level);
         check("#endif");
         return new VersionDeclaration(es, d);
-    } else if (macroList.canFind(t.text) && !inExpr)
-    {
-        auto id = parseIdent();
-        enter("(");
-        string[] args;
-        do
-        {
-            args ~= parseIdent();
-            if (t.text != ")")
-                check(",");
-        } while (t.text != ")");
-        exit(")");
-        assert(0, "No macros!");
     } else if (t.text == "typedef")
     {
         nextToken();
