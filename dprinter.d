@@ -775,49 +775,6 @@ class DPrinter : Visitor
         }
         visit(ast.e);
         println("; }");
-        /+foreach(i; 0..ast.toks.length)
-        {
-            assert(ast.toks[i].text != "##");
-            assert(ast.toks[i].text != "#");
-            print(ast.toks[i].text);
-            print(" ");
-            /+if (ast.toks[i].text == "##")
-            {
-                i++;
-                print("\"");
-                print(ast.toks[i].text);
-                print("\"");
-            }
-            else if (ast.toks[i].text == "#")
-            {
-                i++;
-                print(`"\"`);
-                print(ast.toks[i].text);
-                print(`\" "`);
-            }
-            else if (ast.params.canFind(ast.toks[i].text))
-            {
-                print("\" \" ~ ");
-                print(ast.toks[i].text);
-            }
-            else
-            {
-                print("\" ");
-                print(ast.toks[i].text);
-                print("\"");
-            }
-            if (i != ast.toks.length - 1)
-                print(" ~ ");+/
-        }
-        println("; }");
-        
-        /+auto ident(T)(T arg)
-        {
-            return "tok1 tok2 tok3 tok4 " ~ arg ~ "tok5 tok6 tok7";
-        }
-        
-        foreach(t; ast.toks)
-            writeln(t);+/+/
     }
 
     override void visitMacroUnDeclaration(MacroUnDeclaration ast)
