@@ -934,11 +934,7 @@ class DPrinter : Visitor
 
     override void visitLitExpr(LitExpr ast)
     {
-        if (ast.val.endsWith("LL", "ll"))
-        {
-            print(ast.val[0..$-1]);
-        }
-        else if (ast.val.endsWith("L", "l"))
+        if (ast.val.endsWith("L", "l"))
         {
             print(ast.val[0..$-1]);
         } else {
