@@ -948,7 +948,7 @@ class DPrinter : Visitor
         {
             if (P && structTypes.canFind(P.id))
             {
-                print("(&this)");
+                print("&this");
                 return;
             }
         }
