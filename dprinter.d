@@ -853,8 +853,8 @@ class DPrinter : Visitor
             print(" : ");
             visitIdent(ast.superid);
         }
-        else if (isclass)
-            print(" : RootObject");
+        // else if (isclass)
+            // print(" : RootObject");
         println("");
         println("{");
         if (align1)
