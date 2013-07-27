@@ -522,8 +522,6 @@ Module collapse(Module[] mods, Scanner scan)
     decls = removeDuplicates(decls);
     findProto(decls, scan);
     
-    //zeroToLoc(scan);
-    
     funcBodies(scan);
 
     //bufAddr(scan);
@@ -589,49 +587,6 @@ void funcBodies(Scanner scan)
                         if (tf2.params[i].id)
                             tf1.params[i].id = tf2.params[i].id;
                     }
-                }
-            }
-        }
-    }
-}
-
-void zeroToLoc(Scanner scan)
-{
-    foreach(e; scan.callExprs)
-    {
-        if (auto ie = cast(IdentExpr)e.func)
-        {
-            if (e.args.length && cast(LitExpr)e.args[0] && (cast(LitExpr)e.args[0]).val == "0")
-            {
-                if (auto p = ie.id in scan.funcDeclarationsTakingLoc)
-                {
-                    e.args[0] = new CallExpr(new IdentExpr("Loc"), null);
-                }
-            }
-        }
-    }
-    foreach(e; scan.newExprs)
-    {
-        if (e.args.length && cast(LitExpr)e.args[0] && (cast(LitExpr)e.args[0]).val == "0")
-        {
-            if (auto p = e.t.id in scan.funcDeclarationsTakingLoc)
-            {
-                if (e.args.length == p.params.length)
-                {
-                    e.args[0] = new CallExpr(new IdentExpr("Loc"), null);
-                }
-            }
-        }
-    }
-    foreach(e; scan.constructDeclarations)
-    {
-        if (e.args.length && cast(LitExpr)e.args[0] && (cast(LitExpr)e.args[0]).val == "0")
-        {
-            if (auto p = e.type.id in scan.funcDeclarationsTakingLoc)
-            {
-                if (e.args.length == p.params.length)
-                {
-                    e.args[0] = new CallExpr(new IdentExpr("Loc"), null);
                 }
             }
         }
