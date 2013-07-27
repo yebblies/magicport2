@@ -641,6 +641,7 @@ Declaration[] resolveVersions(Declaration[] decls)
     return r;
 }
 
+// Generate initializers for all of Scope's variables from its default ctor
 void scopeCtor(Scanner scan)
 {
     foreach(f; scan.funcDeclarations)
