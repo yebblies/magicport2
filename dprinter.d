@@ -153,7 +153,7 @@ class DPrinter : Visitor
         {
         case "I": print("1i"); return;
         case "NULL": print("null"); return;
-        case "__IMPORT__": print("\"v\" ~ import(\"VERSION\")"); return;
+        case "__IMPORT__": print("\"v\" ~ import(\"VERSION\")[0..$-1]"); return;
         case "import", "module", "version", "align", "dchar", "ref", "scope", "wchar", "pragma",
             "body", "real", "alias", "is", "invariant", "TypeInfo", "in", "byte", "debug", "inout",
             "override", "final", "toString", "delegate", "cast", "mangleof", "stringof",
