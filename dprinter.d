@@ -313,6 +313,7 @@ class DPrinter : Visitor
             ["StructDeclaration", "kind"],
             ["StructDeclaration", "syntaxCopy"],
             ["SymbolExp", "clone"],
+            ["TemplateInstance", "findTemplateDeclaration"],
             ["TemplateInstance", "inlineScan"],
             ["TemplateInstance", "kind"],
             ["TemplateInstance", "oneMember"],
