@@ -916,11 +916,6 @@ class DPrinter : Visitor
             println(";");
     }
 
-    override void visitBitfieldDeclaration(BitfieldDeclaration ast)
-    {
-        assert(0);
-    }
-
     override void visitProtDeclaration(ProtDeclaration ast)
     {
         indent--;

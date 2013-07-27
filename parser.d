@@ -853,10 +853,6 @@ getid:
     if (t.text == ":")
     {
         assert(0, "No bitfields!");
-        nextToken();
-        auto w = parseAssignExpr();
-        check(";");
-        return new BitfieldDeclaration(type, id, w);
     }
     else if (t.text == "(")
     {

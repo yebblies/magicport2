@@ -233,15 +233,6 @@ class AstPrinter : Visitor
         print(")");
     }
 
-    override void visitBitfieldDeclaration(BitfieldDeclaration ast)
-    {
-        print("BitfieldDeclaration(");
-        visit(ast.type);
-        visit(ast.id);
-        visit(ast.width);
-        print(")");
-    }
-
     override void visitProtDeclaration(ProtDeclaration ast)
     {
         print("ProtDeclaration(");

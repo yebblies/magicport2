@@ -300,11 +300,6 @@ class Scanner : Visitor
     {
     }
 
-    override void visitBitfieldDeclaration(BitfieldDeclaration ast)
-    {
-        visit(ast.type);
-    }
-
     override void visitProtDeclaration(ProtDeclaration ast)
     {
     }

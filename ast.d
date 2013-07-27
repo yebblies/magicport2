@@ -207,15 +207,6 @@ class ErrorDeclaration : Declaration
     mixin(visitor_str);
 }
 
-class BitfieldDeclaration : Declaration
-{
-    Type type;
-    string id;
-    Expression width;
-    this(Type type, string id, Expression width) { this.type = type; this.id = id; this.width = width; }
-    mixin(visitor_str);
-}
-
 class ProtDeclaration : Declaration
 {
     string id;

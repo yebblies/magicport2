@@ -410,16 +410,6 @@ class CppPrinter : Visitor
             visit(ast.s);
     }
 
-    override void visitBitfieldDeclaration(BitfieldDeclaration ast)
-    {
-        visit(ast.type);
-        print(" ");
-        visit(ast.id);
-        print(" : ");
-        visit(ast.width);
-        println(";");
-    }
-
     override void visitProtDeclaration(ProtDeclaration ast)
     {
         visit(ast.id);
