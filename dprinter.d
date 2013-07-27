@@ -928,9 +928,6 @@ class DPrinter : Visitor
 
     override void visitDummyDeclaration(DummyDeclaration ast)
     {
-        print("/* ");
-        print(ast.s);
-        println(" */");
     }
 
     override void visitErrorDeclaration(ErrorDeclaration ast)
