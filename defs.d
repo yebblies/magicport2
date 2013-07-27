@@ -871,6 +871,7 @@ private:
 public:
     void _init(size_t size = 37)
     {
+        table = null;
     }
     ~this()
     {
