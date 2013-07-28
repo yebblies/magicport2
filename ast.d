@@ -126,6 +126,7 @@ class VersionDeclaration : Declaration
 {
     Expression[] cond;
     Declaration[][] members;
+    int[] realdecls;
     this(Expression[] cond, Declaration[][] members) { this.cond = cond; this.members = members; }
     mixin(visitor_str);
 }

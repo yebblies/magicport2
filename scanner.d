@@ -23,6 +23,7 @@ class Scanner : Visitor
     ConstructDeclaration[] constructDeclarations;
     string agg;
     StructDeclaration scopedecl;
+    int realdecls;
 
     this()
     {
@@ -50,6 +51,7 @@ class Scanner : Visitor
 
     override void visitFuncDeclaration(FuncDeclaration ast)
     {
+        realdecls++;
         funcDeclarations ~= ast;
         ast.structid = agg;
         visit(ast.type);
@@ -93,6 +95,7 @@ class Scanner : Visitor
 
     override void visitVarDeclaration(VarDeclaration ast)
     {
+        realdecls++;
         foreach(t; ast.types)
             if (t)
                 visit(t);
@@ -103,6 +106,7 @@ class Scanner : Visitor
 
     override void visitConstructDeclaration(ConstructDeclaration ast)
     {
+        realdecls++;
         constructDeclarations ~= ast;
         visit(ast.type);
         foreach(a; ast.args)
@@ -111,24 +115,32 @@ class Scanner : Visitor
 
     override void visitVersionDeclaration(VersionDeclaration ast)
     {
+        auto rd = realdecls;
+        ast.realdecls.length = ast.cond.length;
         foreach(e; ast.cond)
             if (e)
                 visit(e);
         foreach(i, ds; ast.members)
         {
+            realdecls = 0;
             foreach(d; ds)
                 visit(d);
+            ast.realdecls[i] = realdecls;
+            rd += realdecls;
             break;
         }
+        realdecls = rd;
     }
 
     override void visitTypedefDeclaration(TypedefDeclaration ast)
     {
+        realdecls++;
         visit(ast.t);
     }
 
     override void visitMacroDeclaration(MacroDeclaration ast)
     {
+        realdecls++;
     }
 
     override void visitMacroUnDeclaration(MacroUnDeclaration ast)
@@ -137,6 +149,7 @@ class Scanner : Visitor
 
     override void visitStructDeclaration(StructDeclaration ast)
     {
+        realdecls++;
         auto aggsave = agg;
         scope(exit) agg = aggsave;
         agg = ast.id;
@@ -150,6 +163,7 @@ class Scanner : Visitor
 
     override void visitAnonStructDeclaration(AnonStructDeclaration ast)
     {
+        realdecls++;
         foreach(d; ast.decls)
             visit(d);
     }
@@ -162,6 +176,7 @@ class Scanner : Visitor
 
     override void visitEnumDeclaration(EnumDeclaration ast)
     {
+        realdecls++;
         foreach(v; ast.vals)
             if (v)
                 visit(v);
@@ -173,6 +188,7 @@ class Scanner : Visitor
 
     override void visitErrorDeclaration(ErrorDeclaration ast)
     {
+        realdecls++;
     }
 
     override void visitProtDeclaration(ProtDeclaration ast)
@@ -630,10 +646,12 @@ Declaration[] resolveVersions(Declaration[] decls)
                     auto ie = cast(IdentExpr)ne.e;
                     if (ie.id.endsWith("_H"))
                     {
-                        r ~= vd.members[0];
+                        r ~= resolveVersions(vd.members[0]);
                         continue;
                     }
                 }
+                if (vd.realdecls[0] == 0)
+                    continue;
             }
         }
         r ~= d;
