@@ -27,3 +27,6 @@ magicport2.exe : $(SRC)
 
 clean:
 	del magicport2.exe
+	del *.obj
+	del port\*.obj
+	del port\*.exe
