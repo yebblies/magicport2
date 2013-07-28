@@ -1081,7 +1081,8 @@ Type parseType(string* id = null)
                 nextToken();
                 cdecl = true;
             }
-            check("*");
+            if (t.text == "*")
+                check("*");
             *id = parseIdent();
             check(")");
             auto params = parseParams();
