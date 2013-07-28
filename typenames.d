@@ -96,6 +96,7 @@ auto basicTypes = [
     "ForeachDg",
     "FINALIZERPROC",
     "sapply_fp_t",
+    "fp_speller_t",
     
     "TY",
     "StorageClass",
