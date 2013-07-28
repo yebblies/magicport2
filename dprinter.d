@@ -819,6 +819,8 @@ class DPrinter : Visitor
             else
                 print("extern(C++) ");
         }
+        if (ast.id == "utf8_t")
+            return;
         print("alias ");
         visit(ast.t);
         print(" ");
@@ -1401,6 +1403,7 @@ class DPrinter : Visitor
             "unsigned long" : "uint",
             "_Complex long double" : "creal",
             "volatile char" : "char",
+            "utf8_t" : "char",
         ];
         
         if (ast.id in map)
