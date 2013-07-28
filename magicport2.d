@@ -46,6 +46,7 @@ auto frontsrc = [
 auto rootsrc = [
     "filename.h", "filename.c",
     "file.h", "file.c",
+    "speller.h", "speller.c",
 ];
 
 enum frontpath = r"..\dmdgit\src\";

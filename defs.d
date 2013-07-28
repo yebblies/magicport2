@@ -841,13 +841,6 @@ RootObject* _aaGet(AA** aa, RootObject o)
     return k in *x;
 }
 
-// root.speller
-
-extern(C++) void* speller(const char*, void* function(void*, const(char)*), Scope*, const char*) { return null; }
-extern(C++) void* speller(const char*, void* function(void*, const(char)*), Dsymbol, const char*) { return null; }
-
-extern(C++) __gshared const(char)* idchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
-
 // root.stringtable
 
 struct StringValue
