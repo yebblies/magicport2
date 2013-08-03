@@ -1045,10 +1045,10 @@ version(trace)
 else
 {
     enum dmd_trace_code = "";
-    void trace() {}
-    void tracein() {}
-    void traceout() {}
-    void traceerr() {}
+    void trace(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__) {}
+    void tracein(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__) {}
+    void traceout(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__) {}
+    void traceerr(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__) {}
 }
 
 // Preprocessor symbols (sometimes used as values)
