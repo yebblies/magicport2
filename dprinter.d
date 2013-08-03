@@ -242,7 +242,6 @@ class DPrinter : Visitor
         ["ConditionalDeclaration", "setScope"],
         ["ConditionalDeclaration", "syntaxCopy"],
         ["Declaration", "emitComment"],
-        ["Declaration", "isFinal"],
         ["Declaration", "kind"],
         ["Declaration", "mangle"],
         ["Declaration", "semantic"],
