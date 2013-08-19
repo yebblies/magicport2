@@ -278,6 +278,7 @@ struct Port
     }
     static bool isNan(double r) { return !(r == r); }
     static real fmodl(real a, real b) { return a % b; }
+    static real fequal(real a, real b) { return xmemcmp(&a, &b, 10) == 0; }
     static int memicmp(const char* s1, const char* s2, size_t n) { return .memicmp(s1, s2, n); }
     static char* strupr(const char* s) { return .strupr(s); }
     static int isSignallingNan(double r) { return isNan(r) && !(((cast(ubyte*)&r)[6]) & 8); }
