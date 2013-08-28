@@ -57,6 +57,11 @@ extern extern(C) __gshared uint _end;
 extern(C++)
 class RootObject
 {
+    this()
+    {
+        import core.memory;
+        GC.clrAttr(cast(void*)this, GC.BlkAttr.FINALIZE);
+    }
     void dtor() { assert(0); }
     bool equals(RootObject o)
     {
