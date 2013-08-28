@@ -1502,8 +1502,8 @@ class DPrinter : Visitor
             print(" ");
             if (ast.id)
                 visitIdent(ast.id);
-            else
-                assert(!ast.def);
+            // else
+                // assert(!ast.def);
             if (ast.def)
             {
                 print(" = ");

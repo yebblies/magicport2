@@ -564,7 +564,7 @@ void funcBodies(Scanner scan)
                         fd.initlist = fb.initlist;
                     foreach(i; 0..tf1.params.length)
                     {
-                        if (tf2.params[i].id)
+                        //if (tf2.params[i].id)
                             tf1.params[i].id = tf2.params[i].id;
                     }
                 }
