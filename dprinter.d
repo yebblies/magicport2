@@ -1311,14 +1311,27 @@ class DPrinter : Visitor
 
     override void visitNewExpr(NewExpr ast)
     {
-        assert(!ast.dim);
-        lparen(ast);
-        print("new ");
-        visit(ast.t);
-        print("(");
-        printArgs(ast.args);
-        print(")");
-        rparen(ast);
+        if (ast.dim)
+        {
+            assert(!ast.args.length);
+            lparen(ast);
+            print("new ");
+            visit(ast.t);
+            print("[](");
+            visit(ast.dim);
+            print(")");
+            rparen(ast);
+        }
+        else
+        {
+            lparen(ast);
+            print("new ");
+            visit(ast.t);
+            print("(");
+            printArgs(ast.args);
+            print(")");
+            rparen(ast);
+        }
     }
 
     override void visitOuterScopeExpr(OuterScopeExpr ast)

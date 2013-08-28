@@ -356,7 +356,7 @@ Expression parseUnaryExpr()
             enter("[");
             dim = parseExpr();
             exit("]");
-            type = new ArrayType(type, null);
+            //type = new ArrayType(type, null);
         }
         Expression[] args;
         if (t.text == "(")
