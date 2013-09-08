@@ -1,5 +1,6 @@
 
-auto basicTypes = [
+auto basicTypes =
+[
     "void",
     "bool",
     "char",
@@ -107,16 +108,8 @@ auto basicTypes = [
     "AliasThisRec",
 ];
 
-struct Tuple(T...)
-{
-    T expand;
-}
-auto tuple(T...)(T args)
-{
-    return Tuple!T(args);
-}
-
-enum expTypes = tuple(
+static immutable expTypes =
+[
     "Expression",
     "DotIdExp",
     "BinExp",
@@ -224,9 +217,9 @@ enum expTypes = tuple(
     "FuncInitExp",
     "PrettyFuncInitExp",
     "DotTemplateInstanceExp",
-);
+];
 
-enum typeTypes = tuple(
+static immutable typeTypes = [
     "TypeClass",
     "TypeStruct",
     "TypeTuple",
@@ -252,9 +245,9 @@ enum typeTypes = tuple(
     "TypeReturn",
     "TypeSlice",
     "Type",
-);
+];
 
-auto structTypes =
+static immutable structTypes =
 [
     "Loc",
     "HdrGenState",
@@ -430,6 +423,7 @@ auto structTypes =
     "ParamOpOver",
     "ParamUnique",
     "ParamExact",
+    "Ungag",
 
     "LINK",
     "PREC",
@@ -443,7 +437,7 @@ auto structTypes =
     "PKG",
 ];
 
-auto classTypes =
+static immutable classTypes =
 [
     "Section",
     "ParamSection",
@@ -647,10 +641,7 @@ auto classTypes =
     "SwitchErrorStatement",
     "ErrorStatement",
     "Statement",
-
-    expTypes.expand,
-    typeTypes.expand
-];
+] ~ expTypes ~ typeTypes;
 
 bool isIncludeGuard(string s)
 {
