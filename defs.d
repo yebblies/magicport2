@@ -635,8 +635,8 @@ struct IntRange
             imin.value &= mask;
             imax.value &= mask;
             // sign extend if necessary.
-            imin.negative = imin.value & ~halfChunkMask;
-            imax.negative = imax.value & ~halfChunkMask;
+            imin.negative = (imin.value & ~halfChunkMask) != 0;
+            imax.negative = (imax.value & ~halfChunkMask) != 0;
             halfChunkMask += 1;
             imin.value = (imin.value ^ halfChunkMask) - halfChunkMask;
             imax.value = (imax.value ^ halfChunkMask) - halfChunkMask;
