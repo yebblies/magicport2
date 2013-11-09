@@ -424,6 +424,10 @@ static immutable structTypes =
     "ParamUnique",
     "ParamExact",
     "Ungag",
+    "ptrdiff_t",
+    "StructFlags",
+    "ClassFlags",
+    "FILE",
 
     "LINK",
     "PREC",
