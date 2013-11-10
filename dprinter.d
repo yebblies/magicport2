@@ -271,6 +271,7 @@ class DPrinter : Visitor
         ["Expression", "toChars"],
         ["ExpStatement", "syntaxCopy"],
         ["ExpStatement", "toIR"],
+        ["FuncDeclaration", "inlineScan"],
         ["FuncDeclaration", "isThis"],
         ["FuncDeclaration", "kind"],
         ["FuncDeclaration", "mangle"],
