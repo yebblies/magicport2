@@ -1003,7 +1003,7 @@ import typenames : typeTypes, expTypes;
 void* memcpy()(void* dest, const void* src, size_t size) { return xmemcpy(dest, src, size); }
 Type memcpy(T : Type)(ref T dest, T src, size_t size)
 {
-    dest = cast(T)src.clone();;
+    dest = cast(T)src.clone();
     assert(dest);
     xmemcpy(cast(void*)dest, cast(void*)src, GC.sizeOf(cast(void*)dest));
     return dest;
@@ -1017,7 +1017,7 @@ T memcpy(T : Parameter)(ref T dest, T src, size_t size)
 }
 Expression memcpy(T : Expression)(ref T dest, T src, size_t size)
 {
-    dest = cast(T)src.clone();;
+    dest = cast(T)src.clone();
     assert(dest);
     xmemcpy(cast(void*)dest, cast(void*)src, GC.sizeOf(cast(void*)dest));
     return dest;
