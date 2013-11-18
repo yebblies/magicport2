@@ -226,7 +226,7 @@ struct Mem
     void* malloc(size_t n) { return GC.malloc(n); }
     void* calloc(size_t size, size_t n) { return GC.calloc(size * n); }
     void* realloc(void *p, size_t size) { return GC.realloc(p, size); }
-    void _init() { GC.disable(); }
+    void _init() { }
     void setStackBottom(void *bottom) {}
     void addroots(char* pStart, char* pEnd) {}
 }
