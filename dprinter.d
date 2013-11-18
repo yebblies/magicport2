@@ -280,6 +280,7 @@ class DPrinter : Visitor
         ["FuncDeclaration", "syntaxCopy"],
         ["FuncDeclaration", "toCBuffer"],
         ["FuncDeclaration", "toJson"],
+        ["FuncDeclaration", "toPrettyChars"],
         ["FuncDeclaration", "toSymbol"],
         ["IdentifierExp", "clone"],
         ["IntegerExp", "clone"],
