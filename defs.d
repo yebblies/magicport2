@@ -12,7 +12,7 @@ public import core.stdc.time : time_t, ctime, time;
 public import core.stdc.stdint : int64_t, uint64_t, int32_t, uint32_t, int16_t, uint16_t, int8_t, uint8_t;
 public import core.stdc.float_;
 
-private import core.stdc.string : strcmp, strlen, strncmp, strchr, memset, memmove, strdup, strcpy, strcat, xmemcmp = memcmp, xmemcpy = memcpy;
+private import core.stdc.string : strcmp, strlen, strncmp, strchr, memset, memmove, strdup, strcpy, strcat, xmemcmp = memcmp, memcpy;
 
 public import core.sys.windows.windows;
 
@@ -146,7 +146,7 @@ public:
             reserve(d);
             if (dim != index)
                 memmove(data + index + d, data + index, (dim - index) * (*data).sizeof);
-            xmemcpy(data + index, a.data, d * (*data).sizeof);
+            memcpy(data + index, a.data, d * (*data).sizeof);
             dim += d;
         }
     }
@@ -177,7 +177,7 @@ public:
     {
         auto a = new typeof(this)();
         a.setDim(dim);
-        xmemcpy(a.data, data, dim * (void *).sizeof);
+        memcpy(a.data, data, dim * (void *).sizeof);
         return a;
     }
     void shift(T ptr)
@@ -997,37 +997,6 @@ struct OutBuffer
 };
 
 // hacks to support cloning classed with memcpy
-
-import typenames : typeTypes, expTypes;
-
-void* memcpy()(void* dest, const void* src, size_t size) { return xmemcpy(dest, src, size); }
-Type memcpy(T : Type)(ref T dest, T src, size_t size)
-{
-    dest = cast(T)src.clone();
-    assert(dest);
-    xmemcpy(cast(void*)dest, cast(void*)src, GC.sizeOf(cast(void*)dest));
-    return dest;
-}
-T memcpy(T : Parameter)(ref T dest, T src, size_t size)
-{
-    dest = new Parameter(src.storageClass, src.type, src.ident, src.defaultArg);
-    assert(dest);
-    xmemcpy(cast(void*)dest, cast(void*)src, GC.sizeOf(cast(void*)dest));
-    return dest;
-}
-Expression memcpy(T : Expression)(ref T dest, T src, size_t size)
-{
-    dest = cast(T)src.clone();
-    assert(dest);
-    xmemcpy(cast(void*)dest, cast(void*)src, GC.sizeOf(cast(void*)dest));
-    return dest;
-}
-T memcpy(T : VarDeclaration)(ref T dest, T src, size_t size)
-{
-    dest = new VarDeclaration(src.loc, src.type, src.ident, src._init);
-    xmemcpy(cast(void*)dest, cast(void*)src, GC.sizeOf(cast(void*)dest));
-    return dest;
-}
 
 int main(string[] args)
 {

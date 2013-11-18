@@ -1353,12 +1353,21 @@ class DPrinter : Visitor
 
     override void visitSizeofExpr(SizeofExpr ast)
     {
-        print("(");
-        if (ast.e)
-            visit(ast.e);
-        else
+        if (ast.t && isClass(ast.t))
+        {
+            print("__traits(classInstanceSize, ");
             visit(ast.t);
-        print(").sizeof");
+            print(")");
+        }
+        else
+        {
+            print("(");
+            if (ast.e)
+                visit(ast.e);
+            else
+                visit(ast.t);
+            print(").sizeof");
+        }
     }
 
     override void visitExprInit(ExprInit ast)
