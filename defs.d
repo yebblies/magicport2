@@ -1125,7 +1125,6 @@ enum WINDOWS_SEH = false;
 enum OMFOBJ = true;
 enum UNITTEST = false;
 enum CANINLINE_LOG = false;
-enum TEXTUAL_ASSEMBLY_OUT = false;
 enum LOGSEMANTIC = false;
 
 enum TARGET_LINUX = false;
