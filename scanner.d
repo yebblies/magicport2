@@ -660,6 +660,7 @@ Declaration[] resolveVersions(Declaration[] decls)
 }
 
 // Generate initializers for all of Scope's variables from its default ctor
+// And generate copy ctor
 void scopeCtor(Scanner scan)
 {
     foreach(f; scan.funcDeclarations)
@@ -667,6 +668,7 @@ void scopeCtor(Scanner scan)
         if (f.type.id == f.id && f.id == "Scope" && f.params.length == 0)
         {
             Init[string] inits;
+            Statement[] cbody;
             foreach(s; f.fbody)
             {
                 auto es = cast(ExpressionStatement)s;
@@ -679,6 +681,7 @@ void scopeCtor(Scanner scan)
                 assert(te);
                 assert(te.id == "this");
                 inits[de.id] = new ExprInit(ae.e2);
+                cbody ~= new ExpressionStatement(new AssignExpr("=", de, new DotIdExpr(".", new IdentExpr("sc"), de.id)));
             }
             foreach(m; scan.scopedecl.decls)
             {
@@ -694,6 +697,8 @@ void scopeCtor(Scanner scan)
                     }
                 }
             }
+            auto p = [new Param(new RefType(new ClassType("Scope")), "sc", null)];
+            scan.scopedecl.decls ~= new FuncDeclaration(new ClassType("Scope"), "Scope", p, cbody, 0, null, true);
             return;
         }
     }
