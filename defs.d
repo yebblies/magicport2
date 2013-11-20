@@ -1014,7 +1014,7 @@ int main(string[] args)
 
 __gshared int tracedepth;
 
-version=trace;
+// version=trace;
 // version=fulltrace;
 
 version(trace)
