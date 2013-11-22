@@ -67,7 +67,6 @@ class RootObject
     {
         return o is this;
     }
-    hash_t hashCode() { assert(0); }
     int compare(RootObject) { assert(0); }
     void print()
     {
