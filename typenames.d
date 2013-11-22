@@ -478,6 +478,7 @@ static immutable classTypes =
     "CaseStatements",
     "Dts",
     "AliasDeclarations",
+    "GotoStatements",
     "GotoCaseStatements",
     "TemplateInstances",
     "ReturnStatements",
