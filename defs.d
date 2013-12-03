@@ -49,8 +49,6 @@ alias mkdir _mkdir;
 private extern(C) int memicmp(const char*, const char*, size_t);
 private extern(C) char* strupr(const char*);
 
-extern extern(C) __gshared uint _xi_a;
-extern extern(C) __gshared uint _end;
 
 // root.Object
 
