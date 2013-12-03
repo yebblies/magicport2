@@ -428,6 +428,7 @@ static immutable structTypes =
     "StructFlags",
     "ClassFlags",
     "FILE",
+    "PrevSibling",
 
     "LINK",
     "PREC",
@@ -474,7 +475,7 @@ static immutable classTypes =
     "ObjSymbols",
     "Symbols",
     "Blocks",
-    "CompoundStatements",
+    "ScopeStatements",
     "CaseStatements",
     "Dts",
     "AliasDeclarations",
