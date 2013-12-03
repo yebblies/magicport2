@@ -36,7 +36,6 @@ alias GetFullPathNameA GetFullPathName;
 // So we can accept string literals
 int memcmp(const char* a, const char* b, size_t len) { return .xmemcmp(a, b, len); }
 int memcmp(const void* a, const void* b, size_t len) { return .xmemcmp(a, b, len); }
-int memcmp(void* a, void* b, size_t len) { return .xmemcmp(a, b, len); }
 
 // Not defined for some reason
 extern(C) int stricmp(const char*, const char*);
