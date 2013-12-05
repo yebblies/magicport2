@@ -2,7 +2,7 @@
 // c library
 
 public import core.stdc.stdarg : va_list, va_start, va_end;
-public import core.stdc.stdio : printf, sprintf, fprintf, vprintf, vfprintf, fputs, fwrite, _vsnprintf, putchar, remove, _snprintf, fflush, stdout, stderr, FILE;
+public import core.stdc.stdio : printf, sprintf, fprintf, vprintf, fputs, fwrite, putchar, remove, fflush, stdout, stderr, FILE;
 public import core.stdc.stdlib : alloca, exit, EXIT_FAILURE, EXIT_SUCCESS, strtol, strtoull, getenv, malloc, calloc, free;
 public import core.stdc.ctype : isspace, isdigit, isalnum, isprint, isalpha, isxdigit, islower, tolower;
 public import core.stdc.errno : errno, EEXIST, ERANGE;
@@ -92,17 +92,6 @@ private:
 public:
     void push(size_t line = __LINE__)(T ptr)
     {
-        static if (is(T == Dsymbol) && 0)
-        {
-            printf("from %d\n", line);
-            printf("pushing 0x%.8X\n", ptr);
-            printf("%s\n", ptr.kind());
-            if (ptr.ident)
-            {
-                printf("ident 0x%.8X\n", ptr.ident);
-                printf("ident %.*s\n", ptr.ident.len, ptr.ident.toChars());
-            }
-        }
         reserve(1);
         data[dim++] = ptr;
     }
@@ -216,13 +205,9 @@ struct Mem
         return p[0..strlen(p)+1].dup.ptr;
     }
     void free(void *p) {}
-    void mark(void *pointer) {}
     void* malloc(size_t n) { return GC.malloc(n); }
     void* calloc(size_t size, size_t n) { return GC.calloc(size * n); }
     void* realloc(void *p, size_t size) { return GC.realloc(p, size); }
-    void _init() { }
-    void setStackBottom(void *bottom) {}
-    void addroots(char* pStart, char* pEnd) {}
 }
 extern(C++) __gshared Mem mem;
 
