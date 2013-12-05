@@ -1099,4 +1099,3 @@ enum TARGET_WINDOS = true;
 
 enum __GNUC__ = false;
 enum __MINGW32__ = false;
-enum GCC_SAFE_DMD = false;
