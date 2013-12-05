@@ -49,19 +49,16 @@ auto rootsrc = [
     "speller.h", "speller.c",
 ];
 
-enum frontpath = r"..\dmdgit\src\";
-enum rootpath = r"..\dmdgit\src\root\";
-
-void main()
+void main(string[] args)
 {
     Module[] asts;
-    
+
     writeln("-- ");
     writeln("-- first pass");
     writeln("-- ");
 
     auto scan = new Scanner();
-    foreach(fn; chain(rootsrc.map!(b => rootpath ~ b)(), frontsrc.map!(b => frontpath ~ b)()))
+    foreach(fn; chain(rootsrc.map!(b => buildPath(args[1], "root", b))(), frontsrc.map!(b => buildPath(args[1], b))()))
     {
         writeln("-- ", fn);
         assert(fn.exists(), fn ~ " does not exist");
