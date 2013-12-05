@@ -1076,7 +1076,6 @@ enum __APPLE__ = xversion!"OSX";
 enum __FreeBSD__ = xversion!"FreeBSD";
 enum __OpenBSD__ = xversion!"OpenBSD";
 enum __sun = xversion!"Solaris";
-enum _WIN32 = xversion!"Windows";
 
 enum IN_GCC = xversion!"GNU";
 enum __DMC__ = xversion!"DigitalMars";
