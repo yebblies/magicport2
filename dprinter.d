@@ -1063,6 +1063,15 @@ class DPrinter : Visitor
             assert(ast.args.length == 1);
             visit(ast.args[0]);
         }
+        else if (ie && ie.id == "va_start")
+        {
+            assert(ast.args.length == 2);
+            print("version(X86_64) va_start(");
+            visit(ast.args[0]);
+            print(", __va_argsave); else va_start(");
+            printArgs(ast.args);
+            print(")");
+        }
         else
         {
             visit(ast.func);
@@ -1443,14 +1452,22 @@ class DPrinter : Visitor
     {
         if (ast.isConst)
             print("const(");
-        if (ast.id.length > 7 && ast.id[0..7] == "struct ")
+        if (ast.id == "struct stat")
         {
+            print("stat_t");
+        }
+        else if (ast.id.length > 7 && ast.id[0..7] == "struct ")
+        {
+            assert(ast.id[7..$] != "stat");
             visitIdent(ast.id[7..$]);
         }
         else if (ast.id.length > 6 && ast.id[0..6] == "class ")
         {
+            assert(ast.id[6..$] != "stat");
             visitIdent(ast.id[6..$]);
-        } else {
+        }
+        else 
+        {
             visitIdent(ast.id);
         }
         if (ast.isConst)

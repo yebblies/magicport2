@@ -1,10 +1,10 @@
 
 // c library
 
-public import core.stdc.stdarg : va_list, va_start, va_end;
-public import core.stdc.stdio : printf, sprintf, fprintf, vprintf, fputs, fwrite, putchar, remove, fflush, stdout, stderr, FILE;
+public import core.stdc.stdarg;
+public import core.stdc.stdio : printf, sprintf, fprintf, vprintf, fputs, fwrite, putchar, remove, fflush, stdout, stderr, FILE, fread, ferror, feof, L_tmpnam, perror;
 public import core.stdc.stdlib : alloca, exit, EXIT_FAILURE, EXIT_SUCCESS, strtol, strtoull, getenv, malloc, calloc, free;
-public import core.stdc.ctype : isspace, isdigit, isalnum, isprint, isalpha, isxdigit, islower, tolower;
+public import core.stdc.ctype : isspace, isdigit, isalnum, isprint, isalpha, isxdigit, islower, tolower, toupper;
 public import core.stdc.errno : errno, EEXIST, ERANGE;
 public import core.stdc.limits : INT_MAX;
 public import core.stdc.math : sinl, cosl, tanl, sqrtl, fabsl;
@@ -12,9 +12,7 @@ public import core.stdc.time : time_t, ctime, time;
 public import core.stdc.stdint : int64_t, uint64_t, int32_t, uint32_t, int16_t, uint16_t, int8_t, uint8_t;
 public import core.stdc.float_;
 
-private import core.stdc.string : strcmp, strlen, strncmp, strchr, memset, memmove, strdup, strcpy, strcat, xmemcmp = memcmp, memcpy;
-
-public import core.sys.windows.windows;
+private import core.stdc.string : strcmp, strlen, strncmp, strchr, memset, memmove, strdup, strcpy, strcat, xmemcmp = memcmp, memcpy, strrchr, strstr;
 
 private import core.memory;
 
@@ -24,12 +22,36 @@ import dmd;
 
 // win32
 
-alias GetModuleFileNameA GetModuleFileName;
-alias CreateFileA CreateFile;
-alias CreateFileMappingA CreateFileMapping;
-alias WIN32_FIND_DATA WIN32_FIND_DATAA;
-extern(Windows) DWORD GetFullPathNameA(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR *lpFilePart);
-alias GetFullPathNameA GetFullPathName;
+version(Windows)
+{
+    public import core.sys.windows.windows;
+    alias GetModuleFileNameA GetModuleFileName;
+    alias CreateFileA CreateFile;
+    alias CreateFileMappingA CreateFileMapping;
+    alias WIN32_FIND_DATA WIN32_FIND_DATAA;
+    extern(Windows) DWORD GetFullPathNameA(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR *lpFilePart);
+    alias GetFullPathNameA GetFullPathName;
+
+    extern(C) int mkdir(const char*);
+    alias mkdir _mkdir;
+}
+else version(Posix)
+{
+    public import core.sys.posix.sys.stat : stat_t, stat, S_ISDIR;
+    public import core.sys.posix.fcntl : fstat, open, O_RDONLY, O_CREAT, O_WRONLY, O_TRUNC;
+    public import core.sys.posix.unistd : read, close, write, pid_t, pipe, fork, dup2, STDERR_FILENO, execvp, execv;
+    public import core.sys.posix.utime : utime, utimbuf;
+    public import core.sys.posix.sys.types : off_t, ssize_t;
+    public import core.sys.posix.stdio : P_tmpdir;
+    public import core.sys.posix.stdlib : mkstemp, realpath;
+    public import core.sys.posix.sys.wait : waitpid, WIFEXITED, WEXITSTATUS, WIFSIGNALED, WTERMSIG;
+
+    extern(C) int mkdir(const char*, int);
+    extern(C) char *canonicalize_file_name(const char*);
+    extern(C) FILE* fdopen(int, const char*);
+}
+else
+    static assert(0);
 
 // c lib
 
@@ -43,10 +65,6 @@ extern(C) int putenv(const char*);
 extern(C) int spawnlp(int, const char*, const char*, const char*, const char*);
 extern(C) int spawnl(int, const char*, const char*, const char*, const char*);
 extern(C) int spawnv(int, const char*, const char**);
-extern(C) int mkdir(const char*);
-alias mkdir _mkdir;
-private extern(C) int memicmp(const char*, const char*, size_t);
-private extern(C) char* strupr(const char*);
 
 
 // root.Object
@@ -57,7 +75,6 @@ class RootObject
     this()
     {
     }
-    void dtor() { assert(0); }
     bool equals(RootObject o)
     {
         return o is this;
@@ -90,7 +107,7 @@ private:
     size_t allocdim;
 
 public:
-    void push(size_t line = __LINE__)(T ptr)
+    void push(T ptr)
     {
         reserve(1);
         data[dim++] = ptr;
@@ -263,8 +280,36 @@ struct Port
     static bool isNan(double r) { return !(r == r); }
     static real fmodl(real a, real b) { return a % b; }
     static real fequal(real a, real b) { return xmemcmp(&a, &b, 10) == 0; }
-    static int memicmp(const char* s1, const char* s2, size_t n) { return .memicmp(s1, s2, n); }
-    static char* strupr(const char* s) { return .strupr(s); }
+    static int memicmp(const char* s1, const char* s2, size_t n)
+    {
+        int result = 0;
+
+        for (int i = 0; i < n; i++)
+        {   char c1 = s1[i];
+            char c2 = s2[i];
+
+            result = c1 - c2;
+            if (result)
+            {
+                result = toupper(c1) - toupper(c2);
+                if (result)
+                    break;
+            }
+        }
+        return result;
+    }
+    static char* strupr(char* s)
+    {
+        char *t = s;
+
+        while (*s)
+        {
+            *s = cast(char)toupper(*s);
+            s++;
+        }
+
+        return t;
+    }
     static int isSignallingNan(double r) { return isNan(r) && !(((cast(ubyte*)&r)[6]) & 8); }
     static int isSignallingNan(real r) { return isNan(r) && !(((cast(ubyte*)&r)[7]) & 0x40); }
     static int isInfinity(double r) { return r is double.infinity || r is -double.infinity; }
@@ -962,8 +1007,16 @@ struct OutBuffer
     void write(RootObject obj);
     void fill0(size_t nbytes);
     void _align(size_t size);
-    void vprintf(const(char)* format, va_list args) { vprintf(format, cast(char*)args); }
-    void vprintf(const(char)* format, char* args);
+    version(Windows)
+    {
+        void vprintf(const(char)* format, va_list args) { vprintf(format, cast(char*)args); }
+        void vprintf(const(char)* format, char* args);
+    }
+    else
+    {
+        void vprintf(const(char)* format, va_list args) { vprintf(format, cast(void*)args); }
+        void vprintf(const(char)* format, void* args);
+    }
     void printf(const(char)* format, ...);
     void bracket(char left, char right);
     size_t bracket(size_t i, const(char)* left, size_t j, const(char)* right);
@@ -1083,3 +1136,5 @@ enum TARGET_WINDOS = true;
 
 enum __GNUC__ = false;
 enum __MINGW32__ = false;
+
+enum __GLIBC__ = true;

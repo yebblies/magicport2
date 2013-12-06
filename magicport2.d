@@ -78,7 +78,7 @@ void main(string[] args)
     //auto g = File("port\\dmd.ast", "wb");
     //superast.visit(new AstPrinter(g));
 
-    auto f = File("port\\dmd.d", "wb");
+    auto f = File(buildPath("port", "dmd.d"), "wb");
     f.writeln("\nimport defs;\n");
     superast.visit(new DPrinter((string s) { f.write(s); }, scan));
 }
