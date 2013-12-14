@@ -755,7 +755,7 @@ class DPrinter : Visitor
 
                     case "_WIN32":         println("version(Windows)"); break;
                     case "POSIX":          println("version(Posix)"); break;
-                    case "linux":          println("version(linux)"); break;
+                    case "__linux__":      println("version(linux)"); break;
                     case "__APPLE__":
                     case "MACINTOSH":      println("version(OSX)"); break;
                     case "__FreeBSD__":    println("version(FreeBSD)"); break;

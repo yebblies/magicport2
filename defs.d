@@ -1109,6 +1109,7 @@ template xversion(string s)
 
 enum DDMD = true;
 
+enum __linux__ = xversion!"linux";
 enum linux = xversion!"linux";
 enum __APPLE__ = xversion!"OSX";
 enum __FreeBSD__ = xversion!"FreeBSD";
