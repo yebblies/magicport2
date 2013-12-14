@@ -39,7 +39,7 @@ else version(Posix)
 {
     public import core.sys.posix.sys.stat : stat_t, stat, S_ISDIR;
     public import core.sys.posix.fcntl : fstat, open, O_RDONLY, O_CREAT, O_WRONLY, O_TRUNC;
-    public import core.sys.posix.unistd : read, close, write, pid_t, pipe, fork, dup2, STDERR_FILENO, execvp, execv;
+    public import core.sys.posix.unistd : read, close, write, pid_t, fork, dup2, STDERR_FILENO, execvp, execv;
     public import core.sys.posix.utime : utime, utimbuf;
     public import core.sys.posix.sys.types : off_t, ssize_t;
     public import core.sys.posix.stdio : P_tmpdir;
@@ -49,6 +49,7 @@ else version(Posix)
     extern(C) int mkdir(const char*, int);
     extern(C) char *canonicalize_file_name(const char*);
     extern(C) FILE* fdopen(int, const char*);
+    extern(C) int pipe(int *);
 }
 else
     static assert(0);
