@@ -1124,19 +1124,21 @@ enum _MSC_VER = false;
 enum LOG = false;
 enum ASYNCREAD = false;
 enum WINDOWS_SEH = false;
-enum OMFOBJ = true;
 enum UNITTEST = false;
 enum CANINLINE_LOG = false;
 enum LOGSEMANTIC = false;
 
-enum TARGET_LINUX = false;
+enum OMFOBJ = xversion!"Windows";
+enum ELFOBJ = xversion!"linux";
+
+enum TARGET_LINUX = xversion!"linux";
 enum TARGET_OSX = false;
 enum TARGET_FREEBSD = false;
 enum TARGET_OPENBSD = false;
 enum TARGET_SOLARIS = false;
-enum TARGET_WINDOS = true;
+enum TARGET_WINDOS = xversion!"Windows";;
 
 enum __GNUC__ = false;
 enum __MINGW32__ = false;
 
-enum __GLIBC__ = true;
+enum __GLIBC__ = xversion!"linux";
