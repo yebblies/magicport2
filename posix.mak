@@ -23,7 +23,7 @@ port/dmd: port/dmd.d defs.d $(LIBS)
 
 build2: port/dmdx
 port/dmdx: port/dmd.d defs.d port/dmd $(LIBS)
-	LD_LIBRARY_PATH=$(PHOBOSLIB) port/dmd    port/dmd defs -ofport/dmdx.o $(FLAGS)
+	LD_LIBRARY_PATH=$(PHOBOSLIB) port/dmd port/dmd defs -c -ofport/dmdx.o $(FLAGS)
 	g++ -oport/dmdx port/dmd.o $(LIBS) -L$(PHOBOSLIB) -lphobos2
 
 magicport2 : $(SRC)
