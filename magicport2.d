@@ -12,7 +12,6 @@ import dprinter;
 import printerast;
 import scanner;
 import ast;
-import preprocess;
 
 // "complex_t.h", "intrange.h", "intrange.c", "toelfdebug.c", "libelf.c", "libmach.c", "idgen.c", "libmscoff.c", "scanmscoff.c",
 // "iasm.c",
@@ -64,8 +63,6 @@ void main(string[] args)
         assert(fn.exists(), fn ~ " does not exist");
         auto pp = cast(string)read(fn);
         pp = pp.replace("\"v\"\n#include \"verstr.h\"\n    ;", "__IMPORT__;");
-        //pp = preprocess.preprocess(Lexer(pp, fn), fn);
-        //std.file.write("pre.txt", pp);
         asts ~= parse(Lexer(pp, fn), fn);
         asts[$-1].visit(scan);
     }
