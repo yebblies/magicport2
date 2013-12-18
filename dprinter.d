@@ -697,14 +697,17 @@ class DPrinter : Visitor
     {
         if (auto ct = cast(ClassType)t)
         {
+            auto id = ct.id;
+            if (id.startsWith("class "))
+                id = id[6..$];
             foreach(sd; scan.structsUsingInheritance)
             {
-                if (sd.id == ct.id)
+                if (sd.id == id)
                 {
                     return true;
                 }
             }
-            if (parentlessclasses.canFind(ct.id))
+            if (parentlessclasses.canFind(id))
                 return true;
         }
         return false;
