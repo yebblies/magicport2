@@ -812,6 +812,8 @@ class DPrinter : Visitor
         {
             if (st.id == "union tree_node")
                 return;
+            if (st.id == "struct TYPE")
+                return;
         }
         if (auto ft = cast(FunctionType)ast.t)
         {

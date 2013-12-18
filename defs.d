@@ -866,6 +866,7 @@ size_t ld_sprint(char* str, int fmt, real x)
 
 struct Symbol;
 struct TYPE;
+alias TYPE type;
 struct elem;
 struct code;
 struct block;
