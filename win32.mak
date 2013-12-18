@@ -7,7 +7,7 @@ LIBS=..\dmdgit\src\glue.lib ..\dmdgit\src\backend.lib ..\dmdgit\src\outbuffer.ob
 # LIBS=..\dmdgit\src\gluestub.obj ..\dmdgit\src\backend.lib
 
 COMPILER=..\dmdgit\src\dmd.exe
-FLAGS=-debug -gc -vtls -J..\dmdgit -d -version=DMDV2
+FLAGS=-debug -vtls -J..\dmdgit -d -version=DMDV2
 
 default: gen build1 build2
 
