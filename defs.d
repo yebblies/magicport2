@@ -93,13 +93,8 @@ class RootObject
 // root.Array
 
 extern(C++)
-struct Array(U)
+struct Array(T)
 {
-    static if (!is(U == class))
-        alias U* T;
-    else
-        alias U T;
-
 public:
     size_t dim;
     T* data;
