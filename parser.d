@@ -778,6 +778,22 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             return new ExternCDeclaration(parseDecl);
         }
     }
+    if (t.text == "__attribute__")
+    {
+        nextToken();
+        enter("(");
+        enter("(");
+        check("noreturn");
+        exit(")");
+        exit(")");
+    }
+    else if (t.text == "__declspec")
+    {
+        nextToken();
+        enter("(");
+        check("noreturn");
+        exit(")");
+    }
 getid:
     auto type = tx ? tx : parseType();
     
