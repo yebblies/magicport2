@@ -1116,6 +1116,7 @@ enum __sun = xversion!"Solaris";
 enum IN_GCC = xversion!"GNU";
 enum __DMC__ = xversion!"DigitalMars";
 enum _MSC_VER = false;
+enum __clang__ = false;
 
 enum LOG = false;
 enum ASYNCREAD = false;
