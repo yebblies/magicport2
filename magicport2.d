@@ -35,7 +35,7 @@ auto frontsrc = [
     "arrayop.c", "aliasthis.h", "aliasthis.c", "json.h", "json.c",
     "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sapply.c", "sideeffect.c",
     "ctfe.h", "canthrow.c", "target.c", "target.h", "id.c", "id.h",
-    "impcnvtab.c",
+    "impcnvtab.c", "visitor.h"
     //"gluestub.c"
 ];
 

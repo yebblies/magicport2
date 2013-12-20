@@ -11,7 +11,7 @@ import visitor;
 import scanner;
 import typenames;
 
-auto parentlessclasses = ["Section", "Condition", "TemplateParameter", "Lexer", "RootObject", "Library"];
+auto parentlessclasses = ["Section", "Condition", "TemplateParameter", "Lexer", "RootObject", "Library", "Visitor"];
 
 class DPrinter : Visitor
 {
@@ -343,6 +343,8 @@ class DPrinter : Visitor
         ["VarDeclaration", "toJson"],
         ["VarDeclaration", "toObjFile"],
         ["VarDeclaration", "toSymbol"],
+        ["ExpStatement", "accept"],
+        ["CompoundStatement", "accept"],
     ];
 
     auto nonfinalclasses =
@@ -389,6 +391,7 @@ class DPrinter : Visitor
         "Type",
         "UnaExp",
         "VarDeclaration",
+        "Visitor",
     ];
 
     override void visitFuncDeclaration(FuncDeclaration ast)

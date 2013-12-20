@@ -647,6 +647,7 @@ static immutable classTypes =
     "SwitchErrorStatement",
     "ErrorStatement",
     "Statement",
+    "Visitor",
 ] ~ expTypes ~ typeTypes;
 
 bool isIncludeGuard(string s)
