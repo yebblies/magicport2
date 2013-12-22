@@ -427,12 +427,12 @@ class DPrinter : Visitor
         auto nonfinalclass = P && nonfinalclasses.canFind(P.id);
         if (!virtual && !(ast.stc & STCabstract) && nonfinalclass)
             print("final ");
-        if (!inexternc && (!P || !classTypes.canFind(P.id)))
+        if (!inexternc && (!P || !classTypes.canFind(P.id)) && ast.type.id != ast.id)
             print("extern(C++) ");
         visit(ast.stc);
         if (ast.type.id == ast.id)
         {
-            print("this");
+            print("extern(D) this");
         } else if (ast.id[0] == '~')
         {
             print("~this");
