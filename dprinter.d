@@ -345,6 +345,10 @@ class DPrinter : Visitor
         ["VarDeclaration", "toSymbol"],
         ["ExpStatement", "accept"],
         ["CompoundStatement", "accept"],
+        ["Type", "accept"],
+        ["TypeNext", "accept"],
+        ["TypeArray", "accept"],
+        ["TypeQualified", "accept"],
     ];
 
     auto nonfinalclasses =

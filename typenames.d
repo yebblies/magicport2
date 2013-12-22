@@ -647,7 +647,10 @@ static immutable classTypes =
     "SwitchErrorStatement",
     "ErrorStatement",
     "Statement",
+
     "Visitor",
+    "CppMangleVisitor",
+
 ] ~ expTypes ~ typeTypes;
 
 bool isIncludeGuard(string s)
