@@ -456,6 +456,8 @@ class DPrinter : Visitor
             {
                 foreach(i; ast.initlist)
                 {
+                    if (i.args.length == 0)
+                        continue;
                     print("this.");
                     visit(i.func);
                     print(" = ");
