@@ -343,12 +343,7 @@ class DPrinter : Visitor
         ["VarDeclaration", "toJson"],
         ["VarDeclaration", "toObjFile"],
         ["VarDeclaration", "toSymbol"],
-        ["ExpStatement", "accept"],
-        ["CompoundStatement", "accept"],
-        ["Type", "accept"],
-        ["TypeNext", "accept"],
-        ["TypeArray", "accept"],
-        ["TypeQualified", "accept"],
+        [null, "accept"],
     ];
 
     auto nonfinalclasses =
