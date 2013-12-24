@@ -650,6 +650,7 @@ static immutable classTypes =
 
     "Visitor",
     "CppMangleVisitor",
+    "ToJsonVisitor",
 
 ] ~ expTypes ~ typeTypes;
 
