@@ -88,6 +88,13 @@ void main(string[] args)
         else
             f.writefln("module %s;", m.m);
         f.writeln();
+
+        foreach(i; m.imports)
+        {
+            f.writefln("import %s;", i);
+        }
+        f.writeln();
+
         auto printer = new DPrinter((string s) { f.write(s); }, scan);
         foreach(d; decls)
         {
@@ -97,7 +104,7 @@ void main(string[] args)
                     writeln(d, " needs mangled name");
                 else
                 {
-                    p.d.visit(printer);
+                    printer.visitX(p.d);
                     p.count++;
                 }
             }
@@ -105,7 +112,7 @@ void main(string[] args)
             {
                 assert(p.d);
                 map[p.d.getName].count++;
-                p.d.visit(printer);
+                printer.visitX(p.d);
                 p.count++;
             }
             else
@@ -176,17 +183,20 @@ struct M
 {
     string m;
     string p;
+    string[] imports;
 }
 
 auto getList()
 {
     return
     [
-        M("filename", "root") :
+        M("filename", "root", ["root.rootobject", "root.array", "root.file"]) :
         [
+            "typedef Strings",
+            "typedef Files",
             "struct FileName",
         ],
-        M("file", "root") :
+        M("file", "root", ["root.filename", "root.array"]) :
         [
             "struct File",
         ],
@@ -200,10 +210,10 @@ auto getList()
             "version speller.c:265",
         ],
 
-        M("arraytypes") :
+        M("arraytypes", null, ["root.array", "root.file", "identifier", "dtemplate", "expression", "statement", "dclass", "root.rootobject",
+                               "mtype", "dsymbol", "aggregate", "mars", "declaration", "init", "func", "defs", "dmodule"]) :
         [
             "typedef Strings",
-            "typedef Files",
             "typedef Identifiers",
             "typedef TemplateParameters",
             "typedef Expressions",
@@ -233,7 +243,7 @@ auto getList()
             "typedef Symbols",
             "typedef Dts",
        ],
-        M("mars") :
+        M("mars", null, ["arraytypes", "defs", "dmodule", "root.outbuffer", "root.file", "dscope"]) :
         [
             "function toWinPath",
             "variable global",
@@ -311,13 +321,20 @@ auto getList()
             "externc mars.h:411",
             "version mars.h:426",
         ],
-        M("dstruct") :
+        M("dstruct", null, ["dsymbol", "func", "aggregate", "arraytypes", "mars", "mtype", "identifier", "dscope",
+                            "root.outbuffer", "hdrgen", "visitor"]) :
         [
             "function inNonRoot",
             "function search_toHash",
             "function search_toString",
+            "struct StructFlags",
+            "struct StructDeclaration",
+            "struct UnionDeclaration",
         ],
-        M("dsymbol") :
+        M("dsymbol", null, ["root.rootobject", "identifier", "defs", "mars", "dscope", "arraytypes", "declaration",
+                            "dmodule", "dtemplate", "root.outbuffer", "hdrgen", "aggregate", "statement", "mtype",
+                            "denum", "dimport", "attrib", "visitor", "func", "dclass", "dstruct", "expression",
+                            "root.aav"]) :
         [
             "variable Pprotectionnames",
             "function symbol_search_fp",
@@ -397,7 +414,9 @@ auto getList()
             "variable namesTable",
             "function HtmlNamedEntity",
         ],
-        M("mtype") :
+        M("mtype", null, ["defs", "root.outbuffer", "expression", "dscope", "declaration", "root.rootobject", "dclass",
+                          "hdrgen", "aggregate", "dtemplate", "root.stringtable", "mars", "identifier", "dsymbol", "arraytypes",
+                          "visitor", "denum", "dstruct"]) :
         [
             "version mtype.c:25",
             "variable LOGDOTEXP",
@@ -468,7 +487,9 @@ auto getList()
             "struct TypeNull",
             "struct Parameter",
         ],
-        M("expression") :
+        M("expression", null, ["mars", "dscope", "aggregate", "declaration", "func", "identifier", "arraytypes", "root.rootobject",
+                               "lexer", "mtype", "complex", "root.outbuffer", "hdrgen", "intrange", "dsymbol", "interpret", "inline",
+                               "visitor", "dtemplate", "parse", "dstruct", "defs", "dclass"]) :
         [
             "function getRightThis",
             "function hasThis",
@@ -632,14 +653,16 @@ auto getList()
             "struct FuncInitExp",
             "struct PrettyFuncInitExp",
         ],
-        M("optimize") :
+        M("optimize", null, ["expression", "declaration", "mtype"]) :
         [
             "function expandVar",
             "function fromConstInitializer",
             "function shift_optimize",
             "function setLengthVarIfKnown",
         ],
-        M("dtemplate") :
+        M("dtemplate", null, ["root.rootobject", "arraytypes", "dsymbol", "expression", "root.array", "func", "dscope", "mars",
+                              "identifier", "root.outbuffer", "hdrgen", "mtype", "visitor", "declaration", "root.aav",
+                              "dmodule", "defs", "aggregate", "dclass"]) :
         [
             "version template.h:49",
             "struct Tuple",
@@ -678,7 +701,7 @@ auto getList()
             "function isPseudoDsymbol",
             "function definitelyValueParameter",
         ],
-        M("lexer") :
+        M("lexer", null, ["mars", "identifier", "root.stringtable", "root.outbuffer", "dmodule"]) :
         [
             "variable LS",
             "variable PS",
@@ -698,7 +721,9 @@ auto getList()
             "struct Token",
             "struct Lexer",
         ],
-        M("declaration") :
+        M("declaration", null, ["mars", "dscope", "aggregate", "identifier", "declaration", "dsymbol", "mtype", "expression",
+                                "root.outbuffer", "visitor", "arraytypes", "init", "hdrgen", "defs", "statement", "interpret",
+                                "root.rootobject", "dtemplate", "inline", "lexer", "func", "dclass", "dstruct"]) :
         [
             "function checkFrameAccess",
             "function ObjectNotFound",
@@ -777,24 +802,8 @@ auto getList()
             "struct TypeInfoWildDeclaration",
             "struct TypeInfoVectorDeclaration",
             "struct ThisDeclaration",
-            "enum ILS",
-            "enum BUILTIN",
-            "struct FuncDeclaration",
-            "struct FuncAliasDeclaration",
-            "struct FuncLiteralDeclaration",
-            "struct CtorDeclaration",
-            "struct PostBlitDeclaration",
-            "struct DtorDeclaration",
-            "struct StaticCtorDeclaration",
-            "struct SharedStaticCtorDeclaration",
-            "struct StaticDtorDeclaration",
-            "struct SharedStaticDtorDeclaration",
-            "struct InvariantDeclaration",
-            "struct UnitTestDeclaration",
-            "struct NewDeclaration",
-            "struct DeleteDeclaration",
         ],
-        M("dcast") :
+        M("dcast", null, ["expression", "mtype", "dscope", "mars", "intrange"]) :
         [
             "function isVoidArrayLiteral",
             "function typeMerge",
@@ -805,7 +814,8 @@ auto getList()
             "function unsignedBitwiseOr",
             "function unsignedBitwiseXor",
         ],
-        M("cond") :
+        M("cond", null, ["mars", "identifier", "dmodule", "dscope", "dsymbol", "root.outbuffer", "hdrgen", "dmodule",
+                         "expression", "arraytypes"]) :
         [
             "struct Condition",
             "struct DVCondition",
@@ -815,7 +825,7 @@ auto getList()
             "function findCondition",
             "function printDepsConditional",
         ],
-        M("link") :
+        M("link", null, ["defs", "root.outbuffer"]) :
         [
             "version link.c:41",
             "function writeFilenameOutBuffer*char*size_t",
@@ -827,25 +837,18 @@ auto getList()
             "version link.c:819",
             "function runProgram",
         ],
-        M("aggregate") :
+        M("aggregate", null, ["dsymbol", "mtype", "arraytypes", "declaration", "func", "mars", "expression", "identifier", "dscope",
+                              "root.outbuffer", "visitor", "hdrgen", "defs", "dstruct", "dtemplate", "clone"]) :
         [
             "enum Sizeok",
             "struct AggregateDeclaration",
-            "struct StructFlags",
-            "struct StructDeclaration",
-            "struct UnionDeclaration",
-            "struct BaseClass",
-            "variable CLASSINFO_SIZE_64",
-            "variable CLASSINFO_SIZE",
-            "struct ClassFlags",
-            "struct ClassDeclaration",
-            "struct InterfaceDeclaration",
         ],
-        M("staticassert") :
+        M("staticassert", null, ["dsymbol", "expression", "mars", "dscope", "identifier", "root.outbuffer", "hdrgen", "visitor"]) :
         [
             "struct StaticAssert",
         ],
-        M("parse") :
+        M("parse", null, ["lexer", "dmodule", "mars", "arraytypes", "dsymbol", "expression", "dtemplate", "staticassert", "mtype",
+                          "cond", "func", "denum", "dimport", "identifier", "statement", "init"]) :
         [
             "variable CDECLSYNTAX",
             "variable CCASTSYNTAX",
@@ -857,7 +860,9 @@ auto getList()
             "struct Parser",
             "enum PREC",
         ],
-        M("statement") :
+        M("statement", null, ["identifier", "dscope", "root.rootobject", "mars", "root.outbuffer", "hdrgen", "arraytypes", "expression",
+                              "interpret", "inline", "visitor", "dsymbol", "declaration", "lexer", "func", "mtype", "cond", "staticassert",
+                              "defs"]) :
         [
             "function fixupLabelName",
             "function checkLabeledLoop",
@@ -907,7 +912,7 @@ auto getList()
             "struct AsmStatement",
             "struct ImportStatement",
         ],
-        M("constfold") :
+        M("constfold", null, ["expression", "mtype", "lexer"]) :
         [
             "function expType",
             "function Neg",
@@ -941,7 +946,7 @@ auto getList()
             "function Cat",
             "function Ptr",
         ],
-        M("dversion") :
+        M("dversion", null, ["dsymbol", "mars", "identifier", "dscope", "root.outbuffer", "hdrgen", "visitor"]) :
         [
             "struct DebugSymbol",
             "struct VersionSymbol",
@@ -951,7 +956,8 @@ auto getList()
             "function inifile",
             "function skipspace",
         ],
-        M("dmodule") :
+        M("dmodule", null, ["dsymbol", "identifier", "dscope", "mars", "visitor", "arraytypes", "aggregate", "root.file",
+                            "dmacro", "doc", "root.outbuffer", "hdrgen", "defs"]) :
         [
             "function readwordLE",
             "function readwordBE",
@@ -964,7 +970,8 @@ auto getList()
             "struct Module",
             "struct ModuleDeclaration",
         ],
-        M("dscope") :
+        M("dscope", null, ["mars", "defs", "dmodule", "dsymbol", "func", "statement", "dtemplate", "declaration", "arraytypes", "doc",
+                           "root.outbuffer", "identifier", "dclass", "aggregate", "mars", "mtype"]) :
         [
             "function mergeFieldInit",
             "function scope_search_fp",
@@ -990,13 +997,14 @@ auto getList()
             "variable SCOPEcompile",
             "struct Scope",
         ],
-        M("dump") :
+        M("dump", null, ["mtype", "expression", "arraytypes"]) :
         [
             "function indent",
             "function type_print",
             "function dumpExpressions",
         ],
-        M("init") :
+        M("init", null, ["root.rootobject", "mars", "dscope", "mtype", "arraytypes", "visitor", "expression", "root.outbuffer", "hdrgen",
+                         "identifier"]) :
         [
             "enum NeedInterpret",
             "struct Initializer",
@@ -1008,7 +1016,8 @@ auto getList()
             "function hasNonConstPointers",
             "function arrayHasNonConstPointers",
         ],
-        M("attrib") :
+        M("attrib", null, ["dsymbol", "arraytypes", "dscope", "mars", "identifier", "aggregate", "root.outbuffer", "hdrgen", "visitor",
+                           "expression", "cond", "dtemplate", "dmodule", "dstruct", "dclass"]) :
         [
             "struct AttribDeclaration",
             "struct StorageClassDeclaration",
@@ -1024,7 +1033,8 @@ auto getList()
             "struct UserAttributeDeclaration",
             "function setMangleOverride",
         ],
-        M("opover") :
+        M("opover", null, ["aggregate", "mtype", "arraytypes", "dscope", "lexer", "expression", "mars", "dsymbol", "identifier",
+                           "func"]) :
         [
             "version opover.c:20",
             "function isAggregate",
@@ -1035,17 +1045,26 @@ auto getList()
             "function inferApplyArgTypesY",
             "version opover.c:1595",
         ],
-        M("dclass") :
+        M("dclass", null, ["dsymbol", "mtype", "arraytypes", "aggregate", "func", "declaration", "mars", "identifier",
+                           "dscope", "root.outbuffer", "hdrgen", "defs", "visitor"]) :
         [
             "version class.c:857",
             "function isf",
+            "struct BaseClass",
+            "variable CLASSINFO_SIZE_64",
+            "variable CLASSINFO_SIZE",
+            "struct ClassFlags",
+            "struct ClassDeclaration",
+            "struct InterfaceDeclaration",
         ],
-        M("mangle") :
+        M("mangle", null, ["mars", "declaration"]) :
         [
             "version mangle.c:37",
             "function mangle",
         ],
-        M("func") :
+        M("func", null, ["dsymbol", "root.outbuffer", "declaration", "mars", "dscope", "arraytypes", "mtype", "identifier",
+                         "statement", "interpret", "defs", "aggregate", "root.rootobject", "hdrgen", "dtemplate",
+                         "expression", "inline", "lexer", "visitor"]) :
         [
             "function overloadApply",
             "function MODMatchToBuffer",
@@ -1055,8 +1074,24 @@ auto getList()
             "function markAsNeedingClosure",
             "function checkEscapingSiblings",
             "function unitTestId",
+            "enum ILS",
+            "enum BUILTIN",
+            "struct FuncDeclaration",
+            "struct FuncAliasDeclaration",
+            "struct FuncLiteralDeclaration",
+            "struct CtorDeclaration",
+            "struct PostBlitDeclaration",
+            "struct DtorDeclaration",
+            "struct StaticCtorDeclaration",
+            "struct SharedStaticCtorDeclaration",
+            "struct StaticDtorDeclaration",
+            "struct SharedStaticDtorDeclaration",
+            "struct InvariantDeclaration",
+            "struct UnitTestDeclaration",
+            "struct NewDeclaration",
+            "struct DeleteDeclaration",
         ],
-        M("inline") :
+        M("inline", null, ["func", "expression", "declaration", "arraytypes", "mars", "dsymbol"]) :
         [
             "struct InlineCostState",
             "variable COST_MAX",
@@ -1072,30 +1107,32 @@ auto getList()
             "function arrayInlineScan",
             "function scanVar",
         ],
-        M("access") :
+        M("access", null, ["dsymbol", "aggregate", "dscope", "mars", "expression", "declaration", "defs", "dclass", "dmodule", "mtype", "lexer",
+                           "dstruct"]) :
         [
             "function accessCheckX",
             "function hasPackageAccess",
             "function accessCheck",
         ],
-        M("cppmangle") :
+        M("cppmangle", null, ["mars"]) :
         [
             "version cppmangle.c:474",
         ],
-        M("identifier") :
+        M("identifier", null, ["root.rootobject"]) :
         [
             "struct Identifier",
         ],
-        M("denum") :
+        M("denum", null, ["dsymbol", "mtype", "expression", "mars", "identifier", "dscope", "root.outbuffer",
+                          "hdrgen", "defs", "visitor", "declaration"]) :
         [
             "struct EnumDeclaration",
             "struct EnumMember",
         ],
-        M("dimport") :
+        M("dimport", null, ["dsymbol", "arraytypes", "identifier", "mars", "dmodule", "dscope", "root.outbuffer", "hdrgen", "visitor"]) :
         [
             "struct Import",
         ],
-        M("doc") :
+        M("doc", null, ["dscope", "dsymbol", "root.outbuffer", "root.array", "dmacro", "declaration", "dtemplate", "mtype"]) :
         [
             "struct Escape",
             "struct Section",
@@ -1140,24 +1177,25 @@ auto getList()
             "function isIndentWS",
             "function utfStride",
         ],
-        M("dmacro") :
+        M("dmacro", null, ["root.outbuffer"]) :
         [
             "struct Macro",
             "function memdup",
             "function extractArgN",
         ],
-        M("hdrgen") :
+        M("hdrgen", null, ["dscope"]) :
         [
             "struct HdrGenState",
             "variable PRETTY_PRINT",
             "variable TEST_EMIT_ALL",
         ],
-        M("delegatize") :
+        M("delegatize", null, ["expression"]) :
         [
             "function lambdaSetParent",
             "function lambdaCheckForNestedRef",
         ],
-        M("interpret") :
+        M("interpret", null, ["arraytypes", "expression", "declaration", "statement", "root.array", "mars", "func",
+                              "dclass", "ctfeexpr", "mtype", "lexer"]) :
         [
             "variable LOGASSIGN",
             "variable LOGCOMPILE",
@@ -1193,7 +1231,8 @@ auto getList()
             "function foreachApplyUtf",
             "function evaluateIfBuiltin",
         ],
-        M("ctfeexpr") :
+        M("ctfeexpr", null, ["dstruct", "declaration", "expression", "arraytypes", "mtype", "mars", "lexer", "func", "interpret",
+                             "root.outbuffer", "hdrgen", "dclass", "visitor"]) :
         [
             "function findFieldIndexByName",
             "function exceptionOrCantInterpret",
@@ -1250,7 +1289,7 @@ auto getList()
             "struct VoidInitExp",
             "struct ThrownExceptionExp",
         ],
-        M("traits") :
+        M("traits", null, ["expression", "identifier", "dsymbol", "arraytypes", "root.aav", "mtype", "func", "declaration"]) :
         [
             "struct Ptrait",
             "function fptraits",
@@ -1274,14 +1313,14 @@ auto getList()
             "function isDeclOut",
             "function isDeclLazy",
         ],
-        M("builtin") :
+        M("builtin", null, ["mars", "expression", "func", "arraytypes"]) :
         [
             "function eval_bsf",
             "function eval_bsr",
             "function eval_bswap",
             "function eval_builtin",
         ],
-        M("clone") :
+        M("clone", null, ["mars"]) :
         [
             "function mergeFuncAttrs",
         ],
@@ -1289,7 +1328,7 @@ auto getList()
         [
             "struct Library",
         ],
-        M("arrayop") :
+        M("arrayop", null, ["root.aav", "func", "identifier", "expression", "dscope", "mars"]) :
         [
             "variable arrayfuncs",
             "struct ArrayOp",
@@ -1297,12 +1336,13 @@ auto getList()
             "function buildArrayOp",
             "function isArrayOpValid",
         ],
-        M("aliasthis") :
+        M("aliasthis", null, ["dsymbol", "identifier", "mars", "dscope", "root.outbuffer", "hdrgen", "visitor", "expression"]) :
         [
             "struct AliasThis",
             "function resolveAliasThis",
         ],
-        M("json") :
+        M("json", null, ["visitor", "root.outbuffer", "mars", "mtype", "arraytypes", "dsymbol", "declaration", "dmodule", "dimport",
+                         "attrib", "dtemplate", "func", "aggregate", "denum"]) :
         [
             "struct ToJsonVisitor",
             "function json_generate",
@@ -1316,7 +1356,7 @@ auto getList()
             "function importHint",
             "version imphint.c:71",
         ],
-        M("argtypes") :
+        M("argtypes", null, ["mtype"]) :
         [
             "function mergeFloatToInt",
             "function argtypemerge",
@@ -1329,26 +1369,28 @@ auto getList()
         [
             "macro scondApply",
         ],
-        M("sideeffect") :
+        M("sideeffect", null, ["expression"]) :
         [
             "function lambdaHasSideEffect",
             "version sideeffect.c:249",
         ],
-        M("canthrow") :
+        M("canthrow", null, ["expression", "dsymbol"]) :
         [
             "struct CanThrow",
             "function lambdaCanThrow",
             "function Dsymbol_canThrow",
         ],
-        M("target") :
+        M("target", null, ["mtype"]) :
         [
             "struct Target",
         ],
-        M("id") :
+        M("id", null, ["identifier"]) :
         [
             "struct Id",
         ],
-        M("visitor") :
+        M("visitor", null, ["statement", "mtype", "dsymbol", "staticassert", "dversion", "denum", "dimport",
+                            "aliasthis", "attrib", "cond", "dtemplate", "dmodule", "aggregate", "dstruct", "dclass",
+                            "declaration", "func", "init", "expression", "ctfeexpr"]) :
         [
             "struct Visitor",
         ],

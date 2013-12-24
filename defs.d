@@ -19,6 +19,10 @@ private import core.memory;
 // generated source
 
 import mars;
+import lib;
+import root.file;
+import expression;
+import dscope;
 
 // win32
 

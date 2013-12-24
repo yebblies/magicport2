@@ -1,6 +1,10 @@
 
 module intrange;
 
+import mars;
+import mtype;
+import expression;
+
 enum UINT64_MAX = 0xFFFFFFFFFFFFFFFFUL;
 
 static uinteger_t copySign(uinteger_t x, bool sign)

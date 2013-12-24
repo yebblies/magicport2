@@ -1,6 +1,8 @@
 
 module root.array;
 
+import root.rmem;
+
 extern(C++)
 struct Array(T)
 {

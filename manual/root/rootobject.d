@@ -1,6 +1,8 @@
 
 module root.rootobject;
 
+import root.outbuffer;
+
 extern(C++)
 class RootObject
 {

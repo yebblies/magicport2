@@ -47,7 +47,7 @@ DSRC= $(GENSRC) $(COPYSRC)
 
 default: build1 build2
 
-$(GENSRC) $(COPYSRC): magicport2.exe
+$(GENSRC) $(COPYSRC): magicport2.exe $(MANUALSRC)
 	magicport2 ..\dmdgit\src
 
 build1: port\dmd.exe

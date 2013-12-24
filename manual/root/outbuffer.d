@@ -1,6 +1,9 @@
 
 module root.outbuffer;
 
+import root.rootobject;
+import defs;
+
 extern(C++)
 struct OutBuffer
 {

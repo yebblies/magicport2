@@ -1,6 +1,8 @@
 
 module root.aav;
 
+import root.rootobject;
+
 struct AA;
 RootObject _aaGetRvalue(AA* aa, RootObject o)
 {

@@ -70,7 +70,7 @@ class DPrinter : Visitor
     {
         foreach(i, a; args)
         {
-            visit(a);
+            visitX(a);
             if (i != args.length - 1)
                 print(", ");
         }
@@ -79,12 +79,12 @@ class DPrinter : Visitor
     {
         foreach(i, a; args)
         {
-            visit(a);
+            visitX(a);
             if (i != args.length - 1)
                 print(", ");
         }
     }
-    void visit()(int stc)
+    void visitX()(int stc)
     {
         static immutable names = ["static", "enum", "extern", "extern(C)", "virtual", "__cdecl", "abstract", "__inline", "register"];
         bool one;
@@ -105,7 +105,7 @@ class DPrinter : Visitor
             }
         }
     }
-    void visit(int line = __LINE__)(Ast ast)
+    void visitX(int line = __LINE__)(Ast ast)
     {
         if (!ast)
             writeln(line);
@@ -139,10 +139,10 @@ class DPrinter : Visitor
         assert(ast);
         print(ast);
     }*/
-    void visit(T)(T[] arr) if (is(typeof(visit(arr[0]))) && !is(T[] : string))
+    void visitX(T)(T[] arr) if (is(typeof(visitX(arr[0]))) && !is(T[] : string))
     {
         foreach(v; arr)
-            visit(v);
+            visitX(v);
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -170,7 +170,7 @@ class DPrinter : Visitor
     
     override void visit(Module ast)
     {
-        visit(ast.decls);
+        visitX(ast.decls);
     }
 
     override void visit(ImportDeclaration ast)
@@ -424,7 +424,7 @@ class DPrinter : Visitor
             print("final ");
         if (!inexternc && (!P || !classTypes.canFind(P.id)) && ast.type.id != ast.id)
             print("extern(C++) ");
-        visit(ast.stc);
+        visitX(ast.stc);
         if (ast.type.id == ast.id)
         {
             print("extern(D) this");
@@ -432,7 +432,7 @@ class DPrinter : Visitor
         {
             print("~this");
         } else {
-            visit(ast.type);
+            visitX(ast.type);
             print(" ");
             visitIdent(ast.id);
         }
@@ -459,15 +459,15 @@ class DPrinter : Visitor
                     if (i.args.length == 0)
                         continue;
                     print("this.");
-                    visit(i.func);
+                    visitX(i.func);
                     print(" = ");
                     assert(i.args.length == 1);
-                    visit(i.args);
+                    visitX(i.args);
                     println(";");
                 }
             }
             foreach(s; ast.fbody)
-                visit(s);
+                visitX(s);
             indent--;
             println("}");
         } else if (ast.hasbody)
@@ -477,7 +477,7 @@ class DPrinter : Visitor
             indent++;
             println("mixin(dmd_trace_code);");
             foreach(s; ast.fbody)
-                visit(s);
+                visitX(s);
             indent--;
             println("}");
         } else {
@@ -560,10 +560,10 @@ class DPrinter : Visitor
         if (ast.types.length == 1 && !ast.inits[0] && cast(ArrayType)ast.types[0] && (cast(ArrayType)ast.types[0]).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
         {
             auto at = cast(ArrayType)ast.types[0];
-            visit((ast.stc & STCstatic) | STCvirtual);
-            visit(at.next);
+            visitX((ast.stc & STCstatic) | STCvirtual);
+            visitX(at.next);
             print("[");
-            visit(at.dim);
+            visitX(at.dim);
             print("] ");
             print(ast.ids[0]);
             print("__array_storage");
@@ -583,7 +583,7 @@ class DPrinter : Visitor
             print("extern(C++) ");
             if (!manifest) gshared = true;
         }
-        else if (ast.types.length == 1 && !(ast.stc & STCconst) && !D2 && !fd)
+        else if (ast.types.length == 1 && !(ast.stc & STCconst) && !D2 && !fd && P)
         {
             print("extern(C++) ");
             if (!manifest) gshared = true;
@@ -602,7 +602,7 @@ class DPrinter : Visitor
                 {
                     if (manifest)
                         print("enum ");
-                    visit(ast.stc | STCvirtual);
+                    visitX(ast.stc | STCvirtual);
                     if (gshared)
                         print("__gshared ");
                     if (realarray)
@@ -610,19 +610,19 @@ class DPrinter : Visitor
                         auto at = cast(ArrayType)ast.types[i];
                         if (auto at2 = cast(ArrayType)at.next)
                         {
-                            visit(at2.next);
+                            visitX(at2.next);
                             print("[");
-                            visit(at2.dim);
+                            visitX(at2.dim);
                             print("]");
                         }
                         else
-                            visit(at.next);
+                            visitX(at.next);
                         print("[");
-                        visit(at.dim);
+                        visitX(at.dim);
                         print("]");
                     }
                     else
-                        visit(ast.types[i]);
+                        visitX(ast.types[i]);
                     print(" ");
                 }
                 visitIdent(ast.ids[i]);
@@ -630,7 +630,7 @@ class DPrinter : Visitor
                 {
                     print(" = ");
                     this.inittype = ast.types[i];
-                    visit(ast.inits[i]);
+                    visitX(ast.inits[i]);
                     inittype = null;
                 }
                 else if (cast(ArrayType)ast.types[i] && (cast(ArrayType)ast.types[i]).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
@@ -654,7 +654,7 @@ class DPrinter : Visitor
                 if (ast.inits[i])
                 {
                     print(" = ");
-                    visit(ast.inits[i]);
+                    visitX(ast.inits[i]);
                 } else {
                     print(" = 0");
                 }
@@ -673,7 +673,7 @@ class DPrinter : Visitor
                     print("enum ");
                     print(ast.ids[0]);
                     print("__array_length = ");
-                    visit(at.dim);
+                    visitX(at.dim);
                     if (!E)
                         println(";");
                     return;
@@ -720,13 +720,13 @@ class DPrinter : Visitor
     override void visit(ConstructDeclaration ast)
     {
         stackclasses ~= ast.id;
-        visit(ast.type);
+        visitX(ast.type);
         if (!isClass(ast.type))
             print("*");
         print(" ");
         visitIdent(ast.id);
         print(" = new ");
-        visit(ast.type);
+        visitX(ast.type);
         print("(");
         printArgs(ast.args);
         print(")");
@@ -791,7 +791,7 @@ class DPrinter : Visitor
                 {
                     print("static if (");
                     instaticif = true;
-                    visit(c);
+                    visitX(c);
                     instaticif = false;
                     println(")");
                 }
@@ -802,7 +802,7 @@ class DPrinter : Visitor
             }
             println("{");
             indent++;
-            visit(ast.members[i]);
+            visitX(ast.members[i]);
             indent--;
             println("}");
         }
@@ -832,7 +832,7 @@ class DPrinter : Visitor
         if (ast.id == "utf8_t")
             return;
         print("alias ");
-        visit(ast.t);
+        visitX(ast.t);
         print(" ");
         visitIdent(ast.id);
         println(";");
@@ -868,7 +868,7 @@ class DPrinter : Visitor
             assert(0);
             write(ast.id);
         }
-        visit(ast.e);
+        visitX(ast.e);
         println("; }");
     }
 
@@ -905,7 +905,7 @@ class DPrinter : Visitor
             println("align(1):");
         indent++;
         foreach(d; ast.decls)
-            visit(d);
+            visitX(d);
         indent--;
         println("}");
         println("");
@@ -923,7 +923,7 @@ class DPrinter : Visitor
             println("");
         println("{");
         foreach(d; ast.decls)
-            visit(d);
+            visitX(d);
         if (ast.id)
         {
             println("};");
@@ -943,7 +943,7 @@ class DPrinter : Visitor
         println("extern(C) {");
         inexternc++;
         foreach(d; ast.decls)
-            visit(d);
+            visitX(d);
         inexternc--;
         println("}");
     }
@@ -982,7 +982,7 @@ class DPrinter : Visitor
             if (ast.vals[i])
             {
                 print(" = ");
-                visit(ast.vals[i]);
+                visitX(ast.vals[i]);
             }
             println(",");
         }
@@ -1008,7 +1008,7 @@ class DPrinter : Visitor
     override void visit(ErrorDeclaration ast)
     {
         print("static assert(0, ");
-        visit(ast.e);
+        visitX(ast.e);
         print(")");
         if (!E)
             println(";");
@@ -1060,7 +1060,7 @@ class DPrinter : Visitor
         if (ie && ie.id == "this")
             print("this");
         else
-            visit(ast.e);
+            visitX(ast.e);
         print(".");
         visitIdent(ast.id);
     }
@@ -1071,20 +1071,20 @@ class DPrinter : Visitor
         if (instaticif && ie && ie.id == "defined")
         {
             assert(ast.args.length == 1);
-            visit(ast.args[0]);
+            visitX(ast.args[0]);
         }
         else if (ie && ie.id == "va_start")
         {
             assert(ast.args.length == 2);
             print("version(X86_64) va_start(");
-            visit(ast.args[0]);
+            visitX(ast.args[0]);
             print(", __va_argsave); else va_start(");
             printArgs(ast.args);
             print(")");
         }
         else
         {
-            visit(ast.func);
+            visitX(ast.func);
             print("(");
             printArgs(ast.args);
             print(")");
@@ -1099,7 +1099,7 @@ class DPrinter : Visitor
         auto n2 = ie2 && ie2.id == "NULL";
 
         lparen(ast);
-        visit(ast.e1);
+        visitX(ast.e1);
         print(" ");
         if ((n1 || n2) && ast.op == "==")
             print("is");
@@ -1108,7 +1108,7 @@ class DPrinter : Visitor
         else
             print(ast.op);
         print(" ");
-        visit(ast.e2);
+        visitX(ast.e2);
         rparen(ast);
     }
 
@@ -1142,100 +1142,100 @@ class DPrinter : Visitor
             }
         }
         lparen(ast);
-        visit(ast.e1);
+        visitX(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
-        visit(ast.e2);
+        visitX(ast.e2);
         rparen(ast);
     }
 
     override void visit(AddExpr ast)
     {
         lparen(ast);
-        visit(ast.e1);
+        visitX(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
-        visit(ast.e2);
+        visitX(ast.e2);
         rparen(ast);
     }
 
     override void visit(OrOrExpr ast)
     {
         lparen(ast);
-        visit(ast.e1);
+        visitX(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
-        visit(ast.e2);
+        visitX(ast.e2);
         rparen(ast);
     }
 
     override void visit(AndAndExpr ast)
     {
         lparen(ast);
-        visit(ast.e1);
+        visitX(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
-        visit(ast.e2);
+        visitX(ast.e2);
         rparen(ast);
     }
 
     override void visit(OrExpr ast)
     {
         lparen(ast);
-        visit(ast.e1);
+        visitX(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
-        visit(ast.e2);
+        visitX(ast.e2);
         rparen(ast);
     }
 
     override void visit(XorExpr ast)
     {
         lparen(ast);
-        visit(ast.e1);
+        visitX(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
-        visit(ast.e2);
+        visitX(ast.e2);
         rparen(ast);
     }
 
     override void visit(AndExpr ast)
     {
         lparen(ast);
-        visit(ast.e1);
+        visitX(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
-        visit(ast.e2);
+        visitX(ast.e2);
         rparen(ast);
     }
 
     override void visit(AssignExpr ast)
     {
         lparen(ast);
-        visit(ast.e1);
+        visitX(ast.e1);
         print(" ");
         print(ast.op);
         print(" ");
-        visit(ast.e2);
+        visitX(ast.e2);
         rparen(ast);
     }
 
     override void visit(DeclarationExpr ast)
     {
-        visit(ast.d);
+        visitX(ast.d);
     }
 
     override void visit(PostExpr ast)
     {
         lparen(ast);
-        visit(ast.e);
+        visitX(ast.e);
         print(ast.op);
         rparen(ast);
     }
@@ -1244,7 +1244,7 @@ class DPrinter : Visitor
     {
         lparen(ast);
         print(ast.op);
-        visit(ast.e);
+        visitX(ast.e);
         rparen(ast);
     }
 
@@ -1252,7 +1252,7 @@ class DPrinter : Visitor
     {
         lparen(ast);
         print("*");
-        visit(ast.e);
+        visitX(ast.e);
         rparen(ast);
     }
 
@@ -1262,13 +1262,13 @@ class DPrinter : Visitor
         {
             if (stackclasses.canFind(ie.id))
             {
-                visit(ast.e);
+                visitX(ast.e);
                 return;
             }
         }
         lparen(ast);
         print("&");
-        visit(ast.e);
+        visitX(ast.e);
         rparen(ast);
     }
 
@@ -1276,7 +1276,7 @@ class DPrinter : Visitor
     {
         lparen(ast);
         print("-");
-        visit(ast.e);
+        visitX(ast.e);
         rparen(ast);
     }
 
@@ -1284,7 +1284,7 @@ class DPrinter : Visitor
     {
         lparen(ast);
         print("~");
-        visit(ast.e);
+        visitX(ast.e);
         rparen(ast);
     }
 
@@ -1297,13 +1297,13 @@ class DPrinter : Visitor
     {
         lparen(ast);
         print("!");
-        visit(ast.e);
+        visitX(ast.e);
         rparen(ast);
     }
 
     override void visit(IndexExpr ast)
     {
-        visit(ast.e);
+        visitX(ast.e);
         print("[");
         printArgs(ast.args);
         print("]");
@@ -1312,11 +1312,11 @@ class DPrinter : Visitor
     override void visit(CondExpr ast)
     {
         lparen(ast);
-        visit(ast.cond);
+        visitX(ast.cond);
         print(" ? ");
-        visit(ast.e1);
+        visitX(ast.e1);
         print(" : ");
-        visit(ast.e2);
+        visitX(ast.e2);
         rparen(ast);
     }
 
@@ -1324,9 +1324,9 @@ class DPrinter : Visitor
     {
         lparen(ast);
         print("cast(");
-        visit(ast.t);
+        visitX(ast.t);
         print(")");
-        visit(ast.e);
+        visitX(ast.e);
         rparen(ast);
     }
 
@@ -1337,9 +1337,9 @@ class DPrinter : Visitor
             assert(!ast.args.length);
             lparen(ast);
             print("new ");
-            visit(ast.t);
+            visitX(ast.t);
             print("[](");
-            visit(ast.dim);
+            visitX(ast.dim);
             print(")");
             rparen(ast);
         }
@@ -1347,7 +1347,7 @@ class DPrinter : Visitor
         {
             lparen(ast);
             print("new ");
-            visit(ast.t);
+            visitX(ast.t);
             print("(");
             printArgs(ast.args);
             print(")");
@@ -1358,15 +1358,15 @@ class DPrinter : Visitor
     override void visit(OuterScopeExpr ast)
     {
         print(".");
-        visit(ast.e);
+        visitX(ast.e);
     }
 
     override void visit(CommaExpr ast)
     {
         lparen(ast);
-        visit(ast.e1);
+        visitX(ast.e1);
         print(", ");
-        visit(ast.e2);
+        visitX(ast.e2);
         rparen(ast);
     }
 
@@ -1375,23 +1375,23 @@ class DPrinter : Visitor
         if (ast.t && isClass(ast.t))
         {
             print("__traits(classInstanceSize, ");
-            visit(ast.t);
+            visitX(ast.t);
             print(")");
         }
         else
         {
             print("(");
             if (ast.e)
-                visit(ast.e);
+                visitX(ast.e);
             else
-                visit(ast.t);
+                visitX(ast.t);
             print(").sizeof");
         }
     }
 
     override void visit(ExprInit ast)
     {
-        visit(ast.e);
+        visitX(ast.e);
     }
 
     override void visit(ArrayInit ast)
@@ -1404,7 +1404,7 @@ class DPrinter : Visitor
             {
                 if (i)
                     print(", ");
-                visit(v);
+                visitX(v);
             }
             print(")");
         }
@@ -1418,7 +1418,7 @@ class DPrinter : Visitor
             {
                 if (i)
                     print(", ");
-                visit(v);
+                visitX(v);
             }
             print("]");
         }
@@ -1495,7 +1495,7 @@ class DPrinter : Visitor
     {
         if (ast.isConst)
             print("const(");
-        visit(ast.next);
+        visitX(ast.next);
         if (!isClass(ast.next))
             print("*");
         if (ast.isConst)
@@ -1505,18 +1505,18 @@ class DPrinter : Visitor
     override void visit(RefType ast)
     {
         print("ref ");
-        visit(ast.next);
+        visitX(ast.next);
     }
 
     override void visit(ArrayType ast)
     {
-        visit(ast.next);
+        visitX(ast.next);
         print("*");
     }
 
     override void visit(FunctionType ast)
     {
-        visit(ast.next);
+        visitX(ast.next);
         print(" function(");
         printParams(ast.params);
         print(")");
@@ -1524,9 +1524,9 @@ class DPrinter : Visitor
 
     override void visit(TemplateType ast)
     {
-        visit(ast.next);
+        visitX(ast.next);
         print("!(");
-        visit(ast.param);
+        visitX(ast.param);
         print(")");
     }
 
@@ -1536,7 +1536,7 @@ class DPrinter : Visitor
             print(ast.id);
         else
         {
-            visit(ast.t);
+            visitX(ast.t);
             print(" ");
             if (ast.id)
                 visitIdent(ast.id);
@@ -1545,7 +1545,7 @@ class DPrinter : Visitor
             if (ast.def)
             {
                 print(" = ");
-                visit(ast.def);
+                visitX(ast.def);
             }
         }
     }
@@ -1556,7 +1556,7 @@ class DPrinter : Visitor
         scope(exit) stackclasses = stackclassessave;
         println("{");
         indent++;
-        visit(ast.s);
+        visitX(ast.s);
         indent--;
         println("}");
     }
@@ -1567,7 +1567,7 @@ class DPrinter : Visitor
         if (ast.e)
         {
             print(" ");
-            visit(ast.e);
+            visitX(ast.e);
         }
         println(";");
     }
@@ -1576,7 +1576,7 @@ class DPrinter : Visitor
     {
         if (ast.e)
         {
-            visit(ast.e);
+            visitX(ast.e);
             println(";");
         } else {
             println("{}");
@@ -1591,11 +1591,11 @@ class DPrinter : Visitor
     override void visit(IfStatement ast)
     {
         print("if (");
-        visit(ast.e);
+        visitX(ast.e);
         println(")");
         if (!cast(CompoundStatement)ast.sbody)
             indent++;
-        visit(ast.sbody);
+        visitX(ast.sbody);
         if (!cast(CompoundStatement)ast.sbody)
             indent--;
         if (ast.selse)
@@ -1608,7 +1608,7 @@ class DPrinter : Visitor
                 println("");
             if (!cast(CompoundStatement)ast.selse && !elseisif)
                 indent++;
-            visit(ast.selse);
+            visitX(ast.selse);
             if (!cast(CompoundStatement)ast.selse && !elseisif)
                 indent--;
         }
@@ -1618,23 +1618,23 @@ class DPrinter : Visitor
     {
         print("for (");
         if (ast.xinit)
-            visit(ast.xinit);
+            visitX(ast.xinit);
         print(";");
         if (ast.cond)
         {
             print(" ");
-            visit(ast.cond);
+            visitX(ast.cond);
         }
         print(";");
         if (ast.inc)
         {
             print(" ");
-            visit(ast.inc);
+            visitX(ast.inc);
         }
         println(")");
         if (!cast(CompoundStatement)ast.sbody)
             indent++;
-        visit(ast.sbody);
+        visitX(ast.sbody);
         if (!cast(CompoundStatement)ast.sbody)
             indent--;
     }
@@ -1645,12 +1645,12 @@ class DPrinter : Visitor
         scope(exit) sswitch = sswitchsave;
         sswitch = ast;
         print("switch (");
-        visit(ast.e);
+        visitX(ast.e);
         println(")");
         println("{");
         indent++;
         foreach(s; ast.sbody)
-            visit(s);
+            visitX(s);
         if (!ast.hasdefault)
         {
             indent--;
@@ -1666,7 +1666,7 @@ class DPrinter : Visitor
     {
         indent--;
         print("case ");
-        visit(ast.e);
+        visitX(ast.e);
         println(":");
         indent++;
     }
@@ -1693,11 +1693,11 @@ class DPrinter : Visitor
     override void visit(WhileStatement ast)
     {
         print("while (");
-        visit(ast.e);
+        visitX(ast.e);
         println(")");
         if (!cast(CompoundStatement)ast.sbody)
             indent++;
-        visit(ast.sbody);
+        visitX(ast.sbody);
         if (!cast(CompoundStatement)ast.sbody)
             indent--;
     }
@@ -1707,11 +1707,11 @@ class DPrinter : Visitor
         println("do");
         if (!cast(CompoundStatement)ast.sbody)
             indent++;
-        visit(ast.sbody);
+        visitX(ast.sbody);
         if (!cast(CompoundStatement)ast.sbody)
             indent--;
         print("while (");
-        visit(ast.e);
+        visitX(ast.e);
         println(");");
     }
 
