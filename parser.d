@@ -623,6 +623,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
     {
         auto ndef = (t.text == "#ifndef");
         auto def = (t.text == "#ifdef" || t.text == "#ifndef");
+        auto tsave = t;
         nextToken();
         auto e = def ? new IdentExpr(parseIdent()) : parseExpr();
         if (ndef)
@@ -649,7 +650,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
         }
         assert(l == level);
         check("#endif");
-        return new VersionDeclaration(es, d);
+        return new VersionDeclaration(es, d, t.file, t.line);
     } else if (t.text == "typedef")
     {
         nextToken();
@@ -773,9 +774,9 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             while (t.text != "}")
                 d ~= parseDecl();
             exit("}");
-            return new ExternCDeclaration(d);
+            return new ExternCDeclaration(d, t.file, t.line);
         } else {
-            return new ExternCDeclaration(parseDecl);
+            return new ExternCDeclaration(parseDecl, t.file, t.line);
         }
     }
     if (t.text == "__attribute__")

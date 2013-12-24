@@ -127,7 +127,15 @@ class VersionDeclaration : Declaration
     Expression[] cond;
     Declaration[][] members;
     int[] realdecls;
-    this(Expression[] cond, Declaration[][] members) { this.cond = cond; this.members = members; }
+    string file;
+    size_t line;
+    this(Expression[] cond, Declaration[][] members, string file, size_t line)
+    {
+        this.cond = cond;
+        this.members = members;
+        this.file = file;
+        this.line = line;
+    }
     mixin(visitor_str);
 }
 
@@ -179,8 +187,10 @@ class ExternCDeclaration : Declaration
 {
     bool block;
     Declaration[] decls;
-    this(Declaration[] decls) { this.decls = decls; block = true; }
-    this(Declaration decls) { this.decls = [decls]; block = false; }
+    string file;
+    size_t line;
+    this(Declaration[] decls, string file, size_t line) { this.decls = decls; block = true; this.file = file; this.line = line; }
+    this(Declaration decls, string file, size_t line) { this.decls = [decls]; block = false; this.file = file; this.line = line; }
     mixin(visitor_str);
 }
 
@@ -469,24 +479,28 @@ class Type : Ast
 {
     string id;
     bool isConst;
+    abstract string mangle();
 };
 
 class BasicType : Type
 {
     this(string id) { this.id = id; }
     mixin(visitor_str);
+    override string mangle() { return id; }
 }
 
 class ClassType : Type
 {
     this(string id) { this.id = id; }
     mixin(visitor_str);
+    override string mangle() { return id; }
 }
 
 class EnumType : Type
 {
     this(string id) { this.id = id; }
     mixin(visitor_str);
+    override string mangle() { return id; }
 }
 
 class PointerType : Type
@@ -494,6 +508,7 @@ class PointerType : Type
     Type next;
     this(Type next) { this.next = next; }
     mixin(visitor_str);
+    override string mangle() { return next.mangle() ~ "*"; }
 }
 
 class RefType : Type
@@ -501,6 +516,7 @@ class RefType : Type
     Type next;
     this(Type next) { this.next = next; }
     mixin(visitor_str);
+    override string mangle() { return next.mangle() ~ "&"; }
 }
 
 class ArrayType : Type
@@ -509,6 +525,7 @@ class ArrayType : Type
     Expression dim;
     this(Type next, Expression dim) { this.next = next; this.dim = dim; }
     mixin(visitor_str);
+    override string mangle() { return next.mangle() ~ "[]"; }
 }
 
 class FunctionType : Type
@@ -518,6 +535,7 @@ class FunctionType : Type
     bool cdecl;
     this(Type next, Param[] params) { this.next = next; this.params = params; }
     mixin(visitor_str);
+    override string mangle() { return next.mangle() ~ "()"; }
 }
 
 class TemplateType : Type
@@ -526,6 +544,7 @@ class TemplateType : Type
     Type param;
     this(Type next, Type param) { this.next = next; this.param = param; }
     mixin(visitor_str);
+    override string mangle() { return next.mangle() ~ "!"; }
 }
 
 class QualifiedType : Type
@@ -534,6 +553,7 @@ class QualifiedType : Type
     string id;
     this(Type next, string id) { this.next = next; this.id = id; }
     mixin(visitor_str);
+    override string mangle() { return next.mangle() ~ "..."; }
 }
 
 /********************************************************/

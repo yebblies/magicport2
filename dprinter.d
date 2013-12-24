@@ -998,6 +998,7 @@ class DPrinter : Visitor
             visitIdent(ast.members[i]);
             println(";");
         }
+        println("");
     }
 
     override void visit(DummyDeclaration ast)

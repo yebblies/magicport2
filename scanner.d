@@ -542,6 +542,8 @@ Module collapse(Module[] mods, Scanner scan)
 
     scopeCtor(scan);
 
+    decls = stripDead(decls);
+
     return new Module("dmd.d", decls);
 }
 
@@ -702,4 +704,40 @@ void scopeCtor(Scanner scan)
             return;
         }
     }
+}
+
+Declaration[] stripDead(Declaration[] decls)
+{
+    Declaration[] r;
+    foreach(d; decls)
+    {
+        if (cast(DummyDeclaration)d ||
+            cast(FuncBodyDeclaration)d ||
+            cast(StaticMemberVarDeclaration)d ||
+            cast(ImportDeclaration)d)
+            continue;
+        if (auto vd = cast(VarDeclaration)d)
+        {
+            assert(vd.ids.length == 1);
+            if (vd.ids[0].endsWith("_H"))
+                continue;
+            if (vd.stc & STCextern)
+                continue;
+            if (vd.ids[0] == "__C99FEATURES__")
+                continue;
+            if (vd.ids[0] == "__USE_ISOC99")
+                continue;
+            if (vd.ids[0] == "LOG")
+                continue;
+            if (vd.ids[0] == "LOGSEMANTIC")
+                continue;
+        }
+        if (auto fd = cast(FuncDeclaration)d)
+        {
+            if (!fd.fbody.length)
+                continue;
+        }
+        r ~= d;
+    }
+    return r;
 }
