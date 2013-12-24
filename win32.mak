@@ -51,11 +51,11 @@ $(GENSRC) $(COPYSRC): magicport2.exe $(MANUALSRC)
 	magicport2 ..\dmdgit\src
 
 build1: port\dmd.exe
-port\dmd.exe: $(DSRC) $(LIBS)
+port\dmd.exe: defs.d $(DSRC) $(LIBS)
 	$(COMPILER) $(DSRC) defs.d -ofport\dmd.exe $(LIBS) $(FLAGS)
 
 build2: port\dmdx.exe
-port\dmdx.exe: $(DSRC) port\dmd.exe $(LIBS)
+port\dmdx.exe: defs.d $(DSRC) port\dmd.exe $(LIBS)
 	port\dmd $(DSRC) defs.d -ofport\dmdx.exe $(LIBS) $(FLAGS)
 
 magicport2.exe : $(SRC)
