@@ -4,7 +4,7 @@ module root.port;
 import defs;
 import target;
 
-__gshared extern(C) const(char)* __locale_decpoint;
+__gshared extern(C) extern const(char)* __locale_decpoint;
 
 extern(C) float strtof(const(char)* p, char** endp);
 extern(C) double strtod(const(char)* p, char** endp);
