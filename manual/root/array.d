@@ -2,6 +2,7 @@
 module root.array;
 
 import root.rmem;
+import defs;
 
 extern(C++)
 struct Array(T)

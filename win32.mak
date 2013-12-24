@@ -19,9 +19,9 @@ GENSRC=$(DP)\access.d $(DP)\aggregate.d $(DP)\aliasthis.d $(DP)\apply.d \
 	$(DP)\delegatize.d $(DP)\doc.d $(DP)\dsymbol.d $(DP)\dump.d \
 	$(DP)\entity.d $(DP)\denum.d $(DP)\expression.d $(DP)\func.d \
 	$(DP)\hdrgen.d $(DP)\id.d $(DP)\identifier.d $(DP)\imphint.d \
-	$(DP)\dimport.d $(DP)\inifile.d $(DP)\inline.d $(DP)\init.d \
+	$(DP)\dimport.d $(DP)\dinifile.d $(DP)\inline.d $(DP)\init.d \
 	$(DP)\interpret.d $(DP)\json.d $(DP)\lexer.d $(DP)\link.d \
-	$(DP)\lib.d $(DP)\dmacro.d $(DP)\mangle.d $(DP)\mars.d \
+	$(DP)\lib.d $(DP)\dmacro.d $(DP)\dmangle.d $(DP)\mars.d \
 	$(DP)\dmodule.d $(DP)\mtype.d $(DP)\opover.d $(DP)\optimize.d \
 	$(DP)\parse.d $(DP)\sapply.d $(DP)\dscope.d $(DP)\sideeffect.d \
 	$(DP)\statement.d $(DP)\staticassert.d $(DP)\dstruct.d \

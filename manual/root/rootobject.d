@@ -2,6 +2,7 @@
 module root.rootobject;
 
 import root.outbuffer;
+import defs;
 
 extern(C++)
 class RootObject

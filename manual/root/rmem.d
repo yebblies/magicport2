@@ -1,6 +1,9 @@
 
 module root.rmem;
 
+import core.memory : GC;
+import core.stdc.string;
+
 extern(C++)
 struct Mem
 {

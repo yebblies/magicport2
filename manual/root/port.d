@@ -1,6 +1,9 @@
 
 module root.port;
 
+import defs;
+import target;
+
 __gshared extern(C) const(char)* __locale_decpoint;
 
 extern(C) float strtof(const(char)* p, char** endp);
