@@ -103,7 +103,7 @@ int main(string[] args)
 {
     scope(success) exit(0);
     scope(failure) tracedepth = -1;
-    // __locale_decpoint = ".";
+    GC.disable();
 
     int argc = cast(int)args.length;
     auto argv = (new const(char)*[](argc)).ptr;
