@@ -134,6 +134,10 @@ void main(string[] args)
             writeln("duplicate: ", d.d.getName);
         }
     }
+    foreach(fn; ["intrange.d", "complex.d", "longdouble.d"])
+        std.file.write(buildPath("port", fn), buildPath("manual", fn).read());
+    foreach(fn; ["aav.d", "array.d", "man.d", "rootobject.d", "outbuffer.d", "port.d", "response.d", "rmem.d", "stringtable.d"])
+        std.file.write(buildPath("port", "root", fn), buildPath("manual", "root", fn).read());
 }
 
 struct D
@@ -307,7 +311,7 @@ auto getList()
             "externc mars.h:411",
             "version mars.h:426",
         ],
-        M("struct") :
+        M("dstruct") :
         [
             "function inNonRoot",
             "function search_toHash",
@@ -635,7 +639,7 @@ auto getList()
             "function shift_optimize",
             "function setLengthVarIfKnown",
         ],
-        M("template") :
+        M("dtemplate") :
         [
             "version template.h:49",
             "struct Tuple",
@@ -790,7 +794,7 @@ auto getList()
             "struct NewDeclaration",
             "struct DeleteDeclaration",
         ],
-        M("cast") :
+        M("dcast") :
         [
             "function isVoidArrayLiteral",
             "function typeMerge",
@@ -937,7 +941,7 @@ auto getList()
             "function Cat",
             "function Ptr",
         ],
-        M("version") :
+        M("dversion") :
         [
             "struct DebugSymbol",
             "struct VersionSymbol",
@@ -947,7 +951,7 @@ auto getList()
             "function inifile",
             "function skipspace",
         ],
-        M("module") :
+        M("dmodule") :
         [
             "function readwordLE",
             "function readwordBE",
@@ -960,7 +964,7 @@ auto getList()
             "struct Module",
             "struct ModuleDeclaration",
         ],
-        M("scope") :
+        M("dscope") :
         [
             "function mergeFieldInit",
             "function scope_search_fp",
@@ -1031,7 +1035,7 @@ auto getList()
             "function inferApplyArgTypesY",
             "version opover.c:1595",
         ],
-        M("class") :
+        M("dclass") :
         [
             "version class.c:857",
             "function isf",
@@ -1082,12 +1086,12 @@ auto getList()
         [
             "struct Identifier",
         ],
-        M("enum") :
+        M("denum") :
         [
             "struct EnumDeclaration",
             "struct EnumMember",
         ],
-        M("import") :
+        M("dimport") :
         [
             "struct Import",
         ],
@@ -1136,7 +1140,7 @@ auto getList()
             "function isIndentWS",
             "function utfStride",
         ],
-        M("macro") :
+        M("dmacro") :
         [
             "struct Macro",
             "function memdup",
@@ -1303,7 +1307,7 @@ auto getList()
             "struct ToJsonVisitor",
             "function json_generate",
         ],
-        M("unittest") :
+        M("dunittest") :
         [
             "function unittests",
         ],
