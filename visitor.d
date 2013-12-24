@@ -5,382 +5,382 @@ class Visitor
 {
     int depth = -1;
 
-    void visitModule(Module ast)
+    void visit(Module ast)
     {
         assert(0);
     }
 
-    void visitImportDeclaration(ImportDeclaration ast)
+    void visit(ImportDeclaration ast)
     {
         assert(0);
     }
 
-    void visitFuncDeclaration(FuncDeclaration ast)
+    void visit(FuncDeclaration ast)
     {
         assert(0);
     }
 
-    void visitFuncBodyDeclaration(FuncBodyDeclaration ast)
+    void visit(FuncBodyDeclaration ast)
     {
         assert(0);
     }
 
-    void visitStaticMemberVarDeclaration(StaticMemberVarDeclaration ast)
+    void visit(StaticMemberVarDeclaration ast)
     {
         assert(0);
     }
 
-    void visitVarDeclaration(VarDeclaration ast)
+    void visit(VarDeclaration ast)
     {
         assert(0);
     }
 
-    void visitConstructDeclaration(ConstructDeclaration ast)
+    void visit(ConstructDeclaration ast)
     {
         assert(0);
     }
 
-    void visitVersionDeclaration(VersionDeclaration ast)
+    void visit(VersionDeclaration ast)
     {
         assert(0);
     }
 
-    void visitTypedefDeclaration(TypedefDeclaration ast)
+    void visit(TypedefDeclaration ast)
     {
         assert(0);
     }
 
-    void visitMacroDeclaration(MacroDeclaration ast)
+    void visit(MacroDeclaration ast)
     {
         assert(0);
     }
 
-    void visitMacroUnDeclaration(MacroUnDeclaration ast)
+    void visit(MacroUnDeclaration ast)
     {
         assert(0);
     }
 
-    void visitStructDeclaration(StructDeclaration ast)
+    void visit(StructDeclaration ast)
     {
         assert(0);
     }
 
-    void visitAnonStructDeclaration(AnonStructDeclaration ast)
+    void visit(AnonStructDeclaration ast)
     {
         assert(0);
     }
 
-    void visitExternCDeclaration(ExternCDeclaration ast)
+    void visit(ExternCDeclaration ast)
     {
         assert(0);
     }
 
-    void visitEnumDeclaration(EnumDeclaration ast)
+    void visit(EnumDeclaration ast)
     {
         assert(0);
     }
 
-    void visitDummyDeclaration(DummyDeclaration ast)
+    void visit(DummyDeclaration ast)
     {
         assert(0);
     }
 
-    void visitErrorDeclaration(ErrorDeclaration ast)
+    void visit(ErrorDeclaration ast)
     {
         assert(0);
     }
 
-    void visitProtDeclaration(ProtDeclaration ast)
+    void visit(ProtDeclaration ast)
     {
         assert(0);
     }
 
-    void visitAlignDeclaration(AlignDeclaration ast)
+    void visit(AlignDeclaration ast)
     {
         assert(0);
     }
 
-    void visitLitExpr(LitExpr ast)
+    void visit(LitExpr ast)
     {
         assert(0);
     }
 
-    void visitIdentExpr(IdentExpr ast)
+    void visit(IdentExpr ast)
     {
         assert(0);
     }
 
-    void visitDotIdExpr(DotIdExpr ast)
+    void visit(DotIdExpr ast)
     {
         assert(0);
     }
 
-    void visitCallExpr(CallExpr ast)
+    void visit(CallExpr ast)
     {
         assert(0);
     }
 
-    void visitCmpExpr(CmpExpr ast)
+    void visit(CmpExpr ast)
     {
         assert(0);
     }
 
-    void visitMulExpr(MulExpr ast)
+    void visit(MulExpr ast)
     {
         assert(0);
     }
 
-    void visitAddExpr(AddExpr ast)
+    void visit(AddExpr ast)
     {
         assert(0);
     }
 
-    void visitOrOrExpr(OrOrExpr ast)
+    void visit(OrOrExpr ast)
     {
         assert(0);
     }
 
-    void visitAndAndExpr(AndAndExpr ast)
+    void visit(AndAndExpr ast)
     {
         assert(0);
     }
 
-    void visitOrExpr(OrExpr ast)
+    void visit(OrExpr ast)
     {
         assert(0);
     }
 
-    void visitXorExpr(XorExpr ast)
+    void visit(XorExpr ast)
     {
         assert(0);
     }
 
-    void visitAndExpr(AndExpr ast)
+    void visit(AndExpr ast)
     {
         assert(0);
     }
 
-    void visitAssignExpr(AssignExpr ast)
+    void visit(AssignExpr ast)
     {
         assert(0);
     }
 
-    void visitDeclarationExpr(DeclarationExpr ast)
+    void visit(DeclarationExpr ast)
     {
         assert(0);
     }
 
-    void visitPostExpr(PostExpr ast)
+    void visit(PostExpr ast)
     {
         assert(0);
     }
 
-    void visitPreExpr(PreExpr ast)
+    void visit(PreExpr ast)
     {
         assert(0);
     }
 
-    void visitPtrExpr(PtrExpr ast)
+    void visit(PtrExpr ast)
     {
         assert(0);
     }
 
-    void visitAddrExpr(AddrExpr ast)
+    void visit(AddrExpr ast)
     {
         assert(0);
     }
 
-    void visitNegExpr(NegExpr ast)
+    void visit(NegExpr ast)
     {
         assert(0);
     }
 
-    void visitComExpr(ComExpr ast)
+    void visit(ComExpr ast)
     {
         assert(0);
     }
 
-    void visitDeleteExpr(DeleteExpr ast)
+    void visit(DeleteExpr ast)
     {
         assert(0);
     }
 
-    void visitNotExpr(NotExpr ast)
+    void visit(NotExpr ast)
     {
         assert(0);
     }
 
-    void visitStringofExpr(StringofExpr ast)
+    void visit(StringofExpr ast)
     {
         assert(0);
     }
 
-    void visitIndexExpr(IndexExpr ast)
+    void visit(IndexExpr ast)
     {
         assert(0);
     }
 
-    void visitCondExpr(CondExpr ast)
+    void visit(CondExpr ast)
     {
         assert(0);
     }
 
-    void visitCastExpr(CastExpr ast)
+    void visit(CastExpr ast)
     {
         assert(0);
     }
 
-    void visitNewExpr(NewExpr ast)
+    void visit(NewExpr ast)
     {
         assert(0);
     }
 
-    void visitOuterScopeExpr(OuterScopeExpr ast)
+    void visit(OuterScopeExpr ast)
     {
         assert(0);
     }
 
-    void visitCommaExpr(CommaExpr ast)
+    void visit(CommaExpr ast)
     {
         assert(0);
     }
 
-    void visitSizeofExpr(SizeofExpr ast)
+    void visit(SizeofExpr ast)
     {
         assert(0);
     }
 
-    void visitExprInit(ExprInit ast)
+    void visit(ExprInit ast)
     {
         assert(0);
     }
 
-    void visitArrayInit(ArrayInit ast)
+    void visit(ArrayInit ast)
     {
         assert(0);
     }
 
-    void visitBasicType(BasicType ast)
+    void visit(BasicType ast)
     {
         assert(0);
     }
 
-    void visitClassType(ClassType ast)
+    void visit(ClassType ast)
     {
         assert(0);
     }
 
-    void visitEnumType(EnumType ast)
+    void visit(EnumType ast)
     {
         assert(0);
     }
 
-    void visitPointerType(PointerType ast)
+    void visit(PointerType ast)
     {
         assert(0);
     }
 
-    void visitRefType(RefType ast)
+    void visit(RefType ast)
     {
         assert(0);
     }
 
-    void visitArrayType(ArrayType ast)
+    void visit(ArrayType ast)
     {
         assert(0);
     }
 
-    void visitFunctionType(FunctionType ast)
+    void visit(FunctionType ast)
     {
         assert(0);
     }
 
-    void visitTemplateType(TemplateType ast)
+    void visit(TemplateType ast)
     {
         assert(0);
     }
 
-    void visitQualifiedType(QualifiedType ast)
+    void visit(QualifiedType ast)
     {
         assert(0);
     }
 
-    void visitParam(Param ast)
+    void visit(Param ast)
     {
         assert(0);
     }
 
-    void visitCompoundStatement(CompoundStatement ast)
+    void visit(CompoundStatement ast)
     {
         assert(0);
     }
 
-    void visitReturnStatement(ReturnStatement ast)
+    void visit(ReturnStatement ast)
     {
         assert(0);
     }
 
-    void visitExpressionStatement(ExpressionStatement ast)
+    void visit(ExpressionStatement ast)
     {
         assert(0);
     }
 
-    void visitVersionStatement(VersionStatement ast)
+    void visit(VersionStatement ast)
     {
         assert(0);
     }
 
-    void visitIfStatement(IfStatement ast)
+    void visit(IfStatement ast)
     {
         assert(0);
     }
 
-    void visitForStatement(ForStatement ast)
+    void visit(ForStatement ast)
     {
         assert(0);
     }
 
-    void visitSwitchStatement(SwitchStatement ast)
+    void visit(SwitchStatement ast)
     {
         assert(0);
     }
 
-    void visitCaseStatement(CaseStatement ast)
+    void visit(CaseStatement ast)
     {
         assert(0);
     }
 
-    void visitBreakStatement(BreakStatement ast)
+    void visit(BreakStatement ast)
     {
         assert(0);
     }
 
-    void visitContinueStatement(ContinueStatement ast)
+    void visit(ContinueStatement ast)
     {
         assert(0);
     }
 
-    void visitDefaultStatement(DefaultStatement ast)
+    void visit(DefaultStatement ast)
     {
         assert(0);
     }
 
-    void visitWhileStatement(WhileStatement ast)
+    void visit(WhileStatement ast)
     {
         assert(0);
     }
 
-    void visitDoWhileStatement(DoWhileStatement ast)
+    void visit(DoWhileStatement ast)
     {
         assert(0);
     }
 
-    void visitGotoStatement(GotoStatement ast)
+    void visit(GotoStatement ast)
     {
         assert(0);
     }
 
-    void visitLabelStatement(LabelStatement ast)
+    void visit(LabelStatement ast)
     {
         assert(0);
     }

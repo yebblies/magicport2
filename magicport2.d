@@ -7,9 +7,7 @@ import std.algorithm;
 
 import tokens;
 import parser;
-import printercpp;
 import dprinter;
-import printerast;
 import scanner;
 import ast;
 

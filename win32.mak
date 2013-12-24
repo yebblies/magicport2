@@ -1,5 +1,5 @@
 
-SRC=magicport2.d ast.d scanner.d tokens.d parser.d printerast.d printercpp.d dprinter.d typenames.d visitor.d
+SRC=magicport2.d ast.d scanner.d tokens.d parser.d dprinter.d typenames.d visitor.d
 
 DFLAGS=-g
 

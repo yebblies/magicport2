@@ -39,17 +39,17 @@ class Scanner : Visitor
     
     ////////////////////////////////////
 
-    override void visitModule(Module ast)
+    override void visit(Module ast)
     {
         foreach(d; ast.decls)
             visit(d);
     }
 
-    override void visitImportDeclaration(ImportDeclaration ast)
+    override void visit(ImportDeclaration ast)
     {
     }
 
-    override void visitFuncDeclaration(FuncDeclaration ast)
+    override void visit(FuncDeclaration ast)
     {
         realdecls++;
         funcDeclarations ~= ast;
@@ -69,7 +69,7 @@ class Scanner : Visitor
         }
     }
 
-    override void visitFuncBodyDeclaration(FuncBodyDeclaration ast)
+    override void visit(FuncBodyDeclaration ast)
     {
         funcBodyDeclarations ~= ast;
         visit(ast.type);
@@ -85,7 +85,7 @@ class Scanner : Visitor
         }
     }
 
-    override void visitStaticMemberVarDeclaration(StaticMemberVarDeclaration ast)
+    override void visit(StaticMemberVarDeclaration ast)
     {
         staticMemberVarDeclarations ~= ast;
         visit(ast.type);
@@ -93,7 +93,7 @@ class Scanner : Visitor
             visit(ast.xinit);
     }
 
-    override void visitVarDeclaration(VarDeclaration ast)
+    override void visit(VarDeclaration ast)
     {
         realdecls++;
         foreach(t; ast.types)
@@ -104,7 +104,7 @@ class Scanner : Visitor
                 visit(i);
     }
 
-    override void visitConstructDeclaration(ConstructDeclaration ast)
+    override void visit(ConstructDeclaration ast)
     {
         realdecls++;
         constructDeclarations ~= ast;
@@ -113,7 +113,7 @@ class Scanner : Visitor
             visit(a);
     }
 
-    override void visitVersionDeclaration(VersionDeclaration ast)
+    override void visit(VersionDeclaration ast)
     {
         auto rd = realdecls;
         ast.realdecls.length = ast.cond.length;
@@ -132,22 +132,22 @@ class Scanner : Visitor
         realdecls = rd;
     }
 
-    override void visitTypedefDeclaration(TypedefDeclaration ast)
+    override void visit(TypedefDeclaration ast)
     {
         realdecls++;
         visit(ast.t);
     }
 
-    override void visitMacroDeclaration(MacroDeclaration ast)
+    override void visit(MacroDeclaration ast)
     {
         realdecls++;
     }
 
-    override void visitMacroUnDeclaration(MacroUnDeclaration ast)
+    override void visit(MacroUnDeclaration ast)
     {
     }
 
-    override void visitStructDeclaration(StructDeclaration ast)
+    override void visit(StructDeclaration ast)
     {
         realdecls++;
         auto aggsave = agg;
@@ -161,20 +161,20 @@ class Scanner : Visitor
             visit(d);
     }
 
-    override void visitAnonStructDeclaration(AnonStructDeclaration ast)
+    override void visit(AnonStructDeclaration ast)
     {
         realdecls++;
         foreach(d; ast.decls)
             visit(d);
     }
 
-    override void visitExternCDeclaration(ExternCDeclaration ast)
+    override void visit(ExternCDeclaration ast)
     {
         foreach(d; ast.decls)
             visit(d);
     }
 
-    override void visitEnumDeclaration(EnumDeclaration ast)
+    override void visit(EnumDeclaration ast)
     {
         realdecls++;
         foreach(v; ast.vals)
@@ -182,37 +182,37 @@ class Scanner : Visitor
                 visit(v);
     }
 
-    override void visitDummyDeclaration(DummyDeclaration ast)
+    override void visit(DummyDeclaration ast)
     {
     }
 
-    override void visitErrorDeclaration(ErrorDeclaration ast)
+    override void visit(ErrorDeclaration ast)
     {
         realdecls++;
     }
 
-    override void visitProtDeclaration(ProtDeclaration ast)
+    override void visit(ProtDeclaration ast)
     {
     }
 
-    override void visitAlignDeclaration(AlignDeclaration ast)
+    override void visit(AlignDeclaration ast)
     {
     }
 
-    override void visitLitExpr(LitExpr ast)
+    override void visit(LitExpr ast)
     {
     }
 
-    override void visitIdentExpr(IdentExpr ast)
+    override void visit(IdentExpr ast)
     {
     }
 
-    override void visitDotIdExpr(DotIdExpr ast)
+    override void visit(DotIdExpr ast)
     {
         visit(ast.e);
     }
 
-    override void visitCallExpr(CallExpr ast)
+    override void visit(CallExpr ast)
     {
         callExprs ~= ast;
         visit(ast.func);
@@ -220,126 +220,126 @@ class Scanner : Visitor
             visit(a);
     }
 
-    override void visitCmpExpr(CmpExpr ast)
+    override void visit(CmpExpr ast)
     {
         visit(ast.e1);
         visit(ast.e2);
     }
 
-    override void visitMulExpr(MulExpr ast)
+    override void visit(MulExpr ast)
     {
         visit(ast.e1);
         visit(ast.e2);
     }
 
-    override void visitAddExpr(AddExpr ast)
+    override void visit(AddExpr ast)
     {
         visit(ast.e1);
         visit(ast.e2);
     }
 
-    override void visitOrOrExpr(OrOrExpr ast)
+    override void visit(OrOrExpr ast)
     {
         visit(ast.e1);
         visit(ast.e2);
     }
 
-    override void visitAndAndExpr(AndAndExpr ast)
+    override void visit(AndAndExpr ast)
     {
         visit(ast.e1);
         visit(ast.e2);
     }
 
-    override void visitOrExpr(OrExpr ast)
+    override void visit(OrExpr ast)
     {
         visit(ast.e1);
         visit(ast.e2);
     }
 
-    override void visitXorExpr(XorExpr ast)
+    override void visit(XorExpr ast)
     {
         visit(ast.e1);
         visit(ast.e2);
     }
 
-    override void visitAndExpr(AndExpr ast)
+    override void visit(AndExpr ast)
     {
         visit(ast.e1);
         visit(ast.e2);
     }
 
-    override void visitAssignExpr(AssignExpr ast)
+    override void visit(AssignExpr ast)
     {
         visit(ast.e1);
         visit(ast.e2);
     }
 
-    override void visitDeclarationExpr(DeclarationExpr ast)
+    override void visit(DeclarationExpr ast)
     {
         visit(ast.d);
     }
 
-    override void visitPostExpr(PostExpr ast)
+    override void visit(PostExpr ast)
     {
         visit(ast.e);
     }
 
-    override void visitPreExpr(PreExpr ast)
+    override void visit(PreExpr ast)
     {
         visit(ast.e);
     }
 
-    override void visitPtrExpr(PtrExpr ast)
+    override void visit(PtrExpr ast)
     {
         visit(ast.e);
     }
 
-    override void visitAddrExpr(AddrExpr ast)
+    override void visit(AddrExpr ast)
     {
         visit(ast.e);
     }
 
-    override void visitNegExpr(NegExpr ast)
+    override void visit(NegExpr ast)
     {
         visit(ast.e);
     }
 
-    override void visitComExpr(ComExpr ast)
+    override void visit(ComExpr ast)
     {
         visit(ast.e);
     }
 
-    override void visitDeleteExpr(DeleteExpr ast)
+    override void visit(DeleteExpr ast)
     {
         visit(ast.e);
     }
 
-    override void visitNotExpr(NotExpr ast)
+    override void visit(NotExpr ast)
     {
         visit(ast.e);
     }
 
-    override void visitIndexExpr(IndexExpr ast)
+    override void visit(IndexExpr ast)
     {
         visit(ast.e);
         foreach(a; ast.args)
             visit(a);
     }
 
-    override void visitCondExpr(CondExpr ast)
+    override void visit(CondExpr ast)
     {
         visit(ast.cond);
         visit(ast.e1);
         visit(ast.e2);
     }
 
-    override void visitCastExpr(CastExpr ast)
+    override void visit(CastExpr ast)
     {
         visit(ast.t);
         visit(ast.e);
     }
 
-    override void visitNewExpr(NewExpr ast)
+    override void visit(NewExpr ast)
     {
         newExprs ~= ast;
         if (ast.dim)
@@ -349,18 +349,18 @@ class Scanner : Visitor
             visit(a);
     }
 
-    override void visitOuterScopeExpr(OuterScopeExpr ast)
+    override void visit(OuterScopeExpr ast)
     {
         visit(ast.e);
     }
 
-    override void visitCommaExpr(CommaExpr ast)
+    override void visit(CommaExpr ast)
     {
         visit(ast.e1);
         visit(ast.e2);
     }
 
-    override void visitSizeofExpr(SizeofExpr ast)
+    override void visit(SizeofExpr ast)
     {
         if (ast.e)
             visit(ast.e);
@@ -368,65 +368,65 @@ class Scanner : Visitor
             visit(ast.t);
     }
 
-    override void visitExprInit(ExprInit ast)
+    override void visit(ExprInit ast)
     {
         visit(ast.e);
     }
 
-    override void visitArrayInit(ArrayInit ast)
+    override void visit(ArrayInit ast)
     {
         foreach(i; ast.xinit)
             visit(i);
     }
 
-    override void visitBasicType(BasicType ast)
+    override void visit(BasicType ast)
     {
     }
 
-    override void visitClassType(ClassType ast)
+    override void visit(ClassType ast)
     {
     }
 
-    override void visitEnumType(EnumType ast)
+    override void visit(EnumType ast)
     {
     }
 
-    override void visitPointerType(PointerType ast)
-    {
-        visit(ast.next);
-    }
-
-    override void visitRefType(RefType ast)
+    override void visit(PointerType ast)
     {
         visit(ast.next);
     }
 
-    override void visitArrayType(ArrayType ast)
+    override void visit(RefType ast)
+    {
+        visit(ast.next);
+    }
+
+    override void visit(ArrayType ast)
     {
         visit(ast.next);
         if (ast.dim)
             visit(ast.dim);
     }
 
-    override void visitFunctionType(FunctionType ast)
+    override void visit(FunctionType ast)
     {
         visit(ast.next);
         foreach(p; ast.params)
             visit(p);
     }
 
-    override void visitTemplateType(TemplateType ast)
+    override void visit(TemplateType ast)
     {
         visit(ast.next);
         visit(ast.param);
     }
 
-    override void visitQualifiedType(QualifiedType ast)
+    override void visit(QualifiedType ast)
     {
         visit(ast.next);
     }
 
-    override void visitParam(Param ast)
+    override void visit(Param ast)
     {
         if (ast.t)
             visit(ast.t);
@@ -434,25 +434,25 @@ class Scanner : Visitor
             visit(ast.def);
     }
 
-    override void visitCompoundStatement(CompoundStatement ast)
+    override void visit(CompoundStatement ast)
     {
         foreach(s; ast.s)
             visit(s);
     }
 
-    override void visitReturnStatement(ReturnStatement ast)
+    override void visit(ReturnStatement ast)
     {
         if (ast.e)
             visit(ast.e);
     }
 
-    override void visitExpressionStatement(ExpressionStatement ast)
+    override void visit(ExpressionStatement ast)
     {
         if (ast.e)
             visit(ast.e);
     }
 
-    override void visitVersionStatement(VersionStatement ast)
+    override void visit(VersionStatement ast)
     {
         foreach(e; ast.cond)
             if (e)
@@ -462,7 +462,7 @@ class Scanner : Visitor
                 visit(s);
     }
 
-    override void visitIfStatement(IfStatement ast)
+    override void visit(IfStatement ast)
     {
         visit(ast.e);
         visit(ast.sbody);
@@ -470,7 +470,7 @@ class Scanner : Visitor
             visit(ast.selse);
     }
 
-    override void visitForStatement(ForStatement ast)
+    override void visit(ForStatement ast)
     {
         if (ast.xinit)
             visit(ast.xinit);
@@ -481,47 +481,47 @@ class Scanner : Visitor
         visit(ast.sbody);
     }
 
-    override void visitSwitchStatement(SwitchStatement ast)
+    override void visit(SwitchStatement ast)
     {
         visit(ast.e);
         foreach(s; ast.sbody)
             visit(s);
     }
 
-    override void visitCaseStatement(CaseStatement ast)
+    override void visit(CaseStatement ast)
     {
         visit(ast.e);
     }
 
-    override void visitBreakStatement(BreakStatement ast)
+    override void visit(BreakStatement ast)
     {
     }
 
-    override void visitContinueStatement(ContinueStatement ast)
+    override void visit(ContinueStatement ast)
     {
     }
 
-    override void visitDefaultStatement(DefaultStatement ast)
+    override void visit(DefaultStatement ast)
     {
     }
 
-    override void visitWhileStatement(WhileStatement ast)
-    {
-        visit(ast.e);
-        visit(ast.sbody);
-    }
-
-    override void visitDoWhileStatement(DoWhileStatement ast)
+    override void visit(WhileStatement ast)
     {
         visit(ast.e);
         visit(ast.sbody);
     }
 
-    override void visitGotoStatement(GotoStatement ast)
+    override void visit(DoWhileStatement ast)
+    {
+        visit(ast.e);
+        visit(ast.sbody);
+    }
+
+    override void visit(GotoStatement ast)
     {
     }
 
-    override void visitLabelStatement(LabelStatement ast)
+    override void visit(LabelStatement ast)
     {
     }
 

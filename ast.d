@@ -18,7 +18,7 @@ enum
 };
 alias uint STC;
 
-enum visitor_str = `override void visit(Visitor v) { v.depth++; mixin("v.visit" ~ typeof(this).stringof ~ "(this);"); v.depth--; }`;
+enum visitor_str = `override void visit(Visitor v) { v.depth++; v.visit(this); v.depth--; }`;
 
 class Ast
 {
