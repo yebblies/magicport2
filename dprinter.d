@@ -592,6 +592,11 @@ class DPrinter : Visitor
         {
             if (!manifest) gshared = true;
         }
+        else if (ast.types.length == 1 && !P && !fd && !manifest)
+        {
+            print("extern(C++) ");
+            gshared = true;
+        }
         foreach(i; 0..ast.types.length)
         {
             if (ast.types[i])
