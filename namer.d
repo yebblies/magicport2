@@ -26,7 +26,8 @@ class Namer : Visitor
 
     override void visit(VersionDeclaration ast)
     {
-        name = "version " ~ baseName(ast.file) ~ ":" ~ to!string(ast.line);
+        ast.members[0][0].visit(this);
+        name = "version " ~ name;
     }
 
     override void visit(TypedefDeclaration ast)
@@ -46,7 +47,8 @@ class Namer : Visitor
 
     override void visit(ExternCDeclaration ast)
     {
-        name = "externc " ~ baseName(ast.file) ~ ":" ~ to!string(ast.line);
+        ast.decls[0].visit(this);
+        name = "externc " ~ name;
     }
 
     override void visit(EnumDeclaration ast)
@@ -54,7 +56,7 @@ class Namer : Visitor
         if (ast.id.length)
             name = "enum " ~ ast.id;
         else
-            name = "enum " ~ baseName(ast.file) ~ ":" ~ to!string(ast.line);
+            name = "enum " ~ ast.members[0];
     }
 }
 

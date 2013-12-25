@@ -74,6 +74,7 @@ void main(string[] args)
     auto longmap = buildLongMap(superast);
     auto list = getList();
 
+    bool failed;
     try { mkdir("port"); } catch {}
     foreach(m, decls; list)
     {
@@ -147,10 +148,10 @@ void main(string[] args)
             else
             {
                 writeln("Not found: ", d);
+                failed = true;
             }
         }
     }
-    bool failed;
     foreach(id, d; map)
     {
         if (d.count == 0)
@@ -248,8 +249,7 @@ auto getList()
             "function spellerY",
             "function spellerX",
             "function speller",
-            "version speller.c:265",
-            "version speller.c:266",
+            "version function speller_test",
         ],
 
         M("arraytypes", null, ["root.array", "root.file", "identifier", "dtemplate", "expression", "statement", "dclass", "root.rootobject",
@@ -297,7 +297,7 @@ auto getList()
             "function errorSupplemental",
             "function deprecation",
             "function verrorPrint",
-            "externc mars.c:286",
+            "externc function verror",
             "function verrorSupplemental",
             "function vwarning",
             "function vdeprecation",
@@ -320,17 +320,13 @@ auto getList()
             "function VarDeclarations__factory",
             "function Blocks__factory",
             "function Expressions__factory",
-            "version mars.h:77",
-            "version mars.h:80",
+            "version variable UNITTEST",
             "variable DMDV1",
             "variable DMDV2",
             "variable SNAN_DEFAULT_INIT",
             "variable MODULEINFO_IS_STRUCT",
             "variable PULL93",
             "variable CPP_MANGLE",
-            "version mars.h:105",
-            "version mars.h:111",
-            "version mars.h:118",
             "struct Param",
             "struct Compiler",
             "typedef structalign_t",
@@ -362,7 +358,6 @@ auto getList()
             "enum DYNCAST",
             "enum MATCH",
             "typedef StorageClass",
-            "externc mars.h:411",
         ],
         M("dstruct", null, ["dsymbol", "func", "aggregate", "arraytypes", "mars", "mtype", "identifier", "dscope",
                             "root.outbuffer", "hdrgen", "visitor", "defs", "dtemplate", "dmodule", "opover", "id",
@@ -386,10 +381,9 @@ auto getList()
             "function dimDgvoid*size_tDsymbol*",
             "struct GetNthSymbolCtx",
             "function getNthSymbolDg",
-            "version dsymbol.h:82",
             "enum PROT",
             "enum PASS",
-            "enum dsymbol.h:124",
+            "enum IgnoreNone",
             "typedef Dsymbol_apply_ft_t",
             "struct Dsymbol",
             "struct ScopeDsymbol",
@@ -467,7 +461,6 @@ auto getList()
                           "target", "root.port", "complex", "ctfeexpr", "longdouble", "dimport", "argtypes", "imphint",
                           "access", "attrib"]) :
         [
-            "version mtype.c:25",
             "variable LOGDOTEXP",
             "variable LOGDEFAULTINIT",
             "variable IMPLICIT_ARRAY_TO_PTR",
@@ -490,13 +483,11 @@ auto getList()
             "function semanticLengthScope*TupleDeclaration*Expression*",
             "function semanticLengthScope*Type*Expression*",
             "function functionToCBuffer2",
-            "version mtype.c:9447",
             "function argsToDecoBufferDg",
             "function isTPLDg",
             "function dimDgvoid*size_tParameter*",
             "struct GetNthParamCtx",
             "function getNthParamDg",
-            "version mtype.h:49",
             "enum ENUMTY",
             "typedef TY",
             "variable MODconst",
@@ -587,7 +578,6 @@ auto getList()
             "function extractOpDollarSideEffect",
             "function resolveOpDollarScope*ArrayExp*",
             "function resolveOpDollarScope*SliceExp*",
-            "version expression.h:66",
             "typedef apply_fp_t",
             "enum CtfeGoal",
             "variable WANTflags",
@@ -718,7 +708,6 @@ auto getList()
                               "dmodule", "defs", "aggregate", "dclass", "id", "lexer", "doc", "opover", "aliasthis", "init",
                               "attrib"]) :
         [
-            "version template.h:49",
             "struct Tuple",
             "struct TemplateDeclaration",
             "struct TemplateParameter",
@@ -771,8 +760,7 @@ auto getList()
             "struct Keyword",
             "variable nkeywords",
             "variable keywords",
-            "version lexer.c:2944",
-            "version lexer.c:2946",
+            "version function unittest_lexer",
             "enum TOK",
             "variable TOKwild",
             "struct Token",
@@ -884,14 +872,14 @@ auto getList()
         ],
         M("link", null, ["defs", "root.outbuffer", "mars", "root.filename", "root.file", "root.rmem"]) :
         [
-            "version link.c:41",
+            "version variable HAS_POSIX_SPAWN",
             "function writeFilenameOutBuffer*char*size_t",
             "function writeFilenameOutBuffer*char*",
-            "version link.c:143",
+            "version function findNoMainError",
             "function runLINK",
             "function deleteExeFile",
-            "version link.c:794",
-            "version link.c:819",
+            "version function executecmd",
+            "version function executearg0",
             "function runProgram",
         ],
         M("aggregate", null, ["dsymbol", "mtype", "arraytypes", "declaration", "func", "mars", "expression", "identifier", "dscope",
@@ -928,7 +916,6 @@ auto getList()
             "function fixupLabelName",
             "function checkLabeledLoop",
             "typedef sapply_fp_t",
-            "version statement.h:70",
             "enum BE",
             "struct Statement",
             "struct ErrorStatement",
@@ -1028,7 +1015,6 @@ auto getList()
             "function readlongLE",
             "function readlongBE",
             "function lookForSourceFile",
-            "version module.h:34",
             "enum PKG",
             "struct Package",
             "struct Module",
@@ -1102,20 +1088,18 @@ auto getList()
         M("opover", null, ["aggregate", "mtype", "arraytypes", "dscope", "lexer", "expression", "mars", "dsymbol", "identifier",
                            "func", "defs", "declaration", "dtemplate"]) :
         [
-            "version opover.c:20",
             "function isAggregate",
             "function opToArg",
             "function build_overload",
             "function search_function",
             "function inferApplyArgTypesX",
             "function inferApplyArgTypesY",
-            "version opover.c:1591",
+            "version function inferApplyArgTypesZ",
         ],
         M("dclass", null, ["dsymbol", "mtype", "arraytypes", "aggregate", "func", "declaration", "mars", "identifier",
                            "dscope", "root.outbuffer", "hdrgen", "defs", "visitor", "root.rootobject", "root.rmem", "id",
                            "dmodule", "target", "statement", "dtemplate", "doc"]) :
         [
-            "version class.c:857",
             "function isf",
             "struct BaseClass",
             "variable CLASSINFO_SIZE_64",
@@ -1127,7 +1111,6 @@ auto getList()
         M("dmangle", null, ["mars", "declaration", "defs", "root.outbuffer", "dsymbol", "func", "dtemplate", "mtype",
                             "expression"]) :
         [
-            "version mangle.c:37",
             "function mangle",
         ],
         M("func", null, ["dsymbol", "root.outbuffer", "declaration", "mars", "dscope", "arraytypes", "mtype", "identifier",
@@ -1185,7 +1168,7 @@ auto getList()
         ],
         M("cppmangle", null, ["mars"]) :
         [
-            "version cppmangle.c:474",
+            "version struct CppMangleVisitor",
         ],
         M("identifier", null, ["root.rootobject", "defs", "id", "mars", "root.outbuffer", "lexer"]) :
         [
@@ -1429,8 +1412,7 @@ auto getList()
         M("imphint", null, ["defs"]) :
         [
             "function importHint",
-            "version imphint.c:71",
-            "version imphint.c:73",
+            "version function unittest_importHint",
         ],
         M("argtypes", null, ["mtype", "defs", "mars"]) :
         [
@@ -1448,7 +1430,7 @@ auto getList()
         M("sideeffect", null, ["expression", "defs", "lexer", "mtype"]) :
         [
             "function lambdaHasSideEffect",
-            "version sideeffect.c:249",
+            "version function lambdaUseValue",
         ],
         M("canthrow", null, ["expression", "dsymbol", "defs", "lexer", "mars", "mtype", "dstruct", "attrib", "declaration", "dtemplate",
                              "arraytypes", "init", "root.rootobject"]) :
@@ -1471,10 +1453,5 @@ auto getList()
         [
             "struct Visitor",
         ],
-        M("discard", null, null) :
-        [
-            "version scope.h:40",
-            "version mars.h:426",
-       ],
     ];
 }

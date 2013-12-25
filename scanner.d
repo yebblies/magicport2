@@ -723,7 +723,8 @@ Declaration[] stripDead(Declaration[] decls)
         if (cast(DummyDeclaration)d ||
             cast(FuncBodyDeclaration)d ||
             cast(StaticMemberVarDeclaration)d ||
-            cast(ImportDeclaration)d)
+            cast(ImportDeclaration)d ||
+            cast(MacroUnDeclaration)d)
             continue;
         if (auto vd = cast(VarDeclaration)d)
         {
@@ -746,6 +747,35 @@ Declaration[] stripDead(Declaration[] decls)
         if (auto fd = cast(FuncDeclaration)d)
         {
             if (!fd.fbody.length)
+                continue;
+        }
+        if (auto cd = cast(ExternCDeclaration)d)
+        {
+            cd.decls = cd.decls.stripDead();
+            if (!cd.decls.length)
+                continue;
+        }
+        if (auto vd = cast(VersionDeclaration)d)
+        {
+            size_t n;
+            foreach(ref xdecls; vd.members)
+            {
+                xdecls = xdecls.stripDead();
+                n += xdecls.length;
+            }
+            if (!n)
+                continue;
+        }
+        if (auto td = cast(TypedefDeclaration)d)
+        {
+            if (td.t.id == "union tree_node")
+                continue;
+            if (td.t.id == "struct TYPE")
+                continue;
+        }
+        if (auto md = cast(MacroDeclaration)d)
+        {
+            if (md.id == "assert")
                 continue;
         }
         r ~= d;
