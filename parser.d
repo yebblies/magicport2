@@ -960,28 +960,6 @@ memberfunc:
                 initlist ~= new CallExpr(new IdentExpr(iid), parseArgs());
             } while (t.text == ",");
         }
-        // Just skip pre/post conditions for now
-        if (t.text == "__in")
-        {
-            nextToken();
-            inFunc++;
-            parseCompoundStatement();
-            inFunc--;
-        }
-        if (t.text == "__out")
-        {
-            nextToken();
-            check("(");
-            parseIdent();
-            check(")");
-            inFunc++;
-            parseCompoundStatement();
-            inFunc--;
-        }
-        if (t.text == "__body")
-        {
-            nextToken();
-        }
         Statement[] fbody;
         bool hasbody;
         if (t.text == "{") {
