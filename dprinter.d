@@ -1739,7 +1739,7 @@ class DPrinter : Visitor
     {
         indent--;
         visitIdent(ast.id);
-        println(": {}");
+        println(":");
         indent++;
     }
 
