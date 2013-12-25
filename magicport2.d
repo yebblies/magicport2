@@ -150,12 +150,14 @@ void main(string[] args)
             }
         }
     }
+    bool failed;
     foreach(id, d; map)
     {
         if (d.count == 0)
         {
             assert(d.d);
             writeln("unreferenced: ", d.d.getName);
+            failed = true;
         }
         if (d.count > 1 && d.d)
         {
@@ -174,6 +176,8 @@ void main(string[] args)
         std.file.write(buildPath("port", fn), buildPath("manual", fn).read());
     foreach(fn; ["aav.d", "array.d", "man.d", "rootobject.d", "outbuffer.d", "port.d", "response.d", "rmem.d", "stringtable.d"])
         std.file.write(buildPath("port", "root", fn), buildPath("manual", "root", fn).read());
+    if (failed)
+        assert(0);
 }
 
 struct D
