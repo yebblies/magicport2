@@ -52,7 +52,10 @@ class Namer : Visitor
 
     override void visit(EnumDeclaration ast)
     {
-        name = "enum " ~ ast.id;
+        if (ast.id.length)
+            name = "enum " ~ ast.id;
+        else
+            name = "enum " ~ baseName(ast.file) ~ ":" ~ to!string(ast.line);
     }
 }
 

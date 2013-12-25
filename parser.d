@@ -751,7 +751,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             exit("}");
             if (!inExpr)
                 check(";");
-            return new EnumDeclaration(id, members, vals);
+            return new EnumDeclaration(id, members, vals, t.file, t.line);
         } else
         {
             tx = new EnumType("enum " ~ id);

@@ -998,15 +998,18 @@ class DPrinter : Visitor
         }
         indent--;
         println("}");
-        foreach(i; 0..ast.members.length)
+        if (ast.id)
         {
-            print("alias ");
-            visitIdent(ast.members[i]);
-            print(" = ");
-            visitIdent(ast.id);
-            print(".");
-            visitIdent(ast.members[i]);
-            println(";");
+            foreach(i; 0..ast.members.length)
+            {
+                print("alias ");
+                visitIdent(ast.members[i]);
+                print(" = ");
+                visitIdent(ast.id);
+                print(".");
+                visitIdent(ast.members[i]);
+                println(";");
+            }
         }
         println("");
     }

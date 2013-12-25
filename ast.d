@@ -199,7 +199,9 @@ class EnumDeclaration : Declaration
     string id;
     string[] members;
     Expression[] vals;
-    this (string id, string[] members, Expression[] vals) { this.id = id; this.members = members; this.vals = vals; }
+    string file;
+    size_t line;
+    this (string id, string[] members, Expression[] vals, string file, size_t line) { this.id = id; this.members = members; this.vals = vals; this.file = file; this.line = line; }
     mixin(visitor_str);
 }
 
