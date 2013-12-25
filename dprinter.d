@@ -556,6 +556,8 @@ class DPrinter : Visitor
                 }
             }
         }
+        if (!ast.type)
+            manifest = true;
         bool realarray;
         if (ast.type && !ast.xinit && at && at.dim)
             realarray = true;
@@ -585,12 +587,12 @@ class DPrinter : Visitor
                     ast.xinit = vd.xinit;
                 }
             }
-            print("extern(C++) ");
+            if (!manifest) print("extern(C++) ");
             if (!manifest) gshared = true;
         }
         else if (!(ast.stc & STCconst) && !D2 && !fd && P)
         {
-            print("extern(C++) ");
+            if (!manifest) print("extern(C++) ");
             if (!manifest) gshared = true;
         }
         else if (ast.stc & STCstatic)
@@ -602,15 +604,18 @@ class DPrinter : Visitor
             print("extern(C++) ");
             gshared = true;
         }
-        if (ast.type)
+        if (manifest)
+            print("enum");
+        else
         {
-            if (ast.id == "__locale_decpoint") return;
-            if (ast.id == "__file__") return;
-            if (manifest)
-                print("enum ");
             visitX(ast.stc | STCvirtual);
             if (gshared)
-                print("__gshared ");
+                print("__gshared");
+        }
+        if (ast.type)
+        {
+            if (manifest || gshared || (ast.stc & (STCstatic | STCconst | STCexternc)))
+                print(" ");
             if (realarray)
             {
                 if (auto at2 = cast(ArrayType)at.next)
@@ -628,25 +633,18 @@ class DPrinter : Visitor
             }
             else
                 visitX(ast.type);
-            print(" ");
-            visitIdent(ast.id);
-            if (ast.xinit)
-            {
-                print(" = ");
-                this.inittype = ast.type;
-                visitX(ast.xinit);
-                inittype = null;
-            }
-            if (!E)
-                println(";");
-        } else {
-            assert(ast.stc & STCconst);
-            print("enum ");
-            visitIdent(ast.id);
-            print(" = ");
-            visitX(ast.xinit);
-            println(";");
         }
+        print(" ");
+        visitIdent(ast.id);
+        if (ast.xinit)
+        {
+            print(" = ");
+            this.inittype = ast.type;
+            visitX(ast.xinit);
+            inittype = null;
+        }
+        if (!E)
+            println(";");
     }
 
     override void visit(MultiVarDeclaration ast)
