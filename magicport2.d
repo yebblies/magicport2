@@ -778,7 +778,6 @@ auto getList()
         [
             "function checkFrameAccess",
             "function ObjectNotFound",
-            "variable DUMP",
             "variable STCundefined",
             "variable STCstatic",
             "variable STCextern",
@@ -1252,7 +1251,6 @@ auto getList()
         M("hdrgen", null, ["dscope"]) :
         [
             "struct HdrGenState",
-            "variable PRETTY_PRINT",
             "variable TEST_EMIT_ALL",
         ],
         M("delegatize", null, ["expression", "defs", "dscope", "lexer", "declaration", "mars"]) :

@@ -1331,8 +1331,6 @@ Statement parseReturnStatement()
     Expression e;
     if (t.text != ";")
         e = parseExpr();
-    if (t.text == "DUMP")
-        nextToken();
     check(";");
     return new ReturnStatement(e);
 }
@@ -1399,8 +1397,6 @@ Statement parseExpressionStatement()
             error("this should be an identifier: '%s'", e);
         return new LabelStatement(id.id);
     }
-    if (t.text == "DUMP")
-        nextToken();
     check(";");
     return new ExpressionStatement(e);
 }
