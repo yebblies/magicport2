@@ -612,7 +612,16 @@ class DPrinter : Visitor
             if (gshared)
                 print("__gshared");
         }
-        if (ast.type)
+        ExprInit ei = ast.xinit ? cast(ExprInit)ast.xinit : null;
+        NewExpr ne = ei ? cast(NewExpr)ei.e : null;
+        PointerType pt = ast.type ? cast(PointerType)ast.type : null;
+        if (pt && ne && ne.t.id == pt.next.id)
+        {
+            if (manifest || gshared || (ast.stc & (STCstatic | STCconst | STCexternc)))
+                print(" ");
+            print("auto");
+        }
+        else if (ast.type)
         {
             if (manifest || gshared || (ast.stc & (STCstatic | STCconst | STCexternc)))
                 print(" ");
