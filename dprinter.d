@@ -32,6 +32,7 @@ class DPrinter : Visitor
     Declaration D;
     Declaration D2;
     SwitchStatement sswitch;
+    string[] buffers;
 
     int indent;
     bool wasnl;
@@ -66,13 +67,22 @@ class DPrinter : Visitor
             print(")");
     }
 
+    void maybeBuffer(Expression e)
+    {
+        if (auto ie = cast(IdentExpr)e)
+        {
+            if (buffers.canFind(ie.id))
+            print(".ptr");
+        }
+    }
     void printArgs(Expression[] args)
     {
         foreach(i, a; args)
         {
-            visitX(a);
-            if (i != args.length - 1)
+            if (i)
                 print(", ");
+            visitX(a);
+            maybeBuffer(a);
         }
     }
     void printParams(Param[] args)
@@ -400,6 +410,7 @@ class DPrinter : Visitor
         auto fdsave = fd;
         scope(exit) fd = fdsave;
         fd = ast;
+        buffers = null;
         if (ast.id == "operator new") return;
         if (ast.id == "main") return;
         if (!P && !ast.hasbody && ast.skip) return;
@@ -558,8 +569,10 @@ class DPrinter : Visitor
             visitX(at.dim);
             print("] ");
             print(ast.id);
-            print("__array_storage");
-            println(";");
+            if (!E)
+                println(";");
+            buffers ~= ast.id;
+            return;
         }
         bool gshared;
         if ((ast.stc & STCstatic) && !cast(FuncDeclaration)D2 && P)
@@ -623,12 +636,6 @@ class DPrinter : Visitor
                 this.inittype = ast.type;
                 visitX(ast.xinit);
                 inittype = null;
-            }
-            else if (at && at.dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
-            {
-                print(" = ");
-                print(ast.id);
-                print("__array_storage.ptr");
             }
             if (!E)
                 println(";");
@@ -1079,6 +1086,7 @@ class DPrinter : Visitor
 
         lparen(ast);
         visitX(ast.e1);
+        maybeBuffer(ast.e1);
         print(" ");
         if ((n1 || n2) && ast.op == "==")
             print("is");
@@ -1088,6 +1096,7 @@ class DPrinter : Visitor
             print(ast.op);
         print(" ");
         visitX(ast.e2);
+        maybeBuffer(ast.e2);
         rparen(ast);
     }
 
@@ -1176,6 +1185,7 @@ class DPrinter : Visitor
         print(ast.op);
         print(" ");
         visitX(ast.e2);
+        maybeBuffer(ast.e2);
         rparen(ast);
     }
 
@@ -1267,8 +1277,10 @@ class DPrinter : Visitor
         visitX(ast.cond);
         print(" ? ");
         visitX(ast.e1);
+        maybeBuffer(ast.e1);
         print(" : ");
         visitX(ast.e2);
+        maybeBuffer(ast.e2);
         rparen(ast);
     }
 
@@ -1506,6 +1518,8 @@ class DPrinter : Visitor
     {
         auto stackclassessave = stackclasses;
         scope(exit) stackclasses = stackclassessave;
+        auto bufferssave = buffers;
+        scope(exit) buffers = bufferssave;
         println("{");
         indent++;
         visitX(ast.s);
