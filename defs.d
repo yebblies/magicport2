@@ -199,10 +199,10 @@ enum OMFOBJ = xversion!"Windows";
 enum ELFOBJ = xversion!"linux";
 
 enum TARGET_LINUX = xversion!"linux";
-enum TARGET_OSX = false;
-enum TARGET_FREEBSD = false;
-enum TARGET_OPENBSD = false;
-enum TARGET_SOLARIS = false;
+enum TARGET_OSX = xversion!"OSX";
+enum TARGET_FREEBSD = xversion!"FreeBSD";
+enum TARGET_OPENBSD = xversion!"OpenBSD";
+enum TARGET_SOLARIS = xversion!"Solaris";
 enum TARGET_WINDOS = xversion!"Windows";;
 
 enum __GNUC__ = false;
