@@ -531,6 +531,176 @@ class DPrinter : Visitor
     override void visit(VarDeclaration ast)
     {
         if (ast.stc & STCextern) return;
+        if (ast.id == "ASYNCREAD") return;
+        if (ast.id == "WINDOWS_SEH") return;
+        auto t0 = ast.type;
+        bool allsame = t0 !is null;
+        bool manifest;
+        if (auto tp = cast(ArrayType)t0)
+        {
+            if (auto tc = cast(ClassType)tp.next)
+            {
+                if (tc.id == "NameId")
+                {
+                    ast.stc &= ~STCstatic;
+                    manifest = true;
+                }
+            }
+        }
+        bool realarray;
+        if (1 == 1 && ast.type && !ast.xinit)
+            if (auto at = cast(ArrayType)ast.type)
+                if (at.dim)
+                    realarray = true;
+        if (fd && !(ast.stc & STCstatic) && !cast(AnonStructDeclaration)D2)
+            realarray = false;
+        if (1 == 1 && !ast.xinit && cast(ArrayType)ast.type && (cast(ArrayType)ast.type).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
+        {
+            auto at = cast(ArrayType)ast.type;
+            visitX((ast.stc & STCstatic) | STCvirtual);
+            visitX(at.next);
+            print("[");
+            visitX(at.dim);
+            print("] ");
+            print(ast.id);
+            print("__array_storage");
+            println(";");
+        }
+        bool gshared;
+        if (1 == 1 && (ast.stc & STCstatic) && !cast(FuncDeclaration)D2 && P)
+        {
+            foreach(vd; scan.staticMemberVarDeclarations)
+            {
+                if (P.id == vd.id && ast.id == vd.id2)
+                {
+                    //writeln("found value for ", vd.id, "::", vd.id2);
+                    ast.xinit = vd.xinit;
+                }
+            }
+            print("extern(C++) ");
+            if (!manifest) gshared = true;
+        }
+        else if (1 == 1 && !(ast.stc & STCconst) && !D2 && !fd && P)
+        {
+            print("extern(C++) ");
+            if (!manifest) gshared = true;
+        }
+        else if (ast.stc & STCstatic)
+        {
+            if (!manifest) gshared = true;
+        }
+        else if (1 == 1 && !P && !fd && !manifest)
+        {
+            print("extern(C++) ");
+            gshared = true;
+        }
+        {
+            if (ast.type)
+            {
+                if (ast.id == "__locale_decpoint") return;
+                if (ast.id == "__file__") return;
+                if (!allsame || !0)
+                {
+                    if (manifest)
+                        print("enum ");
+                    visitX(ast.stc | STCvirtual);
+                    if (gshared)
+                        print("__gshared ");
+                    if (realarray)
+                    {
+                        auto at = cast(ArrayType)ast.type;
+                        if (auto at2 = cast(ArrayType)at.next)
+                        {
+                            visitX(at2.next);
+                            print("[");
+                            visitX(at2.dim);
+                            print("]");
+                        }
+                        else
+                            visitX(at.next);
+                        print("[");
+                        visitX(at.dim);
+                        print("]");
+                    }
+                    else
+                        visitX(ast.type);
+                    print(" ");
+                }
+                visitIdent(ast.id);
+                if (ast.xinit)
+                {
+                    print(" = ");
+                    this.inittype = ast.type;
+                    visitX(ast.xinit);
+                    inittype = null;
+                }
+                else if (cast(ArrayType)ast.type && (cast(ArrayType)ast.type).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
+                {
+                    assert(1 == 1);
+                    auto at = cast(ArrayType)ast.type;
+                    print(" = ");
+                    print(ast.id);
+                    print("__array_storage.ptr");
+                }
+                if (allsame && 0 != 1 - 1)
+                    println(", ");
+                else if (!E || 0 != 1 - 1)
+                    println(";");
+            } else {
+                if (ast.id == "LOG" || ast.id == "LOGSEMANTIC") return;
+                if (ast.id.endsWith("_H")) return;
+                assert(ast.stc & STCconst);
+                print("enum ");
+                visitIdent(ast.id);
+                if (ast.xinit)
+                {
+                    print(" = ");
+                    visitX(ast.xinit);
+                } else {
+                    print(" = 0");
+                }
+                println(";");
+            }
+        }
+        if (1 == 1)
+        {
+            if (auto at = cast(ArrayType)ast.type)
+            {
+                if (at.dim)
+                {
+                    if (E)
+                        println(";");
+                    //visit((ast.stc & STCstatic) | STCvirtual);
+                    print("enum ");
+                    print(ast.id);
+                    print("__array_length = ");
+                    visitX(at.dim);
+                    if (!E)
+                        println(";");
+                    return;
+                }
+            }
+        }
+        if (1 == 1 && ast.xinit)
+        {
+            if (auto ai = cast(ArrayInit)ast.xinit)
+            {
+                if (E)
+                    println(";");
+                //visit((ast.stc & STCstatic) | STCvirtual);
+                print("enum ");
+                print(ast.id);
+                print("__array_length = ");
+                print(to!string(ai.xinit.length));
+                if (!E)
+                    println(";");
+            }
+        }
+    }
+
+    override void visit(MultiVarDeclaration ast)
+    {
+        if (ast.stc & STCextern) return;
         if (ast.ids[0] == "ASYNCREAD") return;
         if (ast.ids[0] == "WINDOWS_SEH") return;
         auto t0 = ast.types[0];
@@ -701,7 +871,7 @@ class DPrinter : Visitor
             }
         }
     }
-    
+
     bool isClass(Type t)
     {
         if (auto ct = cast(ClassType)t)

@@ -21,8 +21,7 @@ class Namer : Visitor
 
     override void visit(VarDeclaration ast)
     {
-        assert(ast.ids.length == 1);
-        name = "variable " ~ ast.ids[0];
+        name = "variable " ~ ast.id;
     }
 
     override void visit(VersionDeclaration ast)

@@ -1005,7 +1005,10 @@ memberfunc:
         }
         if (!inExpr)
             check(";");
-        return new VarDeclaration(types, ids, inits, stc);
+        if (types.length == 1)
+            return new VarDeclaration(types[0], ids[0], inits[0], stc);
+        else
+            return new MultiVarDeclaration(types, ids, inits, stc);
     } else {
         error("Unknown declaration: '%s'", t.text);
         assert(0);

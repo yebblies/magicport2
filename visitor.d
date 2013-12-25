@@ -35,6 +35,11 @@ class Visitor
         assert(0);
     }
 
+    void visit(MultiVarDeclaration ast)
+    {
+        assert(0);
+    }
+
     void visit(ConstructDeclaration ast)
     {
         assert(0);

@@ -104,11 +104,20 @@ class StaticMemberVarDeclaration : Declaration
 
 class VarDeclaration : Declaration
 {
+    Type type;
+    string id;
+    Init xinit;
+    STC stc;
+    this(Type type, string id, Init xinit, STC stc) { this.type = type; this.id = id; this.xinit = xinit; this.stc = stc; }
+    mixin(visitor_str);
+}
+
+class MultiVarDeclaration : Declaration
+{
     Type[] types;
     string[] ids;
     Init[] inits;
     STC stc;
-    this(Type type, string id, Init xinit, STC stc) { this.types = [type]; this.ids = [id]; this.inits = [xinit]; this.stc = stc; }
     this(Type[] types, string[] ids, Init[] inits, STC stc) { this.types = types; this.ids = ids; this.inits = inits; this.stc = stc; }
     mixin(visitor_str);
 }

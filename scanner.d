@@ -96,6 +96,15 @@ class Scanner : Visitor
     override void visit(VarDeclaration ast)
     {
         realdecls++;
+        if (ast.type)
+            visit(ast.type);
+        if (ast.xinit)
+            visit(ast.xinit);
+    }
+
+    override void visit(MultiVarDeclaration ast)
+    {
+        realdecls++;
         foreach(t; ast.types)
             if (t)
                 visit(t);
@@ -687,15 +696,15 @@ void scopeCtor(Scanner scan)
             }
             foreach(m; scan.scopedecl.decls)
             {
+                assert(!cast(MultiVarDeclaration)m);
                 auto vd = cast(VarDeclaration)m;
                 if (vd)
                 {
-                    assert(vd.types.length == 1);
-                    assert(!vd.inits[0]);
-                    auto p = vd.ids[0] in inits;
+                    assert(!vd.xinit);
+                    auto p = vd.id in inits;
                     if (p)
                     {
-                        vd.inits[0] = *p;
+                        vd.xinit = *p;
                     }
                 }
             }
@@ -718,18 +727,17 @@ Declaration[] stripDead(Declaration[] decls)
             continue;
         if (auto vd = cast(VarDeclaration)d)
         {
-            assert(vd.ids.length == 1);
-            if (vd.ids[0].endsWith("_H"))
+            if (vd.id.endsWith("_H"))
                 continue;
             if (vd.stc & STCextern)
                 continue;
-            if (vd.ids[0] == "__C99FEATURES__")
+            if (vd.id == "__C99FEATURES__")
                 continue;
-            if (vd.ids[0] == "__USE_ISOC99")
+            if (vd.id == "__USE_ISOC99")
                 continue;
-            if (vd.ids[0] == "LOG")
+            if (vd.id == "LOG")
                 continue;
-            if (vd.ids[0] == "LOGSEMANTIC")
+            if (vd.id == "LOGSEMANTIC")
                 continue;
         }
         if (auto fd = cast(FuncDeclaration)d)
