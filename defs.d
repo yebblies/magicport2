@@ -192,8 +192,6 @@ enum __clang__ = false;
 
 enum LOG = false;
 enum ASYNCREAD = false;
-enum WINDOWS_SEH = false;
-enum UNITTEST = false;
 enum CANINLINE_LOG = false;
 enum LOGSEMANTIC = false;
 
