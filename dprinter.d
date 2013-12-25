@@ -672,174 +672,26 @@ class DPrinter : Visitor
 
     override void visit(MultiVarDeclaration ast)
     {
-        if (ast.stc & STCextern) return;
-        if (ast.ids[0] == "ASYNCREAD") return;
-        if (ast.ids[0] == "WINDOWS_SEH") return;
-        auto t0 = ast.types[0];
-        bool allsame = t0 !is null;
-        foreach(t; ast.types[1..$])
-            if (!typeMatch(t, t0))
-                allsame = false;
-        bool manifest;
-        if (auto tp = cast(ArrayType)t0)
-        {
-            if (auto tc = cast(ClassType)tp.next)
-            {
-                if (tc.id == "NameId")
-                {
-                    ast.stc &= ~STCstatic;
-                    manifest = true;
-                }
-            }
-        }
-        bool realarray;
-        if (ast.types.length == 1 && ast.types[0] && !ast.inits[0])
-            if (auto at = cast(ArrayType)ast.types[0])
-                if (at.dim)
-                    realarray = true;
-        if (fd && !(ast.stc & STCstatic) && !cast(AnonStructDeclaration)D2)
-            realarray = false;
-        if (ast.types.length == 1 && !ast.inits[0] && cast(ArrayType)ast.types[0] && (cast(ArrayType)ast.types[0]).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
-        {
-            auto at = cast(ArrayType)ast.types[0];
-            visitX((ast.stc & STCstatic) | STCvirtual);
-            visitX(at.next);
-            print("[");
-            visitX(at.dim);
-            print("] ");
-            print(ast.ids[0]);
-            print("__array_storage");
-            println(";");
-        }
-        bool gshared;
-        if (ast.types.length == 1 && (ast.stc & STCstatic) && !cast(FuncDeclaration)D2 && P)
-        {
-            foreach(vd; scan.staticMemberVarDeclarations)
-            {
-                if (P.id == vd.id && ast.ids[0] == vd.id2)
-                {
-                    //writeln("found value for ", vd.id, "::", vd.id2);
-                    ast.inits[0] = vd.xinit;
-                }
-            }
-            print("extern(C++) ");
-            if (!manifest) gshared = true;
-        }
-        else if (ast.types.length == 1 && !(ast.stc & STCconst) && !D2 && !fd && P)
-        {
-            print("extern(C++) ");
-            if (!manifest) gshared = true;
-        }
-        else if (ast.stc & STCstatic)
-        {
-            if (!manifest) gshared = true;
-        }
-        else if (ast.types.length == 1 && !P && !fd && !manifest)
-        {
-            print("extern(C++) ");
-            gshared = true;
-        }
+        assert(fd && E);
+        foreach(t; ast.types[0..$])
+            assert(t && typeMatch(t, ast.types[0]));
         foreach(i; 0..ast.types.length)
         {
-            if (ast.types[i])
+            if (i)
+                println(", ");
+            else
             {
-                if (ast.ids[i] == "__locale_decpoint") return;
-                if (ast.ids[i] == "__file__") return;
-                if (!allsame || !i)
-                {
-                    if (manifest)
-                        print("enum ");
-                    visitX(ast.stc | STCvirtual);
-                    if (gshared)
-                        print("__gshared ");
-                    if (realarray)
-                    {
-                        auto at = cast(ArrayType)ast.types[i];
-                        if (auto at2 = cast(ArrayType)at.next)
-                        {
-                            visitX(at2.next);
-                            print("[");
-                            visitX(at2.dim);
-                            print("]");
-                        }
-                        else
-                            visitX(at.next);
-                        print("[");
-                        visitX(at.dim);
-                        print("]");
-                    }
-                    else
-                        visitX(ast.types[i]);
-                    print(" ");
-                }
-                visitIdent(ast.ids[i]);
-                if (ast.inits[i])
-                {
-                    print(" = ");
-                    this.inittype = ast.types[i];
-                    visitX(ast.inits[i]);
-                    inittype = null;
-                }
-                else if (cast(ArrayType)ast.types[i] && (cast(ArrayType)ast.types[i]).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
-                {
-                    assert(ast.types.length == 1);
-                    auto at = cast(ArrayType)ast.types[i];
-                    print(" = ");
-                    print(ast.ids[i]);
-                    print("__array_storage.ptr");
-                }
-                if (allsame && i != ast.types.length - 1)
-                    println(", ");
-                else if (!E || i != ast.types.length - 1)
-                    println(";");
-            } else {
-                if (ast.ids[i] == "LOG" || ast.ids[i] == "LOGSEMANTIC") return;
-                if (ast.ids[i].endsWith("_H")) return;
-                assert(ast.stc & STCconst);
-                print("enum ");
-                visitIdent(ast.ids[i]);
-                if (ast.inits[i])
-                {
-                    print(" = ");
-                    visitX(ast.inits[i]);
-                } else {
-                    print(" = 0");
-                }
-                println(";");
+                visitX(ast.stc | STCvirtual);
+                visitX(ast.types[i]);
+                print(" ");
             }
-        }
-        if (ast.types.length == 1)
-        {
-            if (auto at = cast(ArrayType)ast.types[0])
+            visitIdent(ast.ids[i]);
+            if (ast.inits[i])
             {
-                if (at.dim)
-                {
-                    if (E)
-                        println(";");
-                    //visit((ast.stc & STCstatic) | STCvirtual);
-                    print("enum ");
-                    print(ast.ids[0]);
-                    print("__array_length = ");
-                    visitX(at.dim);
-                    if (!E)
-                        println(";");
-                    return;
-                }
-            }
-        }
-        if (ast.types.length == 1 && ast.inits[0])
-        {
-            if (auto ai = cast(ArrayInit)ast.inits[0])
-            {
-                if (E)
-                    println(";");
-                //visit((ast.stc & STCstatic) | STCvirtual);
-                print("enum ");
-                print(ast.ids[0]);
-                print("__array_length = ");
-                print(to!string(ai.xinit.length));
-                if (!E)
-                    println(";");
+                print(" = ");
+                this.inittype = ast.types[i];
+                visitX(ast.inits[i]);
+                inittype = null;
             }
         }
     }
