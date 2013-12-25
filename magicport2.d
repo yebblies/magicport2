@@ -249,6 +249,7 @@ auto getList()
             "function spellerX",
             "function speller",
             "version speller.c:265",
+            "version speller.c:266",
         ],
 
         M("arraytypes", null, ["root.array", "root.file", "identifier", "dtemplate", "expression", "statement", "dclass", "root.rootobject",
@@ -404,6 +405,7 @@ auto getList()
             "typedef utf16_t",
             "typedef utf32_t",
             "typedef dchar_t",
+            "variable ALPHA_TABLE_LENGTH",
             "variable ALPHA_TABLE",
             "variable UTF8_DECODE_OK",
             "variable UTF16_DECODE_OK",
@@ -768,8 +770,10 @@ auto getList()
             "function isidchar",
             "function cmtable_init",
             "struct Keyword",
+            "variable nkeywords",
             "variable keywords",
             "version lexer.c:2944",
+            "version lexer.c:2946",
             "enum TOK",
             "variable TOKwild",
             "struct Token",
@@ -1428,6 +1432,7 @@ auto getList()
         [
             "function importHint",
             "version imphint.c:71",
+            "version imphint.c:73",
         ],
         M("argtypes", null, ["mtype", "defs", "mars"]) :
         [

@@ -640,34 +640,6 @@ class DPrinter : Visitor
             visitX(ast.xinit);
             println(";");
         }
-        if (at && at.dim)
-        {
-            if (E)
-                println(";");
-            //visit((ast.stc & STCstatic) | STCvirtual);
-            print("enum ");
-            print(ast.id);
-            print("__array_length = ");
-            visitX(at.dim);
-            if (!E)
-                println(";");
-            return;
-        }
-        if (ast.xinit)
-        {
-            if (auto ai = cast(ArrayInit)ast.xinit)
-            {
-                if (E)
-                    println(";");
-                //visit((ast.stc & STCstatic) | STCvirtual);
-                print("enum ");
-                print(ast.id);
-                print("__array_length = ");
-                print(to!string(ai.xinit.length));
-                if (!E)
-                    println(";");
-            }
-        }
     }
 
     override void visit(MultiVarDeclaration ast)
@@ -1121,33 +1093,6 @@ class DPrinter : Visitor
 
     override void visit(MulExpr ast)
     {
-        // replace sizeof(X) / sizeof(X[0]) with X__array_length
-        if (ast.op == "/")
-        {
-            auto se1 = cast(SizeofExpr)ast.e1;
-            auto se2 = cast(SizeofExpr)ast.e2;
-            if (se1 && se2)
-            {
-                auto id1 = cast(IdentExpr)se1.e;
-                auto ie2 = cast(IndexExpr)se2.e;
-                if (id1 && ie2)
-                {
-                    auto id2 = cast(IdentExpr)ie2.e;
-                    if (id2 && id1.id == id2.id && ie2.args.length == 1)
-                    {
-                        if (auto le = cast(LitExpr)ie2.args[0])
-                        {
-                            if (le.val == "0")
-                            {
-                                print(id1.id);
-                                print("__array_length");
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-        }
         lparen(ast);
         visitX(ast.e1);
         print(" ");
