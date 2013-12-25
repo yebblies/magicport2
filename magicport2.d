@@ -363,7 +363,6 @@ auto getList()
             "enum MATCH",
             "typedef StorageClass",
             "externc mars.h:411",
-            "version mars.h:426",
         ],
         M("dstruct", null, ["dsymbol", "func", "aggregate", "arraytypes", "mars", "mtype", "identifier", "dscope",
                             "root.outbuffer", "hdrgen", "visitor", "defs", "dtemplate", "dmodule", "opover", "id",
@@ -1041,7 +1040,6 @@ auto getList()
         [
             "function mergeFieldInit",
             "function scope_search_fp",
-            "version scope.h:40",
             "variable CSXthis_ctor",
             "variable CSXsuper_ctor",
             "variable CSXthis",
@@ -1473,5 +1471,10 @@ auto getList()
         [
             "struct Visitor",
         ],
+        M("discard", null, null) :
+        [
+            "version scope.h:40",
+            "version mars.h:426",
+       ],
     ];
 }
