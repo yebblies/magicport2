@@ -731,14 +731,17 @@ Declaration[] stripDead(Declaration[] decls)
                 continue;
             if (vd.stc & STCextern)
                 continue;
-            if (vd.id == "__C99FEATURES__")
+            switch(vd.id)
+            {
+            case "ASYNCREAD":
+            case "__C99FEATURES__":
+            case "__USE_ISOC99":
+            case "LOG":
+            case "LOGSEMANTIC":
                 continue;
-            if (vd.id == "__USE_ISOC99")
-                continue;
-            if (vd.id == "LOG")
-                continue;
-            if (vd.id == "LOGSEMANTIC")
-                continue;
+            default:
+                break;
+            }
         }
         if (auto fd = cast(FuncDeclaration)d)
         {

@@ -532,13 +532,11 @@ class DPrinter : Visitor
     {
         if (ast.stc & STCextern) return;
         if (ast.id == "ASYNCREAD") return;
-        if (ast.id == "WINDOWS_SEH") return;
-        auto t0 = ast.type;
-        bool allsame = t0 !is null;
         bool manifest;
-        if (auto tp = cast(ArrayType)t0)
+        auto at = cast(ArrayType)ast.type;
+        if (at)
         {
-            if (auto tc = cast(ClassType)tp.next)
+            if (auto tc = cast(ClassType)at.next)
             {
                 if (tc.id == "NameId")
                 {
@@ -548,15 +546,12 @@ class DPrinter : Visitor
             }
         }
         bool realarray;
-        if (1 == 1 && ast.type && !ast.xinit)
-            if (auto at = cast(ArrayType)ast.type)
-                if (at.dim)
-                    realarray = true;
+        if (ast.type && !ast.xinit && at && at.dim)
+            realarray = true;
         if (fd && !(ast.stc & STCstatic) && !cast(AnonStructDeclaration)D2)
             realarray = false;
-        if (1 == 1 && !ast.xinit && cast(ArrayType)ast.type && (cast(ArrayType)ast.type).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
+        if (!ast.xinit && at && at.dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
         {
-            auto at = cast(ArrayType)ast.type;
             visitX((ast.stc & STCstatic) | STCvirtual);
             visitX(at.next);
             print("[");
@@ -567,7 +562,7 @@ class DPrinter : Visitor
             println(";");
         }
         bool gshared;
-        if (1 == 1 && (ast.stc & STCstatic) && !cast(FuncDeclaration)D2 && P)
+        if ((ast.stc & STCstatic) && !cast(FuncDeclaration)D2 && P)
         {
             foreach(vd; scan.staticMemberVarDeclarations)
             {
@@ -580,7 +575,7 @@ class DPrinter : Visitor
             print("extern(C++) ");
             if (!manifest) gshared = true;
         }
-        else if (1 == 1 && !(ast.stc & STCconst) && !D2 && !fd && P)
+        else if (!(ast.stc & STCconst) && !D2 && !fd && P)
         {
             print("extern(C++) ");
             if (!manifest) gshared = true;
@@ -589,99 +584,76 @@ class DPrinter : Visitor
         {
             if (!manifest) gshared = true;
         }
-        else if (1 == 1 && !P && !fd && !manifest)
+        else if (!P && !fd && !manifest)
         {
             print("extern(C++) ");
             gshared = true;
         }
+        if (ast.type)
         {
-            if (ast.type)
-            {
-                if (ast.id == "__locale_decpoint") return;
-                if (ast.id == "__file__") return;
-                if (!allsame || !0)
-                {
-                    if (manifest)
-                        print("enum ");
-                    visitX(ast.stc | STCvirtual);
-                    if (gshared)
-                        print("__gshared ");
-                    if (realarray)
-                    {
-                        auto at = cast(ArrayType)ast.type;
-                        if (auto at2 = cast(ArrayType)at.next)
-                        {
-                            visitX(at2.next);
-                            print("[");
-                            visitX(at2.dim);
-                            print("]");
-                        }
-                        else
-                            visitX(at.next);
-                        print("[");
-                        visitX(at.dim);
-                        print("]");
-                    }
-                    else
-                        visitX(ast.type);
-                    print(" ");
-                }
-                visitIdent(ast.id);
-                if (ast.xinit)
-                {
-                    print(" = ");
-                    this.inittype = ast.type;
-                    visitX(ast.xinit);
-                    inittype = null;
-                }
-                else if (cast(ArrayType)ast.type && (cast(ArrayType)ast.type).dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
-                {
-                    assert(1 == 1);
-                    auto at = cast(ArrayType)ast.type;
-                    print(" = ");
-                    print(ast.id);
-                    print("__array_storage.ptr");
-                }
-                if (allsame && 0 != 1 - 1)
-                    println(", ");
-                else if (!E || 0 != 1 - 1)
-                    println(";");
-            } else {
-                if (ast.id == "LOG" || ast.id == "LOGSEMANTIC") return;
-                if (ast.id.endsWith("_H")) return;
-                assert(ast.stc & STCconst);
+            if (ast.id == "__locale_decpoint") return;
+            if (ast.id == "__file__") return;
+            if (manifest)
                 print("enum ");
-                visitIdent(ast.id);
-                if (ast.xinit)
-                {
-                    print(" = ");
-                    visitX(ast.xinit);
-                } else {
-                    print(" = 0");
-                }
-                println(";");
-            }
-        }
-        if (1 == 1)
-        {
-            if (auto at = cast(ArrayType)ast.type)
+            visitX(ast.stc | STCvirtual);
+            if (gshared)
+                print("__gshared ");
+            if (realarray)
             {
-                if (at.dim)
+                if (auto at2 = cast(ArrayType)at.next)
                 {
-                    if (E)
-                        println(";");
-                    //visit((ast.stc & STCstatic) | STCvirtual);
-                    print("enum ");
-                    print(ast.id);
-                    print("__array_length = ");
-                    visitX(at.dim);
-                    if (!E)
-                        println(";");
-                    return;
+                    visitX(at2.next);
+                    print("[");
+                    visitX(at2.dim);
+                    print("]");
                 }
+                else
+                    visitX(at.next);
+                print("[");
+                visitX(at.dim);
+                print("]");
             }
+            else
+                visitX(ast.type);
+            print(" ");
+            visitIdent(ast.id);
+            if (ast.xinit)
+            {
+                print(" = ");
+                this.inittype = ast.type;
+                visitX(ast.xinit);
+                inittype = null;
+            }
+            else if (at && at.dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
+            {
+                print(" = ");
+                print(ast.id);
+                print("__array_storage.ptr");
+            }
+            if (!E)
+                println(";");
+        } else {
+            assert(ast.stc & STCconst);
+            print("enum ");
+            visitIdent(ast.id);
+            print(" = ");
+            visitX(ast.xinit);
+            println(";");
         }
-        if (1 == 1 && ast.xinit)
+        if (at && at.dim)
+        {
+            if (E)
+                println(";");
+            //visit((ast.stc & STCstatic) | STCvirtual);
+            print("enum ");
+            print(ast.id);
+            print("__array_length = ");
+            visitX(at.dim);
+            if (!E)
+                println(";");
+            return;
+        }
+        if (ast.xinit)
         {
             if (auto ai = cast(ArrayInit)ast.xinit)
             {
