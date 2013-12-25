@@ -89,11 +89,40 @@ void main(string[] args)
             f.writefln("module %s;", m.m);
         f.writeln();
 
-        foreach(i; m.imports)
         {
-            f.writefln("import %s;", i);
+            bool found;
+            foreach(i; m.imports)
+            {
+                if (i.startsWith("root."))
+                {
+                    if (!found)
+                        f.writef("import %s", i);
+                    else
+                        f.writef(", %s", i);
+                    found = true;
+                }
+            }
+            if (found)
+                f.writeln(";");
         }
-        f.writeln();
+        {
+            bool found;
+            foreach(i; m.imports)
+            {
+                if (!i.startsWith("root."))
+                {
+                    if (!found)
+                        f.writef("import %s", i);
+                    else
+                        f.writef(", %s", i);
+                    found = true;
+                }
+            }
+            if (found)
+                f.writeln(";");
+        }
+        if (m.imports.length)
+            f.writeln();
 
         auto printer = new DPrinter((string s) { f.write(s); }, scan);
         foreach(d; decls)
@@ -184,6 +213,14 @@ struct M
     string m;
     string p;
     string[] imports;
+
+    this(string m, string p, string[] imports)
+    {
+        this.m = m;
+        this.p = p;
+        this.imports = imports;
+        sort(this.imports);
+    }
 }
 
 auto getList()
@@ -1356,7 +1393,7 @@ auto getList()
         [
             "function mergeFuncAttrs",
         ],
-        M("lib") :
+        M("lib", null, []) :
         [
             "struct Library",
         ],
@@ -1395,11 +1432,11 @@ auto getList()
             "function mergeFloatToInt",
             "function argtypemerge",
         ],
-        M("apply") :
+        M("apply", null, []) :
         [
             "macro condApply",
         ],
-        M("sapply") :
+        M("sapply", null, []) :
         [
             "macro scondApply",
         ],
