@@ -320,7 +320,6 @@ auto getList()
             "function VarDeclarations__factory",
             "function Blocks__factory",
             "function Expressions__factory",
-            "version variable UNITTEST",
             "variable DMDV1",
             "variable DMDV2",
             "variable SNAN_DEFAULT_INIT",
