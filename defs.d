@@ -195,9 +195,6 @@ enum ASYNCREAD = false;
 enum CANINLINE_LOG = false;
 enum LOGSEMANTIC = false;
 
-enum OMFOBJ = xversion!"Windows";
-enum ELFOBJ = xversion!"linux";
-
 enum TARGET_LINUX = xversion!"linux";
 enum TARGET_OSX = xversion!"OSX";
 enum TARGET_FREEBSD = xversion!"FreeBSD";
