@@ -173,7 +173,7 @@ void main(string[] args)
             writeln("duplicate: ", d.d.getName);
         }
     }
-    foreach(fn; ["intrange.d", "complex.d", "longdouble.d", "lib.d", "libomf.d"])
+    foreach(fn; ["intrange.d", "complex.d", "longdouble.d", "lib.d", "libomf.d", "scanomf.d"])
         std.file.write(buildPath("port", fn), buildPath("manual", fn).read());
     foreach(fn; ["aav.d", "array.d", "man.d", "rootobject.d", "outbuffer.d", "port.d", "response.d", "rmem.d", "stringtable.d"])
         std.file.write(buildPath("port", "root", fn), buildPath("manual", "root", fn).read());

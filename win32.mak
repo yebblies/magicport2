@@ -33,14 +33,14 @@ DM=manual
 RM=manual\root
 MANUALSRC= \
 	$(DM)\intrange.d $(DM)\complex.d $(DM)\longdouble.d \
-	$(DM)\lib.d $(DM)\libomf.d \
+	$(DM)\lib.d $(DM)\libomf.d $(DM)\scanomf.d \
 	$(RM)\aav.d $(RM)\array.d \
 	$(RM)\man.d $(RM)\rootobject.d $(RM)\outbuffer.d $(RM)\port.d \
 	$(RM)\response.d $(RM)\rmem.d  $(RM)\stringtable.d
 
 COPYSRC= \
 	$(DP)\intrange.d $(DP)\complex.d $(DP)\longdouble.d \
-	$(DP)\lib.d $(DP)\libomf.d \
+	$(DP)\lib.d $(DP)\libomf.d $(DP)\scanomf.d \
 	$(RP)\aav.d $(RP)\array.d \
 	$(RP)\man.d $(RP)\rootobject.d $(RP)\outbuffer.d $(RP)\port.d \
 	$(RP)\response.d $(RP)\rmem.d  $(RP)\stringtable.d
