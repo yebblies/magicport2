@@ -89,6 +89,15 @@ extern extern(C++) void obj_end(Library library, File* objfile);
 extern extern(C++) void obj_write_deferred(Library library);
 extern extern(C++) Expression createTypeInfoArray(Scope* sc, Expression *args, size_t dim);
 
+uint rol(uint x, uint n)
+{
+    return (x << n) | (x >> (32-n));
+}
+uint ror(uint x, uint n)
+{
+    return (x >> n) | (x << (32-n));
+}
+
 // Util
 
 int binary(char* p, const(char)** tab, size_t n)
@@ -189,6 +198,9 @@ enum IN_GCC = xversion!"GNU";
 enum __DMC__ = xversion!"DigitalMars";
 enum _MSC_VER = false;
 enum __clang__ = false;
+enum __GNUC__ = false;
+enum __MINGW32__ = false;
+enum __GLIBC__ = xversion!"linux";
 
 enum LOG = false;
 enum ASYNCREAD = false;
@@ -201,8 +213,3 @@ enum TARGET_FREEBSD = xversion!"FreeBSD";
 enum TARGET_OPENBSD = xversion!"OpenBSD";
 enum TARGET_SOLARIS = xversion!"Solaris";
 enum TARGET_WINDOS = xversion!"Windows";;
-
-enum __GNUC__ = false;
-enum __MINGW32__ = false;
-
-enum __GLIBC__ = xversion!"linux";

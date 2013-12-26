@@ -12,11 +12,11 @@ import scanner;
 import ast;
 import namer;
 
-// "complex_t.h", "intrange.h", "intrange.c", "toelfdebug.c", "libelf.c", "libmach.c", "idgen.c", "libmscoff.c", "scanmscoff.c",
+// "complex_t.h", "intrange.h", "intrange.c", "toelfdebug.c", "libelf.c", "libmach.c", "idgen.c",
 // "iasm.c",
 // "eh.c",
 // "tocsym.c", "s2ir.c", "todt.c", "e2ir.c", "toobj.c", "glue.c", "toctype.c", "msc.c", "typinf.c", "tocvdebug.c", "irstate.c", "irstate.h", "toir.h", "toir.c",
-// "libomf.c", "scanomf.c",
+// "libomf.c", "scanomf.c", "lib.h", "libmscoff.c", "scanmscoff.c",
 
 auto frontsrc = [
     "mars.c", "enum.c", "struct.c", "dsymbol.c", "import.c", "utf.h",
@@ -30,7 +30,7 @@ auto frontsrc = [
     "mars.h", "module.h", "mtype.h", "dsymbol.h",
     "declaration.h", "lexer.h", "expression.h", "statement.h", "doc.h", "doc.c", "macro.h",
     "macro.c", "hdrgen.h", "hdrgen.c", "arraytypes.h", "delegatize.c",
-    "interpret.c", "ctfeexpr.c", "traits.c", "builtin.c", "clone.c", "lib.h",
+    "interpret.c", "ctfeexpr.c", "traits.c", "builtin.c", "clone.c",
     "arrayop.c", "aliasthis.h", "aliasthis.c", "json.h", "json.c",
     "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sapply.c", "sideeffect.c",
     "ctfe.h", "canthrow.c", "target.c", "target.h", "id.c", "id.h",
@@ -173,7 +173,7 @@ void main(string[] args)
             writeln("duplicate: ", d.d.getName);
         }
     }
-    foreach(fn; ["intrange.d", "complex.d", "longdouble.d"])
+    foreach(fn; ["intrange.d", "complex.d", "longdouble.d", "lib.d", "libomf.d"])
         std.file.write(buildPath("port", fn), buildPath("manual", fn).read());
     foreach(fn; ["aav.d", "array.d", "man.d", "rootobject.d", "outbuffer.d", "port.d", "response.d", "rmem.d", "stringtable.d"])
         std.file.write(buildPath("port", "root", fn), buildPath("manual", "root", fn).read());
@@ -1378,10 +1378,6 @@ auto getList()
         M("clone", null, ["mars", "defs", "declaration"]) :
         [
             "function mergeFuncAttrs",
-        ],
-        M("lib", null, []) :
-        [
-            "struct Library",
         ],
         M("arrayop", null, ["root.aav", "func", "identifier", "expression", "dscope", "mars", "defs", "arraytypes", "mtype", "statement",
                             "lexer", "id", "declaration", "dsymbol"]) :
