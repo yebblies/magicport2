@@ -17,7 +17,7 @@ module libomf;
 
 import core.stdc.stdlib;
 import root.file, root.filename, root.outbuffer, root.stringtable;
-import defs, lib, mars;
+import defs, lib, mars, scanomf;
 
 enum LOG = false;
 
@@ -36,11 +36,6 @@ struct ObjModule
     ushort page;        // page module starts in output file
     char *name;                 // module name
 };
-
-extern(C++) uint OMFObjSize(const void* base, uint length, const(char)* name);
-extern(C++) void writeOMFObj(OutBuffer *buf, const void* base, uint length, const(char)* name);
-extern(C++) extern void scanOmfObjModule(void*, void (*pAddSymbol)(void*, const(char)*, int), void* , size_t, const(char)* , Loc loc);
-extern(C++) extern bool scanOmfLib(void*, void (*pAddObjModule)(void*, char*, void* , size_t), void* , size_t, uint);
 
 extern(C++)
 class LibOMF : Library
@@ -156,53 +151,42 @@ public:
             g_page_size = 16;
         }
 
-        static struct Context
+        bool firstmodule = true;
+
+        void addObjModule(char *name, void* base, size_t length)
         {
-            LibOMF lib;
-            ubyte *pstart;
-            uint pagesize;
-            bool islibrary;
-            const(char)* module_name;
-            bool firstmodule = true;
+            ObjModule *om = new ObjModule();
+            om.base = cast(ubyte*)base;
+            om.page = cast(ushort)((om.base - pstart) / g_page_size);
+            om.length = length;
 
-            extern(C++) static void addObjModule(void* pctx, char *name, void* base, size_t length)
+            /* Determine the name of the module
+             */
+            if (firstmodule && module_name && !islibrary)
             {
-                Context *ctx = cast(Context*)pctx;
-                ObjModule *om = new ObjModule();
-                om.base = cast(ubyte*)base;
-                om.page = cast(ushort)((om.base - ctx.pstart) / ctx.pagesize);
-                om.length = length;
-
-                /* Determine the name of the module
-                 */
-                if (ctx.firstmodule && ctx.module_name && !ctx.islibrary)
-                {
-                    // Remove path and extension
-                    om.name = strdup(FileName.name(ctx.module_name));
-                    char *ext = cast(char*)FileName.ext(om.name);
-                    if (ext)
-                        ext[-1] = 0;
-                }
-                else
-                {
-                    /* Use THEADR name as module name,
-                     * removing path and extension.
-                     */
-                    om.name = strdup(FileName.name(name));
-                    char *ext = cast(char*)FileName.ext(om.name);
-                    if (ext)
-                        ext[-1] = 0;
-                }
-
-                ctx.firstmodule = false;
-
-                ctx.lib.objmodules ~= om;
+                // Remove path and extension
+                om.name = strdup(FileName.name(module_name));
+                char *ext = cast(char*)FileName.ext(om.name);
+                if (ext)
+                    ext[-1] = 0;
             }
-        };
+            else
+            {
+                /* Use THEADR name as module name,
+                 * removing path and extension.
+                 */
+                om.name = strdup(FileName.name(name));
+                char *ext = cast(char*)FileName.ext(om.name);
+                if (ext)
+                    ext[-1] = 0;
+            }
 
-        auto ctx = Context(this, pstart, g_page_size, islibrary, module_name);
+            firstmodule = false;
 
-        if (scanOmfLib(&ctx, &Context.addObjModule, buf, buflen, g_page_size))
+            objmodules ~= om;
+        }
+
+        if (scanOmfLib(&addObjModule, buf, buflen, g_page_size))
             goto Lcorrupt;
     }
 
@@ -270,20 +254,12 @@ private:
             printf("LibMSCoff.scanObjModule(%s)\n", om.name);
         }
 
-        static struct Context
+        void addSymbol(const(char)* name, int pickAny)
         {
-            LibOMF lib;
-            ObjModule *om;
+            this.addSymbol(om, name, pickAny);
+        }
 
-            extern(C++) static void addSymbol(void* pctx, const(char)* name, int pickAny)
-            {
-                (cast(Context*)pctx).lib.addSymbol((cast(Context*)pctx).om, name, pickAny);
-            }
-        };
-
-        auto ctx = Context(this, om);
-
-        scanOmfObjModule(&ctx, &Context.addSymbol, om.base, om.length, om.name, loc);
+        scanOmfObjModule(&addSymbol, om.base, om.length, om.name, loc);
     }
 
     /***********************************

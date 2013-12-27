@@ -97,14 +97,13 @@ static ushort parseIdx(ubyte** pp)
  * Reads an object module from base[0..buflen] and passes the names
  * of any exported symbols to (*pAddSymbol)().
  * Input:
- *      pctx            context pointer, pass to *pAddSymbol
  *      pAddSymbol      function to pass the names to
  *      base[0..buflen] contains contents of object module
  *      module_name     name of the object module (used for error messages)
  *      loc             location to use for error printing
  */
 
-void scanOmfObjModule(void* pctx, void function(void* pctx, const(char)* name, int pickAny) pAddSymbol,
+void scanOmfObjModule(void delegate(const(char)* name, int pickAny) pAddSymbol,
     void* base, size_t buflen, const(char)* module_name, Loc loc)
 {
     static if (LOG)
@@ -150,7 +149,7 @@ void scanOmfObjModule(void* pctx, void function(void* pctx, const(char)* name, i
                     parseName(&p, name.ptr);
                     p += (recTyp == PUBDEF) ? 2 : 4;    // skip offset
                     parseIdx(&p);                               // skip type index
-                    pAddSymbol(pctx, name.ptr, 0);
+                    pAddSymbol(name.ptr, 0);
                 }
                 break;
 
@@ -190,14 +189,14 @@ void scanOmfObjModule(void* pctx, void function(void* pctx, const(char)* name, i
                 }
 
                 //printf("[s] name='%s'\n",name);
-                pAddSymbol(pctx, names[idx],pickAny);
+                pAddSymbol(names[idx],pickAny);
                 break;
             }
             case ALIAS:
                 while (p + 1 < pnext)
                 {
                     parseName(&p, name.ptr);
-                    pAddSymbol(pctx, name.ptr, 0);
+                    pAddSymbol(name.ptr, 0);
                     parseName(&p, name.ptr);
                 }
                 break;
@@ -235,7 +234,7 @@ void scanOmfObjModule(void* pctx, void function(void* pctx, const(char)* name, i
                                 goto L2;
                         p++;            // skip OrdFlag field
                         parseName(&p, name.ptr);
-                        pAddSymbol(pctx, name.ptr, 0);
+                        pAddSymbol(name.ptr, 0);
                         break;
                     L2: ;
                     }
@@ -259,8 +258,7 @@ Ret:
  *      true for corrupt OMF data
  */
 
-bool scanOmfLib(void* pctx,
-        void function(void* pctx, char* name, void* base, size_t length) pAddObjModule,
+bool scanOmfLib(void delegate(char* name, void* base, size_t length) pAddObjModule,
         void* buf, size_t buflen,
         uint pagesize)
 {
@@ -305,7 +303,7 @@ bool scanOmfLib(void* pctx,
             {
                 if (base)
                 {
-                    pAddObjModule(pctx, name.ptr, base, pnext - base);
+                    pAddObjModule(name.ptr, base, pnext - base);
                     base = null;
                 }
                 // Round up to next page
