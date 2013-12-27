@@ -46,7 +46,7 @@ extern(C++) extern void scanOmfObjModule(void*, void (*pAddSymbol)(void*, const(
 extern(C++) extern bool scanOmfLib(void*, void (*pAddObjModule)(void*, char*, void* , size_t), void* , size_t, uint);
 
 extern(C++)
-class LibOMF : public Library
+class LibOMF : Library
 {
 public:
     File *libfile;
@@ -81,7 +81,7 @@ public:
             arg = FileName.combine(dir, arg);
         const(char)* libfilename = FileName.defaultExt(arg, global.lib_ext);
 
-        libfile = File.factory(libfilename);
+        libfile = new File(libfilename);
 
         loc.filename = libfile.name.toChars();
         loc.linnum = 0;

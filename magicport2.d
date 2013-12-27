@@ -173,7 +173,7 @@ void main(string[] args)
             writeln("duplicate: ", d.d.getName);
         }
     }
-    foreach(fn; ["intrange.d", "complex.d", "longdouble.d", "lib.d", "libomf.d", "scanomf.d"])
+    foreach(fn; ["intrange.d", "complex.d", "longdouble.d", "lib.d", "libomf.d", "scanomf.d", "libmscoff.d", "scanmscoff.d"])
         std.file.write(buildPath("port", fn), buildPath("manual", fn).read());
     foreach(fn; ["aav.d", "array.d", "man.d", "rootobject.d", "outbuffer.d", "port.d", "response.d", "rmem.d", "stringtable.d"])
         std.file.write(buildPath("port", "root", fn), buildPath("manual", "root", fn).read());
@@ -314,12 +314,12 @@ auto getList()
             "function getenv_setargv",
             "function escapePath",
             "function parse_arch",
-            "function Dsymbols__factory",
-            "function Parameters__factory",
-            "function Symbols__factory",
-            "function VarDeclarations__factory",
-            "function Blocks__factory",
-            "function Expressions__factory",
+            "function Dsymbols_create",
+            "function Parameters_create",
+            "function Symbols_create",
+            "function VarDeclarations_create",
+            "function Blocks_create",
+            "function Expressions_create",
             "variable DMDV1",
             "variable DMDV2",
             "variable SNAN_DEFAULT_INIT",
