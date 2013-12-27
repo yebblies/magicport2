@@ -16,7 +16,7 @@
 module libomf;
 
 import core.stdc.stdlib;
-import root.array, root.file, root.filename, root.outbuffer, root.stringtable;
+import root.file, root.filename, root.outbuffer, root.stringtable;
 import defs, lib, mars;
 
 enum LOG = false;
@@ -26,9 +26,6 @@ struct ObjSymbol
     char *name;
     ObjModule *om;
 };
-
-alias Array!(ObjModule*) ObjModules;
-alias Array!(ObjSymbol*) ObjSymbols;
 
 enum LIBIDMAX = (512 - 0x25 - 3 - 4);   // max size that will fit in dictionary
 
@@ -49,9 +46,9 @@ extern(C++)
 class LibOMF : Library
 {
 public:
-    File *libfile;
-    ObjModules objmodules;   // ObjModule[]
-    ObjSymbols objsymbols;   // ObjSymbol[]
+    File* libfile;
+    ObjModule*[] objmodules;   // ObjModule[]
+    ObjSymbol*[] objsymbols;   // ObjSymbol[]
 
     StringTable tab;
 
@@ -199,7 +196,7 @@ public:
 
                 ctx.firstmodule = false;
 
-                ctx.lib.objmodules.push(om);
+                ctx.lib.objmodules ~= om;
             }
         };
 
@@ -258,7 +255,7 @@ public:
             os.om = om;
             s.ptrvalue = os;
 
-            objsymbols.push(os);
+            objsymbols ~= os;
         }
     }
 private:
@@ -301,22 +298,20 @@ private:
         ushort bucksForSize;
         uint symSize = 0;
 
-        for (size_t i = 0; i < objsymbols.dim; i++)
+        foreach(s; objsymbols)
         {
-            ObjSymbol *s = objsymbols[i];
             symSize += ( strlen(s.name) + 4 ) & ~1;
         }
 
-        for (size_t i = 0; i < objmodules.dim; i++)
+        foreach(om; objmodules)
         {
-            ObjModule *om = objmodules[i];
             size_t len = strlen(om.name);
             if (len > 0xFF)
                 len += 2;                   // Digital Mars long name extension
             symSize += ( len + 4 + 1 ) & ~1;
         }
 
-        bucksForHash = cast(ushort)((objsymbols.dim + objmodules.dim + HASHMOD - 3) /
+        bucksForHash = cast(ushort)((objsymbols.length + objmodules.length + HASHMOD - 3) /
                     (HASHMOD - 2));
         bucksForSize = cast(ushort)((symSize + BUCKETSIZE - padding - padding - 1) /
                     (BUCKETSIZE - padding));
@@ -386,9 +381,8 @@ private:
         //printf("FillDict()\n");
 
         // Add each of the module names
-        for (size_t i = 0; i < objmodules.dim; i++)
+        foreach(om; objmodules)
         {
-            ObjModule *om = objmodules[i];
             ushort n = cast(ushort)strlen(om.name);
             if (n > 255)
             {
@@ -412,12 +406,11 @@ private:
         }
 
         // Sort the symbols
-        qsort(objsymbols.tdata(), objsymbols.dim, objsymbols[0].sizeof, cast(cmpfunc_t)&NameCompare);
+        qsort(objsymbols.ptr, objsymbols.length, typeof(objsymbols[0]).sizeof, cast(cmpfunc_t)&NameCompare);
 
         // Add each of the symbols
-        for (size_t i = 0; i < objsymbols.dim; i++)
+        foreach(os; objsymbols)
         {
-            ObjSymbol *os = objsymbols[i];
             ushort n = cast(ushort)strlen(os.name);
             if (n > 255)
             {
@@ -456,9 +449,8 @@ private:
         /* Scan each of the object modules for symbols
          * to go into the dictionary
          */
-        for (size_t i = 0; i < objmodules.dim; i++)
+        foreach(om; objmodules)
         {
-            ObjModule *om = objmodules[i];
             scanObjModule(om);
         }
 
@@ -477,9 +469,8 @@ private:
             }
             uint offset = g_page_size;
 
-            for (size_t i = 0; i < objmodules.dim; i++)
+            foreach(om; objmodules)
             {
-                ObjModule *om = objmodules[i];
                 uint page = offset / g_page_size;
                 if (page > 0xFFFF)
                 {
@@ -507,9 +498,8 @@ private:
 
         /* Write each object module into the library
          */
-        for (size_t i = 0; i < objmodules.dim; i++)
+        foreach(om; objmodules)
         {
-            ObjModule *om = objmodules[i];
             uint page = libbuf.offset / g_page_size;
             assert(page <= 0xFFFF);
             om.page = cast(ushort)page;
