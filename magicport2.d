@@ -291,9 +291,6 @@ auto getList()
         [
             "variable DMDV1",
             "variable DMDV2",
-            "variable SNAN_DEFAULT_INIT",
-            "variable MODULEINFO_IS_STRUCT",
-            "variable PULL93",
             "variable CPP_MANGLE",
             "struct Param",
             "struct Compiler",
@@ -320,8 +317,6 @@ auto getList()
             "typedef d_dchar",
             "typedef real_t",
             "struct Loc",
-            "variable INTERFACE_OFFSET",
-            "variable INTERFACE_VIRTUAL",
             "enum LINK",
             "enum DYNCAST",
             "enum MATCH",
