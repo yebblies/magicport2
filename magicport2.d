@@ -1159,7 +1159,8 @@ auto getList()
             "function hasPackageAccess",
             "function accessCheck",
         ],
-        M("cppmangle", null, ["mars", "defs", "dsymbol"]) :
+        M("cppmangle", null, ["mars", "defs", "dsymbol", "root.outbuffer", "arraytypes", "root.rootobject", "mtype", "visitor", "func",
+                              "declaration", "dstruct"]) :
         [
             "version struct CppMangleVisitor",
         ],
