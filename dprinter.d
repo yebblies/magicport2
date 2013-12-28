@@ -545,13 +545,14 @@ class DPrinter : Visitor
         if (ast.id == "ASYNCREAD") return;
         bool manifest;
         auto at = cast(ArrayType)ast.type;
+        if (!D2)
+            ast.stc &= ~STCstatic;
         if (at)
         {
             if (auto tc = cast(ClassType)at.next)
             {
                 if (tc.id == "NameId")
                 {
-                    ast.stc &= ~STCstatic;
                     manifest = true;
                 }
             }
