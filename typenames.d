@@ -98,6 +98,7 @@ auto basicTypes =
     "FINALIZERPROC",
     "sapply_fp_t",
     "fp_speller_t",
+    "builtin_fp",
     
     "TY",
     "StorageClass",

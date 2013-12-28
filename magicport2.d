@@ -295,7 +295,7 @@ auto getList()
        ],
         M("mars", null, ["arraytypes", "defs", "dmodule", "root.outbuffer", "root.file", "dscope", "root.rmem", "root.filename",
                          "identifier", "id", "parse", "lexer", "dunittest", "root.response", "cond", "dinifile", "root.man",
-                         "mtype", "target", "expression", "interpret", "lib", "json", "link"]) :
+                         "mtype", "target", "expression", "interpret", "lib", "json", "link", "builtin"]) :
         [
             "variable DMDV1",
             "variable DMDV2",
@@ -1117,7 +1117,8 @@ auto getList()
         M("func", null, ["dsymbol", "root.outbuffer", "declaration", "mars", "dscope", "arraytypes", "mtype", "identifier",
                          "statement", "interpret", "defs", "aggregate", "root.rootobject", "hdrgen", "dtemplate",
                          "expression", "inline", "lexer", "visitor", "dclass", "dmodule", "dstruct", "opover",
-                         "id", "root.filename", "root.rmem", "init", "target", "attrib", "ctfeexpr", "doc"]) :
+                         "id", "root.filename", "root.rmem", "init", "target", "attrib", "ctfeexpr", "doc",
+                         "builtin"]) :
         [
             "function overloadApply",
             "function MODMatchToBuffer",
@@ -1371,11 +1372,22 @@ auto getList()
             "function isDeclOut",
             "function isDeclLazy",
         ],
-        M("builtin", null, ["mars", "expression", "func", "arraytypes", "defs", "mtype", "lexer"]) :
+        M("builtin", null, ["mars", "expression", "func", "arraytypes", "defs", "mtype", "lexer", "root.stringtable"]) :
         [
+            "typedef builtin_fp",
+            "variable builtins",
+            "function add_builtin",
+            "function builtin_lookup",
+            "function eval_unimp",
+            "function eval_sin",
+            "function eval_cos",
+            "function eval_tan",
+            "function eval_sqrt",
+            "function eval_fabs",
             "function eval_bsf",
             "function eval_bsr",
             "function eval_bswap",
+            "function builtin_init",
             "function eval_builtin",
         ],
         M("clone", null, ["mars", "defs", "declaration"]) :
