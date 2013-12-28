@@ -291,7 +291,6 @@ auto getList()
         [
             "variable DMDV1",
             "variable DMDV2",
-            "variable CPP_MANGLE",
             "struct Param",
             "struct Compiler",
             "typedef structalign_t",
@@ -763,7 +762,7 @@ auto getList()
         M("declaration", null, ["mars", "dscope", "aggregate", "identifier", "declaration", "dsymbol", "mtype", "expression",
                                 "root.outbuffer", "visitor", "arraytypes", "init", "hdrgen", "defs", "statement", "interpret",
                                 "root.rootobject", "dtemplate", "inline", "lexer", "func", "dclass", "dstruct", "opover", "id",
-                                "doc", "dmangle", "ctfeexpr", "attrib", "target"]) :
+                                "doc", "dmangle", "ctfeexpr", "attrib", "target", "cppmangle"]) :
         [
             "function checkFrameAccess",
             "function ObjectNotFound",
@@ -1160,7 +1159,7 @@ auto getList()
             "function hasPackageAccess",
             "function accessCheck",
         ],
-        M("cppmangle", null, ["mars"]) :
+        M("cppmangle", null, ["mars", "defs", "dsymbol"]) :
         [
             "version struct CppMangleVisitor",
         ],
