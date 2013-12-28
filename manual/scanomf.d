@@ -307,8 +307,8 @@ bool scanOmfLib(void delegate(char* name, void* base, size_t length) pAddObjModu
                     base = null;
                 }
                 // Round up to next page
-                uint t = pnext - cast(ubyte*)buf;
-                t = (t + pagesize - 1) & ~cast(uint)(pagesize - 1);
+                size_t t = pnext - cast(ubyte*)buf;
+                t = (t + pagesize - 1) & ~cast(size_t)(pagesize - 1);
                 pnext = cast(ubyte*)buf + t;
                 break;
             }
@@ -352,7 +352,7 @@ void writeOMFObj(OutBuffer *buf, const(void)* base, uint length, const(char)* na
         memcpy(4 + header.ptr, name, len);
 
         // Compute and store record checksum
-        uint n = len + 4;
+        size_t n = len + 4;
         ubyte checksum = 0;
         ubyte* p = header.ptr;
         while (n--)

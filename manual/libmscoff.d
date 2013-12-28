@@ -106,8 +106,8 @@ public:
         if (!buf)
         {
             assert(module_name[0]);
-            File* file = new File(module_name);
-            readFile(Loc(), file);
+            auto file = File(module_name);
+            readFile(Loc(), &file);
             buf = file.buffer;
             buflen = file.len;
             file._ref = 1;
@@ -120,7 +120,7 @@ public:
             static if (LOG)
                 printf("buf = %p, buflen = %d\n", buf, buflen);
         Lcorrupt:
-            error("corrupt object module %s %d", module_name, reason);
+            error(loc, "corrupt object module %s %d", module_name, reason);
             exit(EXIT_FAILURE);
         }
 
@@ -163,7 +163,7 @@ public:
                 Header* header = cast(Header*)(cast(ubyte*)buf + offset);
                 offset += Header.sizeof;
                 char* endptr = null;
-                uint size = strtoul(header.file_size.ptr, &endptr, 10);
+                uint size = cast(uint)strtoul(header.file_size.ptr, &endptr, 10);
                 if (endptr >= &header.file_size[10] || *endptr != ' ')
                 {
                     reason = __LINE__;
@@ -259,13 +259,13 @@ public:
                     ObjModule* om = new ObjModule();
                     // Include Header in base[0..length], so we don't have to repro it
                     om.base = cast(ubyte*)buf + offset - Header.sizeof;
-                    om.length = size + Header.sizeof;
+                    om.length = cast(uint)(size + Header.sizeof);
                     om.offset = 0;
                     if (header.object_name[0] == '/')
                     {
                         /* Pick long name out of longnames[]
                          */
-                        uint foff = strtoul(header.object_name.ptr + 1, &endptr, 10);
+                        uint foff = cast(uint)strtoul(header.object_name.ptr + 1, &endptr, 10);
                         uint i;
                         for (i = 0; 1; i++)
                         {
@@ -308,10 +308,10 @@ public:
                         }
                         om.name = oname;
                     }
-                    om.file_time = strtoul(header.file_time.ptr, &endptr, 10);
-                    om.user_id   = strtoul(header.user_id.ptr, &endptr, 10);
-                    om.group_id  = strtoul(header.group_id.ptr, &endptr, 10);
-                    om.file_mode = strtoul(header.file_mode.ptr, &endptr, 8);
+                    om.file_time = cast(int)strtoul(header.file_time.ptr, &endptr, 10);
+                    om.user_id   = cast(uint)strtoul(header.user_id.ptr, &endptr, 10);
+                    om.group_id  = cast(uint)strtoul(header.group_id.ptr, &endptr, 10);
+                    om.file_mode = cast(uint)strtoul(header.file_mode.ptr, &endptr, 8);
                     om.scan = 0;                   // don't scan object module for symbols
                     objmodules ~= om;
                 }
@@ -348,7 +348,7 @@ public:
                     goto Lcorrupt;
                 }
                 uint moff = member_file_offsets[memi];
-                for (uint m = mstart; 1; m++)
+                for (size_t m = mstart; 1; m++)
                 {
                     if (m == objmodules.length)
                     {
@@ -374,7 +374,7 @@ public:
          */
         ObjModule* om = new ObjModule();
         om.base = cast(ubyte*)buf;
-        om.length = buflen;
+        om.length = cast(uint)buflen;
         om.offset = 0;
         om.name = global.params.preservePaths ? module_name : FileName.name(module_name);     // remove path, but not extension
         om.scan = 1;
@@ -542,7 +542,7 @@ private:
         foreach(om; objmodules)
         {
             moffset += moffset & 1;
-            om.offset = moffset;
+            om.offset = cast(uint)moffset;
             if (om.scan)
                 moffset += Header.sizeof + om.length;
             else
@@ -557,7 +557,7 @@ private:
         ObjModule om;
         om.name_offset = -1;
         om.base = null;
-        om.length = 4 + objsymbols.length * 4 + slength;
+        om.length = cast(uint)(4 + objsymbols.length * 4 + slength);
         om.offset = 8;
         om.name = cast(char*)"";
         time_t file_time = 0;
@@ -576,7 +576,7 @@ private:
         libbuf.write(&h, h.sizeof);
 
         char buf[4];
-        sputl_big(objsymbols.length, buf.ptr);
+        sputl_big(cast(int)objsymbols.length, buf.ptr);
         libbuf.write(buf.ptr, 4);
 
         // Sort objsymbols[] in module offset order
@@ -607,11 +607,11 @@ private:
 
         assert(libbuf.offset == secondLinkerMemberOffset);
 
-        om.length = 4 + objmodules.length * 4 + 4 + objsymbols.length * 2 + slength;
+        om.length = cast(uint)(4 + objmodules.length * 4 + 4 + objsymbols.length * 2 + slength);
         OmToHeader(&h, &om);
         libbuf.write(&h, h.sizeof);
 
-        sputl(objmodules.length, buf.ptr);
+        sputl(cast(int)objmodules.length, buf.ptr);
         libbuf.write(buf.ptr, 4);
 
         foreach(i, om2; objmodules)
@@ -621,7 +621,7 @@ private:
             libbuf.write(buf.ptr, 4);
         }
 
-        sputl(objsymbols.length, buf.ptr);
+        sputl(cast(int)objsymbols.length, buf.ptr);
         libbuf.write(buf.ptr, 4);
 
         // Sort objsymbols[] in lexical order
@@ -694,14 +694,6 @@ private:
         static if (LOG)
             printf("moffset = x%x, libbuf.offset = x%x\n", cast(uint)moffset, cast(uint)libbuf.offset);
         assert(libbuf.offset == moffset);
-    }
-
-    void error(const(char)* format, ...)
-    {
-        va_list ap;
-        va_start(ap, format);
-        .verror(loc, format, ap);
-        va_end(ap);
     }
 
     Loc loc;

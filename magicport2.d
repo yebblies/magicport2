@@ -173,7 +173,15 @@ void main(string[] args)
             writeln("duplicate: ", d.d.getName);
         }
     }
-    foreach(fn; ["intrange.d", "complex.d", "longdouble.d", "lib.d", "libomf.d", "scanomf.d", "libmscoff.d", "scanmscoff.d"])
+    auto manualsrc =
+    [
+        "intrange.d", "complex.d", "longdouble.d",
+        "lib.d",
+        "libomf.d", "scanomf.d",
+        "libmscoff.d", "scanmscoff.d",
+        "libelf.d", "scanelf.d",
+    ];
+    foreach(fn; manualsrc)
         std.file.write(buildPath("port", fn), buildPath("manual", fn).read());
     foreach(fn; ["aav.d", "array.d", "man.d", "rootobject.d", "outbuffer.d", "port.d", "response.d", "rmem.d", "stringtable.d"])
         std.file.write(buildPath("port", "root", fn), buildPath("manual", "root", fn).read());

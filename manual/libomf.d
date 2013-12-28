@@ -94,8 +94,8 @@ public:
         if (!buf)
         {
             assert(module_name);
-            File *file = new File(module_name);
-            readFile(Loc(), file);
+            auto file = File(module_name);
+            readFile(Loc(), &file);
             buf = file.buffer;
             buflen = file.len;
             file._ref = 1;
@@ -124,7 +124,7 @@ public:
         if (buflen < LibHeader.sizeof)
         {
         Lcorrupt:
-            error("corrupt object module");
+            error(loc, "corrupt object module");
         }
         LibHeader *lh = cast(LibHeader*)buf;
         if (lh.recTyp == 0xF0)
@@ -142,7 +142,7 @@ public:
         }
         else if (lh.recTyp == '!' && memcmp(lh, cast(const(char)*)"!<arch>\n", 8) == 0)
         {
-            error("COFF libraries not supported");
+            error(loc, "COFF libraries not supported");
             return;
         }
         else
@@ -158,7 +158,7 @@ public:
             ObjModule *om = new ObjModule();
             om.base = cast(ubyte*)base;
             om.page = cast(ushort)((om.base - pstart) / g_page_size);
-            om.length = length;
+            om.length = cast(uint)length;
 
             /* Determine the name of the module
              */
@@ -228,7 +228,7 @@ public:
                 s = tab.lookup(name, strlen(name));
                 assert(s);
                 ObjSymbol *os = cast(ObjSymbol*)s.ptrvalue;
-                error("multiple definition of %s: %s and %s: %s",
+                error(loc, "multiple definition of %s: %s and %s: %s",
                     om.name, name, os.om.name, os.name);
             }
         }
@@ -476,7 +476,7 @@ private:
          */
         foreach(om; objmodules)
         {
-            uint page = libbuf.offset / g_page_size;
+            uint page = cast(uint)(libbuf.offset / g_page_size);
             assert(page <= 0xFFFF);
             om.page = cast(ushort)page;
 
@@ -491,7 +491,7 @@ private:
         }
 
         // File offset of start of dictionary
-        uint offset = libbuf.offset;
+        uint offset = cast(uint)libbuf.offset;
 
         // Write dictionary header, then round it to a BUCKETPAGE boundary
         ushort size = (BUCKETPAGE - (cast(short)offset + 3)) & (BUCKETPAGE - 1);
@@ -557,20 +557,6 @@ private:
 
         // Write library header at start of buffer
         memcpy(libbuf.data, &libHeader, libHeader.sizeof);
-    }
-
-    void error(const(char)* format, ...)
-    {
-        Loc loc;
-        if (libfile)
-        {
-            loc.filename = libfile.name.toChars();
-            loc.linnum = 0;
-        }
-        va_list ap;
-        va_start(ap, format);
-        .verror(loc, format, ap);
-        va_end(ap);
     }
 
     Loc loc;

@@ -4,6 +4,7 @@ module root.port;
 import defs;
 import target;
 
+version(Windows)
 __gshared extern(C) extern const(char)* __locale_decpoint;
 
 extern(C) float strtof(const(char)* p, char** endp);
@@ -78,26 +79,38 @@ struct Port
     static int isInfinity(double r) { return r is double.infinity || r is -double.infinity; }
     static float strtof(const(char)* p, char** endp)
     {
-        auto save = __locale_decpoint;
-        __locale_decpoint = ".";
+        version(Windows)
+        {
+            auto save = __locale_decpoint;
+            __locale_decpoint = ".";
+        }
         auto r = .strtof(p, endp);
-        __locale_decpoint = save;
+        version(Windows)
+            __locale_decpoint = save;
         return r;
     }
     static double strtod(const(char)* p, char** endp)
     {
-        auto save = __locale_decpoint;
-        __locale_decpoint = ".";
+        version(Windows)
+        {
+            auto save = __locale_decpoint;
+            __locale_decpoint = ".";
+        }
         auto r = .strtod(p, endp);
-        __locale_decpoint = save;
+        version(Windows)
+            __locale_decpoint = save;
         return r;
     }
     static real strtold(const(char)* p, char** endp)
     {
-        auto save = __locale_decpoint;
-        __locale_decpoint = ".";
+        version(Windows)
+        {
+            auto save = __locale_decpoint;
+            __locale_decpoint = ".";
+        }
         auto r = .strtold(p, endp);
-        __locale_decpoint = save;
+        version(Windows)
+            __locale_decpoint = save;
         return r;
     }
 }
