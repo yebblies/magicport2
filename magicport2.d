@@ -347,6 +347,7 @@ auto getList()
             "function halt",
             "function usage",
             "variable entrypoint",
+            "variable rootHasMain",
             "function genCmain",
             "function tryMain",
             "function main",
