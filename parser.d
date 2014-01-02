@@ -98,12 +98,7 @@ Declaration parsePreprocessor()
         auto flag = t.flag;
         auto xline = t.line;
         auto id = parseIdent();
-        if (isIncludeGuard(id))
-        {
-            while (t.line == xline)
-                nextToken();
-            return new VarDeclaration(null, id, new ExprInit(new LitExpr("1")), STCconst);
-        } else if (t.text == "(" && flag)
+        if (t.text == "(" && flag)
         {
             enter("(");
             string[] params;
