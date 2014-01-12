@@ -285,6 +285,7 @@
                 "function search_toHash",
                 "function search_toString",
                 "struct StructFlags",
+                "enum StructPOD",
                 "struct StructDeclaration",
                 "struct UnionDeclaration"
             ]
@@ -2578,6 +2579,7 @@
         "NeedInterpret",
         "FLAGS",
         "AliasThisRec",
+        "StructPOD",
 
         "LINK",
         "PREC",
