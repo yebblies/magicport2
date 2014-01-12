@@ -916,6 +916,7 @@
             "members" :
             [
                 "struct Tuple",
+                "struct TemplatePrevious",
                 "struct TemplateDeclaration",
                 "struct TemplateParameter",
                 "struct TemplateTypeParameter",
@@ -2773,7 +2774,8 @@
         "StructFlags",
         "ClassFlags",
         "FILE",
-        "PrevSibling"
+        "PrevSibling",
+        "TemplatePrevious"
     ],
     "classTypes" :
     [
