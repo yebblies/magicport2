@@ -757,6 +757,13 @@ Declaration[] stripDead(Declaration[] decls)
         }
         if (auto vd = cast(VersionDeclaration)d)
         {
+            auto ne = cast(NotExpr)vd.cond[0];
+            auto ie = ne ? cast(IdentExpr)ne.e : null;
+            if (ie && ie.id == "SYSCONFDIR")
+            {
+                r ~= vd.members[0].stripDead();
+                continue;
+            }
             size_t n;
             foreach(ref xdecls; vd.members)
             {
