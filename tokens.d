@@ -13,15 +13,17 @@ enum TokenType
     TOKnum,
     TOKid,
     TOKkey,
+    TOKcomment,
     TOKeof
 };
-alias TokenType.TOKstring TOKstring;
-alias TokenType.TOKop     TOKop;
-alias TokenType.TOKchar   TOKchar;
-alias TokenType.TOKnum    TOKnum;
-alias TokenType.TOKid     TOKid;
-alias TokenType.TOKkey    TOKkey;
-alias TokenType.TOKeof    TOKeof;
+alias TokenType.TOKstring  TOKstring;
+alias TokenType.TOKop      TOKop;
+alias TokenType.TOKchar    TOKchar;
+alias TokenType.TOKnum     TOKnum;
+alias TokenType.TOKid      TOKid;
+alias TokenType.TOKkey     TOKkey;
+alias TokenType.TOKcomment TOKcomment;
+alias TokenType.TOKeof     TOKeof;
 
 struct Token
 {
@@ -38,6 +40,7 @@ struct Lexer
     size_t line;
     string t;
     Token current;
+    bool skipcomments = true;
 
     this(string t, string fn)
     {
@@ -54,8 +57,8 @@ struct Lexer
         while (current.type != TOKeof)
         {
             if (t.length >= 1 && isWhite(t[0])) SkipWhitespace();
-            else if (t.length >= 2 && t[0..2] == "/*") SkipComment();
-            else if (t.length >= 2 && t[0..2] == "//") SkipLineComment();
+            else if (skipcomments && t.startsWith("/*")) ReadComment();
+            else if (skipcomments && t.startsWith("//")) ReadLineComment();
             else break;
         }
         if (t.empty)
@@ -65,11 +68,13 @@ struct Lexer
         }
 
         if (0) {}
-        else if (t.length >= 1 && t[0..1] == "\"") ReadStringLiteral();
-        else if (t.length >= 1 && t[0..1] == "'") ReadCharLiteral();
-        else if (t.length >= 1 && (isAlpha(t[0]) || t[0] == '_')) ReadIdentifier();
-        else if (t.length >= 1 && isDigit(t[0])) ReadNumber();
-        else ReadOperator();
+        else if (t.startsWith("\"")) current = ReadStringLiteral();
+        else if (t.startsWith("'")) current = ReadCharLiteral();
+        else if (t.startsWith("/*")) current = ReadComment();
+        else if (t.startsWith("//")) current = ReadLineComment();
+        else if (t.length >= 1 && (isAlpha(t[0]) || t[0] == '_')) current = ReadIdentifier();
+        else if (t.length >= 1 && isDigit(t[0])) current = ReadNumber();
+        else current = ReadOperator();
         line += count(f[0..$-t.length], '\n');
         current.line = line;
         current.file = file;
@@ -84,7 +89,7 @@ struct Lexer
             t.popFront();
     }
 
-    void SkipComment()
+    Token ReadComment()
     {
         assert(t[0..2] == "/*");
         t = t[2..$];
@@ -99,16 +104,18 @@ struct Lexer
 
         assert(t[0..2] == "*/");
         t = t[2..$];
+        return Token(file, line, null, TOKcomment);
     }
 
-    void SkipLineComment()
+    Token ReadLineComment()
     {
         assert(t[0..2] == "//");
         while(!t.empty && t.front != '\n')
             t.popFront();
+        return Token(file, line, null, TOKcomment);
     }
 
-    void ReadStringLiteral()
+    Token ReadStringLiteral()
     {
         assert(t[0] == '"');
 
@@ -134,11 +141,11 @@ struct Lexer
 
         assert(t[i] == '"');
         s ~= t[i];
-        current = Token(file, line, s, TOKstring);
         t = t[i+1..$];
+        return Token(file, line, s, TOKstring);
     }
 
-    void ReadCharLiteral()
+    Token ReadCharLiteral()
     {
         assert(t[0] == '\'');
 
@@ -153,24 +160,26 @@ struct Lexer
         }
 
         assert(t[i] == '\'');
-        current = Token(file, line, t[0..i+1], TOKchar);
+        auto tk = Token(file, line, t[0..i+1], TOKchar);
         t = t[i+1..$];
+        return tk;
     }
 
-    void ReadIdentifier()
+    Token ReadIdentifier()
     {
         assert(t[0] == '_' || isAlpha(t[0]));
 
         auto i = 1;
         while( i < t.length && (t[i] == '_' || isAlpha(t[i]) || isDigit(t[i])))
             ++i;
-        current = Token(file, line, t[0..i], TOKid, t[i] == '(');
+        auto tk = Token(file, line, t[0..i], TOKid, t[i] == '(');
         t = t[i..$];
         if (t[0] != ' ')
-            current.flag = true;
+            tk.flag = true;
+        return tk;
     }
 
-    void ReadNumber()
+    Token ReadNumber()
     {
         auto i = 1;
         while (i < t.length &&
@@ -185,11 +194,12 @@ struct Lexer
                 (t[i] == 'l' || t[i] == 'L')
             ))
             ++i;
-        current = Token(file, line, t[0..i], TOKnum);
+        auto tk = Token(file, line, t[0..i], TOKnum);
         t = t[i..$];
+        return tk;
     }
 
-    void ReadOperator()
+    Token ReadOperator()
     {
         int l;
         if (t.length >= 7 &&
@@ -279,7 +289,8 @@ struct Lexer
             )) l = 1;
         assert(l, '`' ~ t[0..min(50,$)] ~ '`');
 
-        current = Token(file, line, t[0..l], TOKop);
+        auto tk = Token(file, line, t[0..l], TOKop);
         t = t[l..$];
+        return tk;
     }
 };
