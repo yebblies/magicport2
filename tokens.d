@@ -92,27 +92,30 @@ struct Lexer
     Token ReadComment()
     {
         assert(t.startsWith("/*"));
-        t = t[2..$];
+        size_t i = 2;
         bool found = false;
 
-        while (1)
+        while (i < t.length)
         {
-            if (t.empty) break;
-            if (t.startsWith("*/")) break;
-            t.popFront();
+            if (t[i..$].startsWith("*/")) break;
+            i++;
         }
 
-        assert(t.startsWith("*/"));
-        t = t[2..$];
-        return Token(file, line, null, TOKcomment);
+        auto tk = Token(file, line, t[2..i], TOKcomment);
+        assert(t[i..$].startsWith("*/"));
+        t = t[i+2..$];
+        return tk;
     }
 
     Token ReadLineComment()
     {
         assert(t.startsWith("//"));
-        while(!t.empty && t.front != '\n')
-            t.popFront();
-        return Token(file, line, null, TOKcomment);
+        size_t i = 2;
+        while(i < t.length && t[i] != '\n')
+            i++;
+        auto tk = Token(file, line, t[2..i], TOKcomment);
+        t = t[i..$];
+        return tk;
     }
 
     Token ReadStringLiteral()
