@@ -315,6 +315,11 @@ class Visitor
         assert(0);
     }
 
+    void visit(CommentStatement ast)
+    {
+        assert(0);
+    }
+
     void visit(CompoundStatement ast)
     {
         assert(0);

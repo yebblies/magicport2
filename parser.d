@@ -29,6 +29,11 @@ string check(string s, size_t line = __LINE__)
     return nextToken();
 }
 string nextToken() { auto l = t.text; t = tx.front; tx.popFront(); return l; }
+void skipComment()
+{
+    while(t.type == TOKcomment)
+        nextToken();
+}
 
 int level;
 string[] marker;
@@ -48,6 +53,7 @@ Module parse(Lexer tokens, string fn)
     while (1)
     {
         auto lastt = t;
+        skipComment();
         switch(t.text)
         {
         case "":
@@ -237,6 +243,7 @@ Expression parseOrOrExpr()
     while (t.text == "||")
     {
         nextToken();
+        skipComment();
         e = new OrOrExpr(e, parseAndAndExpr());
     }
     return e;
@@ -248,6 +255,7 @@ Expression parseAndAndExpr()
     while (t.text == "&&")
     {
         nextToken();
+        skipComment();
         e = new AndAndExpr(e, parseOrExpr());
     }
     return e;
@@ -334,6 +342,8 @@ Expression parseMulExpr()
 
 Expression parseUnaryExpr()
 {
+    scope(exit)
+        skipComment();
     switch(t.text)
     {
     case "*":
@@ -424,6 +434,7 @@ Expression parsePrimaryExpr()
     case TOKchar:
         auto e = t.text;
         nextToken();
+        skipComment();
         return new LitExpr(e);
     case TOKstring:
         string e;
@@ -514,6 +525,7 @@ Expression[] parseArgs(string delim = "(")
             e ~= parseAssignExpr();
             if (t.text != map[delim])
                 check(",");
+            skipComment();
         } while (t.text != map[delim]);
     }
     exit(map[delim]);
@@ -531,6 +543,7 @@ Init parseInit()
             e ~= parseInit();
             if (t.text != "}")
                 check(",");
+            skipComment();
         }
         exit("}");
         return new ArrayInit(e);
@@ -641,6 +654,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
                 ++d.length;
                 es ~= parseExpr();
             }
+            skipComment();
             d[$-1] ~= parseDecl();
         }
         assert(l == level);
@@ -667,6 +681,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             inFunc = 0;
             while(t.text != "}")
             {
+                skipComment();
                 d ~= parseDecl();
             }
             inFunc = save;
@@ -700,7 +715,9 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             inFunc = 0;
             while(t.text != "}")
             {
+                skipComment();
                 d ~= parseDecl();
+                skipComment();
             }
             inFunc = save;
             exit("}");
@@ -740,8 +757,10 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
                     nextToken();
                     vals[$-1] = parseAssignExpr();
                 }
+                skipComment();
                 if (t.text != "}")
                     check(",");
+                skipComment();
             }
             exit("}");
             if (!inExpr)
@@ -957,6 +976,7 @@ memberfunc:
         }
         Statement[] fbody;
         bool hasbody;
+        skipComment();
         if (t.text == "{") {
             inFunc++;
             check("{");
@@ -1000,6 +1020,7 @@ memberfunc:
         }
         if (!inExpr)
             check(";");
+        skipComment();
         if (types.length == 1)
             return new VarDeclaration(types[0], ids[0], inits[0], stc);
         else
@@ -1212,6 +1233,7 @@ Param parseParam()
     }
     if (t.text == ",")
         nextToken();
+    skipComment();
     return new Param(tx, id, def);
 }
 
@@ -1238,6 +1260,10 @@ Statement[] parseStatements()
 Statement parseStatement()
 {
     debug(PARSE) writeln("parseStatement");
+    if (t.type == TOKcomment)
+    {
+        return new CommentStatement(nextToken());
+    }
     switch (t.text)
     {
     case "{":
@@ -1354,9 +1380,12 @@ Statement parseIfStatement()
     debug(PARSE) writeln("parseIfStatement");
     check("if");
     enter("(");
+    skipComment();
     auto e = parseExpr();
     exit(")");
+    skipComment();
     auto sbody = parseStatement();
+    skipComment();
     Statement selse;
     if (t.text == "else")
     {
@@ -1403,6 +1432,7 @@ Statement parseSwitchStatement()
     enter("(");
     auto e = parseExpr();
     exit(")");
+    skipComment();
     check("{");
     auto sbody = parseStatements();
     check("}");

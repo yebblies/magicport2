@@ -443,6 +443,10 @@ class Scanner : Visitor
             visit(ast.def);
     }
 
+    override void visit(CommentStatement ast)
+    {
+    }
+
     override void visit(CompoundStatement ast)
     {
         foreach(s; ast.s)
@@ -682,6 +686,8 @@ void scopeCtor(Scanner scan)
             Statement[] cbody;
             foreach(s; f.fbody)
             {
+                if (cast(CommentStatement)s)
+                    continue;
                 auto es = cast(ExpressionStatement)s;
                 assert(es);
                 auto ae = cast(AssignExpr)es.e;

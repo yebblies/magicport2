@@ -584,6 +584,13 @@ class Statement : Ast
 {
 };
 
+class CommentStatement : Statement
+{
+    string comment;
+    this(string comment) { this.comment = comment; }
+    mixin(visitor_str);
+};
+
 class CompoundStatement : Statement
 {
     Statement[] s;

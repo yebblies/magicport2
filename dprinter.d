@@ -1535,6 +1535,15 @@ class DPrinter : Visitor
         println("}");
     }
 
+    override void visit(CommentStatement ast)
+    {
+        foreach(l; ast.comment.splitLines)
+        {
+            print("// ");
+            println(l.strip.chompPrefix("* ").strip);
+        }
+    }
+
     override void visit(ReturnStatement ast)
     {
         print("return");

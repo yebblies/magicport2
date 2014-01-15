@@ -37,10 +37,10 @@ struct Token
 struct Lexer
 {
     string file;
-    size_t line;
+    size_t line = 1;
     string t;
     Token current;
-    bool skipcomments = true;
+    bool skipcomments = false;
 
     this(string t, string fn)
     {
