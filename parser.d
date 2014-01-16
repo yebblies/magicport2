@@ -32,7 +32,9 @@ string nextToken() { auto l = t.text; t = tx.front; tx.popFront(); return l; }
 void skipComment()
 {
     while(t.type == TOKcomment)
-        nextToken();
+    {
+        writeln("skipped comment: " ~ nextToken());
+    }
 }
 
 int level;
@@ -49,6 +51,12 @@ Module parse(Lexer tokens, string fn)
     Declaration[] decls;
     
     nextToken();
+
+    if (t.type == TOKcomment)
+    {
+        writeln("Module comment: ");
+        writeln(parseComment());
+    }
 
     while (1)
     {
@@ -1257,12 +1265,21 @@ Statement[] parseStatements()
     return s;
 }
 
+string parseComment()
+{
+    assert(t.type == TOKcomment);
+    string c = nextToken();
+    while (t.type == TOKcomment)
+        c ~= "\n" ~ nextToken();
+    return c;
+}
+
 Statement parseStatement()
 {
     debug(PARSE) writeln("parseStatement");
     if (t.type == TOKcomment)
     {
-        return new CommentStatement(nextToken());
+        return new CommentStatement(parseComment());
     }
     switch (t.text)
     {

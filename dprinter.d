@@ -1535,12 +1535,20 @@ class DPrinter : Visitor
         println("}");
     }
 
+    void printComment(string l)
+    {
+        auto x = l.strip;
+        if (x.countchars("*") == x.length)
+            return;
+        print("// ");
+        println(x.chompPrefix("* ").strip);
+    }
+
     override void visit(CommentStatement ast)
     {
         foreach(l; ast.comment.splitLines)
         {
-            print("// ");
-            println(l.strip.chompPrefix("* ").strip);
+            printComment(l);
         }
     }
 
