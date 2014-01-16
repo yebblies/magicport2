@@ -17,6 +17,7 @@ class Scanner : Visitor
     FuncDeclaration[string] funcDeclarationsTakingLoc;
     FuncBodyDeclaration[] funcBodyDeclarations;
     StructDeclaration[] structsUsingInheritance;
+    StructDeclaration[] structDeclarations;
     StaticMemberVarDeclaration[] staticMemberVarDeclarations;
     CallExpr[] callExprs;
     NewExpr[] newExprs;
@@ -162,6 +163,7 @@ class Scanner : Visitor
         auto aggsave = agg;
         scope(exit) agg = aggsave;
         agg = ast.id;
+        structDeclarations ~= ast;
         if (ast.superid)
             structsUsingInheritance ~= ast;
         if (ast.id == "Scope")
@@ -552,6 +554,7 @@ Module collapse(Module[] mods, Scanner scan)
     findProto(decls, scan);
     
     funcBodies(scan);
+    staticMemberInit(scan);
 
     scopeCtor(scan);
 
@@ -617,6 +620,34 @@ void findProto(Declaration[] decls, Scanner scan)
                 }
             }
         }
+    }
+}
+
+void staticMemberInit(Scanner scan)
+{
+    foreach(vd1; scan.staticMemberVarDeclarations)
+    {
+        bool found = false;
+    structloop:
+        foreach(sd; scan.structDeclarations)
+        {
+            if (sd.id == vd1.id)
+            {
+                foreach(d; sd.decls)
+                {
+                    if (auto vd = cast(VarDeclaration)d)
+                    {
+                        if (vd.id == vd1.id2)
+                        {
+                            vd.xinit = vd1.xinit;
+                            found = true;
+                            break structloop;
+                        }
+                    }
+                }
+            }
+        }
+        assert(found);
     }
 }
 
@@ -705,7 +736,7 @@ void scopeCtor(Scanner scan)
             {
                 assert(!cast(MultiVarDeclaration)m);
                 auto vd = cast(VarDeclaration)m;
-                if (vd)
+                if (vd && !(vd.stc && STCstatic))
                 {
                     assert(!vd.xinit);
                     auto p = vd.id in inits;

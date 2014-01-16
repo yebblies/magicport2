@@ -582,14 +582,14 @@ class DPrinter : Visitor
         bool gshared;
         if ((ast.stc & STCstatic) && !cast(FuncDeclaration)D2 && P)
         {
-            foreach(vd; scan.staticMemberVarDeclarations)
-            {
-                if (P.id == vd.id && ast.id == vd.id2)
-                {
-                    //writeln("found value for ", vd.id, "::", vd.id2);
-                    ast.xinit = vd.xinit;
-                }
-            }
+            // foreach(vd; scan.staticMemberVarDeclarations)
+            // {
+                // if (P.id == vd.id && ast.id == vd.id2)
+                // {
+                    // //writeln("found value for ", vd.id, "::", vd.id2);
+                    // ast.xinit = vd.xinit;
+                // }
+            // }
             if (!manifest) print("extern(C++) ");
             if (!manifest) gshared = true;
         }
