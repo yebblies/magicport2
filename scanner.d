@@ -715,7 +715,7 @@ void scopeCtor(Scanner scan)
                 }
             }
             auto p = [new Param(new RefType(new ClassType("Scope")), "sc", null)];
-            scan.scopedecl.decls ~= new FuncDeclaration(new ClassType("Scope"), "Scope", p, cbody, 0, null, true);
+            scan.scopedecl.decls ~= new FuncDeclaration(new ClassType("Scope"), "Scope", p, cbody, 0, null, true, null);
             return;
         }
     }

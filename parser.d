@@ -36,6 +36,14 @@ void skipComment()
         writeln("skipped comment: " ~ nextToken());
     }
 }
+string trailingComment(string s = ";")
+{
+    auto line = t.line;
+    check(s);
+    if (t.type == TOKcomment && t.line == line)
+        return nextToken();
+    return null;
+}
 
 int level;
 string[] marker;
@@ -54,14 +62,13 @@ Module parse(Lexer tokens, string fn)
 
     if (t.type == TOKcomment)
     {
-        writeln("Module comment: ");
-        writeln(parseComment());
+        // writeln("Module comment: ");
+        parseComment();
     }
 
     while (1)
     {
         auto lastt = t;
-        skipComment();
         switch(t.text)
         {
         case "":
@@ -78,7 +85,7 @@ Module parse(Lexer tokens, string fn)
 
 /********************************************************/
 
-Declaration parsePreprocessor()
+Declaration parsePreprocessor(ref bool hascomment, string comment)
 {
     debug(PARSE) writeln("parsePreprocessor");
     check("#");
@@ -97,12 +104,13 @@ Declaration parsePreprocessor()
                 fn ~= t.text;
                 nextToken();
             }
-            nextToken();
+            trailingComment(">");
         } else if (t.type == TOKstring)
         {
             fn = t.text[1..$-1];
-            nextToken();
+            trailingComment(t.text);
         }
+        hascomment = false;
         return new ImportDeclaration(fn);
         break;
     case "define":
@@ -114,6 +122,7 @@ Declaration parsePreprocessor()
         auto id = parseIdent();
         if (t.text == "(" && flag)
         {
+            hascomment = false;
             enter("(");
             string[] params;
             if (t.text != ")")
@@ -126,7 +135,7 @@ Declaration parsePreprocessor()
             auto line = t.line;
             exit(")");
             if (t.line != line)
-                return new MacroDeclaration(id, params, null);
+                return new MacroDeclaration(id, params, null, comment);
             auto e = parseExpr();
             /*Token[] mbody;
             while (line == t.line)
@@ -137,12 +146,13 @@ Declaration parsePreprocessor()
                     mbody ~= t;
                 nextToken();
             }*/
-            return new MacroDeclaration(id, params, e);
+            return new MacroDeclaration(id, params, e, comment);
         } else {
             Expression e;
             if (t.line == xline)
                 e = parseExpr();
-            return new VarDeclaration(null, id, e ? new ExprInit(e) : null, STCconst);
+            hascomment = false;
+            return new VarDeclaration(null, id, e ? new ExprInit(e) : null, STCconst, comment, null);
         }
     case "undef":
         nextToken();
@@ -607,8 +617,16 @@ STC parseStorageClasses()
 Declaration parseDecl(Type tx = null, bool inExpr = false)
 {
     STC stc;
-    debug(PARSE) writeln("parseDecl");
+    // writeln("parseDecl ", t.text);
     bool destructor;
+    string comment;
+    bool hascomment;
+    scope(exit) assert(!hascomment);
+    if (t.type == TOKcomment)
+    {
+        comment = parseComment();
+        hascomment = true;
+    }
     if (t.text == "template")
     {
         nextToken();
@@ -634,7 +652,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
         return new ProtDeclaration(p);
     } else if (t.text == "#")
     {
-        return parsePreprocessor();
+        return parsePreprocessor(hascomment, comment);
     } else if ((t.text == "#if" || t.text == "#ifdef" || t.text == "#ifndef") && !inExpr)
     {
         auto ndef = (t.text == "#ifndef");
@@ -666,8 +684,9 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             d[$-1] ~= parseDecl();
         }
         assert(l == level);
-        check("#endif");
-        return new VersionDeclaration(es, d, t.file, t.line);
+        trailingComment("#endif");
+        hascomment = false;
+        return new VersionDeclaration(es, d, t.file, t.line, comment);
     } else if (t.text == "typedef")
     {
         nextToken();
@@ -677,7 +696,8 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             error("Identifier expected for typedef");
         if (!inExpr)
             check(";");
-        return new TypedefDeclaration(type, id);
+        hascomment = false;
+        return new TypedefDeclaration(type, id, comment);
     } else if (t.text == "struct" || t.text == "union" || t.text == "class")
     {
         auto kind = nextToken();
@@ -731,7 +751,8 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             exit("}");
             if (!inExpr)
                 check(";");
-            return new StructDeclaration(kind, id, d, s);
+            hascomment = false;
+            return new StructDeclaration(kind, id, d, s, comment);
         } else
         {
             assert(!s);
@@ -796,9 +817,11 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             while (t.text != "}")
                 d ~= parseDecl();
             exit("}");
-            return new ExternCDeclaration(d, t.file, t.line);
+            hascomment = false;
+            return new ExternCDeclaration(d, t.file, t.line, comment);
         } else {
-            return new ExternCDeclaration(parseDecl, t.file, t.line);
+            hascomment = false;
+            return new ExternCDeclaration(parseDecl, t.file, t.line, comment);
         }
     }
     if (t.text == "__attribute__")
@@ -932,7 +955,8 @@ func:
                 inFunc--;
             } else
                 fail();
-            return new FuncDeclaration(type, id, params, fbody, stc, initlist, hasbody);
+            hascomment = false;
+            return new FuncDeclaration(type, id, params, fbody, stc, initlist, hasbody, comment);
         } else {
             auto args = parseArgs();
             return new ConstructDeclaration(type, id, args);
@@ -963,13 +987,13 @@ memberfunc:
         {
             nextToken();
             auto init = parseInit();
-            check(";");
-            return new StaticMemberVarDeclaration(type, id, id2, init);
+            hascomment = false;
+            return new StaticMemberVarDeclaration(type, id, id2, init, comment, trailingComment());
         }
         if (t.text == ";")
         {
-            nextToken();
-            return new StaticMemberVarDeclaration(type, id, id2);
+            hascomment = false;
+            return new StaticMemberVarDeclaration(type, id, id2, null, comment, trailingComment());
         }
         auto params = parseParams();
         CallExpr[] initlist;
@@ -994,7 +1018,8 @@ memberfunc:
             inFunc--;
         } else
             fail();
-        return new FuncBodyDeclaration(type, id, id2, params, fbody, stc, initlist, hasbody);
+        hascomment = false;
+        return new FuncBodyDeclaration(type, id, id2, params, fbody, stc, initlist, hasbody, comment);
     } else if (t.text == "," || t.text == "=" || t.text == ";")
     {
         auto ids = [id];
@@ -1026,13 +1051,21 @@ memberfunc:
             } else
                 ++inits.length;
         }
-        if (!inExpr)
-            check(";");
         skipComment();
         if (types.length == 1)
-            return new VarDeclaration(types[0], ids[0], inits[0], stc);
+        {
+            hascomment = false;
+            string trail;
+            if (!inExpr)
+                trail = trailingComment();
+            return new VarDeclaration(types[0], ids[0], inits[0], stc, comment, trail);
+        }
         else
+        {
+            if (!inExpr)
+                check(";");
             return new MultiVarDeclaration(types, ids, inits, stc);
+        }
     } else {
         error("Unknown declaration: '%s'", t.text);
         assert(0);

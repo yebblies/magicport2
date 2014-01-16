@@ -54,7 +54,8 @@ class FuncDeclaration : Declaration
     STC stc;
     CallExpr[] initlist;
     string structid;
-    this(Type type, string id, Param[] params, Statement[] fbody, STC stc, CallExpr[] initlist, bool hasbody)
+    string comment;
+    this(Type type, string id, Param[] params, Statement[] fbody, STC stc, CallExpr[] initlist, bool hasbody, string comment)
     {
         this.type = type;
         this.id = id;
@@ -63,6 +64,7 @@ class FuncDeclaration : Declaration
         this.stc = stc;
         this.initlist = initlist;
         this.hasbody = hasbody;
+        this.comment = comment;
     }
     mixin(visitor_str);
     bool skip;
@@ -78,7 +80,8 @@ class FuncBodyDeclaration : Declaration
     bool hasbody;
     STC stc;
     CallExpr[] initlist;
-    this(Type type, string id, string id2, Param[] params, Statement[] fbody, STC stc, CallExpr[] initlist, bool hasbody)
+    string comment;
+    this(Type type, string id, string id2, Param[] params, Statement[] fbody, STC stc, CallExpr[] initlist, bool hasbody, string comment)
     {
         this.type = type;
         this.id = id;
@@ -88,6 +91,7 @@ class FuncBodyDeclaration : Declaration
         this.stc = stc;
         this.initlist = initlist;
         this.hasbody = hasbody;
+        this.comment = comment;
     }
     mixin(visitor_str);
 }
@@ -98,7 +102,17 @@ class StaticMemberVarDeclaration : Declaration
     string id;
     string id2;
     Init xinit;
-    this(Type type, string id, string id2, Init xinit = null) { this.type = type; this.id = id; this.id2 = id2; this.xinit = xinit; }
+    string comment;
+    string trailingcomment;
+    this(Type type, string id, string id2, Init xinit, string comment, string trailingcomment)
+    {
+        this.type = type;
+        this.id = id;
+        this.id2 = id2;
+        this.xinit = xinit;
+        this.comment = comment;
+        this.trailingcomment = trailingcomment;
+    }
     mixin(visitor_str);
 }
 
@@ -108,7 +122,17 @@ class VarDeclaration : Declaration
     string id;
     Init xinit;
     STC stc;
-    this(Type type, string id, Init xinit, STC stc) { this.type = type; this.id = id; this.xinit = xinit; this.stc = stc; }
+    string comment;
+    string trailingcomment;
+    this(Type type, string id, Init xinit, STC stc, string comment, string trailingcomment)
+    {
+        this.type = type;
+        this.id = id;
+        this.xinit = xinit;
+        this.stc = stc;
+        this.comment = comment;
+        this.trailingcomment = trailingcomment;
+    }
     mixin(visitor_str);
 }
 
@@ -138,12 +162,14 @@ class VersionDeclaration : Declaration
     int[] realdecls;
     string file;
     size_t line;
-    this(Expression[] cond, Declaration[][] members, string file, size_t line)
+    string comment;
+    this(Expression[] cond, Declaration[][] members, string file, size_t line, string comment)
     {
         this.cond = cond;
         this.members = members;
         this.file = file;
         this.line = line;
+        this.comment = comment;
     }
     mixin(visitor_str);
 }
@@ -152,7 +178,8 @@ class TypedefDeclaration : Declaration
 {
     Type t;
     string id;
-    this(Type t, string id) { this.t = t; this.id = id; }
+    string comment;
+    this(Type t, string id, string comment) { this.t = t; this.id = id; this.comment = comment; }
     mixin(visitor_str);
 }
 
@@ -162,7 +189,8 @@ class MacroDeclaration : Declaration
     string[] params;
     //Token[] toks;
     Expression e;
-    this(string id, string[] params, Expression e) { this.id = id; this.params = params; this.e = e; }
+    string comment;
+    this(string id, string[] params, Expression e, string comment) { this.id = id; this.params = params; this.e = e; this.comment = comment; }
     mixin(visitor_str);
 }
 
@@ -179,7 +207,8 @@ class StructDeclaration : Declaration
     string id;
     string superid;
     Declaration[] decls;
-    this(string kind, string id, Declaration[] decls, string superid) { this.kind = kind; this.id = id; this.decls = decls; this.superid = superid; }
+    string comment;
+    this(string kind, string id, Declaration[] decls, string superid, string comment) { this.kind = kind; this.id = id; this.decls = decls; this.superid = superid; this.comment = comment; }
     mixin(visitor_str);
 }
 
@@ -198,8 +227,9 @@ class ExternCDeclaration : Declaration
     Declaration[] decls;
     string file;
     size_t line;
-    this(Declaration[] decls, string file, size_t line) { this.decls = decls; block = true; this.file = file; this.line = line; }
-    this(Declaration decls, string file, size_t line) { this.decls = [decls]; block = false; this.file = file; this.line = line; }
+    string comment;
+    this(Declaration[] decls, string file, size_t line, string comment) { this.decls = decls; block = true; this.file = file; this.line = line; this.comment = comment; }
+    this(Declaration decls, string file, size_t line, string comment) { this.decls = [decls]; block = false; this.file = file; this.line = line; this.comment = comment; }
     mixin(visitor_str);
 }
 
