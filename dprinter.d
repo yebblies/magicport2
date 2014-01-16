@@ -206,7 +206,7 @@ class DPrinter : Visitor
         {
             print("import ");
             visitIdent(v[0].stripExtension());
-            print("; // ");
+            print("; ");
             println(ast.fn);
         } else
             assert(v[0].extension() == ".c");
@@ -417,6 +417,8 @@ class DPrinter : Visitor
         auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue", "OutBuffer", "Scope", "DocComment"];
         if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
+        if (ast.comment)
+            printComment(ast.comment);
         bool virtual = (ast.stc & STCvirtual) != 0;
         foreach(m; overriddenfuncs)
         {
@@ -654,7 +656,17 @@ class DPrinter : Visitor
             inittype = null;
         }
         if (!E)
-            println(";");
+        {
+            if (ast.trailingcomment)
+            {
+                print("; ");
+                println(ast.trailingcomment.strip);
+            }
+            else
+            {
+                println(";");
+            }
+        }
     }
 
     override void visit(MultiVarDeclaration ast)
@@ -1535,21 +1547,42 @@ class DPrinter : Visitor
         println("}");
     }
 
-    void printComment(string l)
+    void printComment(string c)
     {
-        auto x = l.strip;
-        if (x.countchars("*") == x.length)
-            return;
-        print("// ");
-        println(x.chompPrefix("* ").strip);
+        bool block;
+        foreach(i, l; c.splitLines)
+        {
+            auto lx = l.strip;
+            if (!block)
+            {
+                if (lx.startsWith("/*"))
+                {
+                    block = true;
+                }
+                else
+                {
+                    assert(lx.startsWith("//"));
+                    println(lx);
+                }
+            }
+            if (block)
+            {
+                if (!lx.startsWith("/*"))
+                {
+                    print(" ");
+                }
+                println(lx);
+                if (lx.endsWith("*/"))
+                {
+                    block = false;
+                }
+            }
+        }
     }
 
     override void visit(CommentStatement ast)
     {
-        foreach(l; ast.comment.splitLines)
-        {
-            printComment(l);
-        }
+        printComment(ast.comment);
     }
 
     override void visit(ReturnStatement ast)

@@ -101,8 +101,8 @@ struct Lexer
             i++;
         }
 
-        auto tk = Token(file, line, t[2..i], TOKcomment);
         assert(t[i..$].startsWith("*/"));
+        auto tk = Token(file, line, t[0..i+2], TOKcomment);
         t = t[i+2..$];
         return tk;
     }
@@ -113,7 +113,7 @@ struct Lexer
         size_t i = 2;
         while(i < t.length && t[i] != '\n')
             i++;
-        auto tk = Token(file, line, t[2..i], TOKcomment);
+        auto tk = Token(file, line, t[0..i], TOKcomment);
         t = t[i..$];
         return tk;
     }

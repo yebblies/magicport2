@@ -573,6 +573,7 @@ void funcBodies(Scanner scan)
                 if (typeMatch(tf1, tf2))
                 {
                     assert(!fd.hasbody && fb.hasbody, fd.id);
+                    assert(!(fd.comment && fb.comment), fd.id);
                     fd.fbody = fb.fbody;
                     fd.hasbody = true;
                     if (fb.initlist)
