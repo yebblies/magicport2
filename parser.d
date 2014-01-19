@@ -1005,7 +1005,8 @@ memberfunc:
         }
         Statement[] fbody;
         bool hasbody;
-        skipComment();
+        if (t.type == TOKcomment && !comment)
+            comment = parseComment();
         if (t.text == "{") {
             inFunc++;
             check("{");
