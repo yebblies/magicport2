@@ -1481,7 +1481,6 @@ Statement parseSwitchStatement()
     enter("(");
     auto e = parseExpr();
     exit(")");
-    skipComment();
     check("{");
     auto sbody = parseStatements();
     check("}");
