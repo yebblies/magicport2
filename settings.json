@@ -2,7 +2,7 @@
     "src" :
     [
         "mars.c", "enum.c", "struct.c", "dsymbol.c", "import.c", "utf.h",
-        "utf.c", "entity.c", "identifier.c", "mtype.c", "expression.c", "optimize.c", "template.h",
+        "utf.c", "identifier.c", "mtype.c", "expression.c", "optimize.c", "template.h",
         "template.c", "lexer.c", "declaration.c", "cast.c", "cond.h", "cond.c", "link.c",
         "aggregate.h", "staticassert.h", "parse.c", "statement.c", "constfold.c", "version.h",
         "version.c", "inifile.c", "staticassert.c", "module.c", "scope.c",
@@ -208,46 +208,6 @@
                 "struct ClassReferenceExp",
                 "struct VoidInitExp",
                 "struct ThrownExceptionExp"
-            ]
-        },
-        {
-            "module" : "entity",
-            "package" : "",
-            "imports" :
-            [
-                "defs"
-            ],
-            "members" :
-            [
-                "struct NameId",
-                "variable namesA",
-                "variable namesB",
-                "variable namesC",
-                "variable namesD",
-                "variable namesE",
-                "variable namesF",
-                "variable namesG",
-                "variable namesH",
-                "variable namesI",
-                "variable namesJ",
-                "variable namesK",
-                "variable namesL",
-                "variable namesM",
-                "variable namesN",
-                "variable namesO",
-                "variable namesP",
-                "variable namesQ",
-                "variable namesR",
-                "variable namesS",
-                "variable namesT",
-                "variable namesU",
-                "variable namesV",
-                "variable namesW",
-                "variable namesX",
-                "variable namesY",
-                "variable namesZ",
-                "variable namesTable",
-                "function HtmlNamedEntity"
             ]
         },
         {

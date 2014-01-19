@@ -161,6 +161,7 @@ void main(string[] args)
         "libomf.d", "scanomf.d",
         "libmscoff.d", "scanmscoff.d",
         "libelf.d", "scanelf.d",
+        "entity.d"
     ];
     foreach(fn; manualsrc)
         std.file.write(buildPath("port", fn), buildPath("manual", fn).read());

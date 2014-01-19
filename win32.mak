@@ -17,7 +17,7 @@ GENSRC=$(DP)\access.d $(DP)\aggregate.d $(DP)\aliasthis.d $(DP)\apply.d \
 	$(DP)\dclass.d $(DP)\clone.d $(DP)\cond.d $(DP)\constfold.d \
 	$(DP)\cppmangle.d $(DP)\ctfeexpr.d $(DP)\declaration.d \
 	$(DP)\delegatize.d $(DP)\doc.d $(DP)\dsymbol.d \
-	$(DP)\entity.d $(DP)\denum.d $(DP)\expression.d $(DP)\func.d \
+	$(DP)\denum.d $(DP)\expression.d $(DP)\func.d \
 	$(DP)\hdrgen.d $(DP)\id.d $(DP)\identifier.d $(DP)\imphint.d \
 	$(DP)\dimport.d $(DP)\dinifile.d $(DP)\inline.d $(DP)\init.d \
 	$(DP)\interpret.d $(DP)\json.d $(DP)\lexer.d $(DP)\link.d \
@@ -35,6 +35,7 @@ MANUALSRC= \
 	$(DM)\intrange.d $(DM)\complex.d $(DM)\longdouble.d \
 	$(DM)\lib.d $(DM)\libomf.d $(DM)\scanomf.d \
 	$(DM)\libmscoff.d $(DM)\scanmscoff.d \
+	$(DM)\entity.d \
 	$(RM)\aav.d $(RM)\array.d \
 	$(RM)\man.d $(RM)\rootobject.d $(RM)\outbuffer.d $(RM)\port.d \
 	$(RM)\response.d $(RM)\rmem.d  $(RM)\stringtable.d
@@ -43,6 +44,7 @@ COPYSRC= \
 	$(DP)\intrange.d $(DP)\complex.d $(DP)\longdouble.d \
 	$(DP)\lib.d $(DP)\libomf.d $(DP)\scanomf.d \
 	$(DP)\libmscoff.d $(DP)\scanmscoff.d \
+	$(DP)\entity.d \
 	$(RP)\aav.d $(RP)\array.d \
 	$(RP)\man.d $(RP)\rootobject.d $(RP)\outbuffer.d $(RP)\port.d \
 	$(RP)\response.d $(RP)\rmem.d  $(RP)\stringtable.d

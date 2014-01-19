@@ -561,7 +561,6 @@ Init parseInit()
             e ~= parseInit();
             if (t.text != "}")
                 check(",");
-            skipComment();
         }
         exit("}");
         return new ArrayInit(e);
