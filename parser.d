@@ -448,7 +448,6 @@ Expression parsePrimaryExpr()
     case TOKchar:
         auto e = t.text;
         nextToken();
-        skipComment();
         return new LitExpr(e);
     case TOKstring:
         string e;
