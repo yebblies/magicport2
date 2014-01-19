@@ -360,8 +360,6 @@ Expression parseMulExpr()
 
 Expression parseUnaryExpr()
 {
-    scope(exit)
-        skipComment();
     switch(t.text)
     {
     case "*":
