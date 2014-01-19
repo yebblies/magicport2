@@ -655,6 +655,13 @@ class DPrinter : Visitor
             visitX(ast.xinit);
             inittype = null;
         }
+        else if (isClass(ast.type))
+        {
+            stackclasses ~= ast.id;
+            print(" = new ");
+            visitX(ast.type);
+            print("()");
+        }
         if (!E)
         {
             if (ast.trailingcomment)
