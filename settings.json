@@ -5,7 +5,7 @@
         "utf.c", "entity.c", "identifier.c", "mtype.c", "expression.c", "optimize.c", "template.h",
         "template.c", "lexer.c", "declaration.c", "cast.c", "cond.h", "cond.c", "link.c",
         "aggregate.h", "staticassert.h", "parse.c", "statement.c", "constfold.c", "version.h",
-        "version.c", "inifile.c", "staticassert.c", "module.c", "scope.c", "dump.c",
+        "version.c", "inifile.c", "staticassert.c", "module.c", "scope.c",
         "init.h", "init.c", "attrib.h", "attrib.c", "opover.c", "class.c",
         "mangle.c", "func.c", "inline.c", "access.c",
         "cppmangle.c", "identifier.h", "parse.h", "scope.h", "enum.h", "import.h",
@@ -298,23 +298,24 @@
                 "arraytypes",
                 "declaration",
                 "defs",
+                "dstruct",
                 "dsymbol",
                 "expression",
                 "func",
                 "init",
                 "lexer",
-                "mars"
+                "mars",
+                "mtype",
+                "statement",
+                "visitor"
             ],
             "members" :
             [
-                "struct InlineCostState",
                 "variable COST_MAX",
                 "variable STATEMENT_COST",
                 "variable STATEMENT_COST_MAX",
                 "function tooCostly",
-                "struct ICS2",
-                "function lambdaInlineCost",
-                "function expressionInlineCost",
+                "struct InlineCostVisitor",
                 "struct InlineDoState",
                 "function arrayExpressiondoInline",
                 "struct InlineScanState",
@@ -1077,23 +1078,6 @@
                 "function fromConstInitializer",
                 "function shift_optimize",
                 "function setLengthVarIfKnown"
-            ]
-        },
-        {
-            "module" : "dump",
-            "package" : "",
-            "imports" :
-            [
-                "arraytypes",
-                "defs",
-                "expression",
-                "mtype"
-            ],
-            "members" :
-            [
-                "function indent",
-                "function type_print",
-                "function dumpExpressions"
             ]
         },
         {
@@ -2137,7 +2121,6 @@
                 "dstruct",
                 "dsymbol",
                 "dtemplate",
-                "dump",
                 "func",
                 "hdrgen",
                 "id",
@@ -2644,7 +2627,6 @@
         "ASMTK",
         "block",
         "Msgtable",
-        "InlineCostState",
         "InlineDoState",
         "InlineScanState",
         "ICS1",
@@ -3120,6 +3102,7 @@
 
         "Visitor",
         "CppMangleVisitor",
-        "ToJsonVisitor"
+        "ToJsonVisitor",
+        "InlineCostVisitor"
     ]
 }

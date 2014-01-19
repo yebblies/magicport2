@@ -16,7 +16,7 @@ GENSRC=$(DP)\access.d $(DP)\aggregate.d $(DP)\aliasthis.d $(DP)\apply.d \
 	$(DP)\attrib.d $(DP)\builtin.d $(DP)\canthrow.d $(DP)\dcast.d \
 	$(DP)\dclass.d $(DP)\clone.d $(DP)\cond.d $(DP)\constfold.d \
 	$(DP)\cppmangle.d $(DP)\ctfeexpr.d $(DP)\declaration.d \
-	$(DP)\delegatize.d $(DP)\doc.d $(DP)\dsymbol.d $(DP)\dump.d \
+	$(DP)\delegatize.d $(DP)\doc.d $(DP)\dsymbol.d \
 	$(DP)\entity.d $(DP)\denum.d $(DP)\expression.d $(DP)\func.d \
 	$(DP)\hdrgen.d $(DP)\id.d $(DP)\identifier.d $(DP)\imphint.d \
 	$(DP)\dimport.d $(DP)\dinifile.d $(DP)\inline.d $(DP)\init.d \
