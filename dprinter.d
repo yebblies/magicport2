@@ -1426,14 +1426,33 @@ class DPrinter : Visitor
             auto inittypesave = inittype;
             scope(exit) inittype = inittypesave;
             inittype = at.next;
-            print("[ ");
-            foreach(i, v; ast.xinit)
+            if (ast.xinit.length < 10)
             {
-                if (i)
-                    print(", ");
-                visitX(v);
+                print("[ ");
+                foreach(i, v; ast.xinit)
+                {
+                    if (i)
+                        print(", ");
+                    visitX(v);
+                }
+                print(" ]");
             }
-            print("]");
+            else
+            {
+                // multiline
+                println("");
+                println("[");
+                indent++;
+                foreach(i, v; ast.xinit)
+                {
+                    if (i)
+                        println(",");
+                    visitX(v);
+                }
+                println("");
+                indent--;
+                println("]");
+            }
         }
     }
 
