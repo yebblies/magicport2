@@ -233,19 +233,30 @@ class ExternCDeclaration : Declaration
     mixin(visitor_str);
 }
 
+class EnumMember
+{
+    string id;
+    Expression val;
+    string comment;
+    this(string id, Expression val, string comment)
+    {
+        this.id = id;
+        this.val = val;
+        this.comment = comment;
+    }
+}
+
 class EnumDeclaration : Declaration
 {
     string id;
-    string[] members;
-    Expression[] vals;
+    EnumMember[] members;
     string file;
     size_t line;
     string comment;
-    this (string id, string[] members, Expression[] vals, string file, size_t line, string comment)
+    this (string id, EnumMember[] members, string file, size_t line, string comment)
     {
         this.id = id;
         this.members = members;
-        this.vals = vals;
         this.file = file;
         this.line = line;
         this.comment = comment;

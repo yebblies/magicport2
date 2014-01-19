@@ -29,13 +29,13 @@ string check(string s, size_t line = __LINE__)
     return nextToken();
 }
 string nextToken() { auto l = t.text; t = tx.front; tx.popFront(); return l; }
-void skipComment(size_t line = __LINE__)
-{
-    while(t.type == TOKcomment)
-    {
-        writefln("skipped comment(%d): %s", line, nextToken());
-    }
-}
+// void skipComment(size_t line = __LINE__)
+// {
+    // while(t.type == TOKcomment)
+    // {
+        // writefln("skipped comment(%d): %s", line, nextToken());
+    // }
+// }
 string trailingComment(string s = ";")
 {
     auto line = t.line;
@@ -701,10 +701,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             auto save = inFunc;
             inFunc = 0;
             while(t.text != "}")
-            {
-                skipComment();
                 d ~= parseDecl();
-            }
             inFunc = save;
             exit("}");
             string id;
@@ -767,27 +764,37 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
         if (t.text == "{")
         {
             enter("{");
-            string[] members;
-            Expression[] vals;
+            EnumMember[] members;
             while (t.text != "}")
             {
-                members ~= parseIdent();
-                ++vals.length;
+                if (t.type == TOKcomment)
+                {
+                    members ~= new EnumMember(null, null, parseComment);
+                    continue;
+                }
+
+                auto mid = parseIdent();
+                Expression val;
+                string mcomment;
                 if (t.text == "=")
                 {
                     nextToken();
-                    vals[$-1] = parseAssignExpr();
+                    val = parseAssignExpr();
                 }
-                skipComment();
+                if (t.type == TOKcomment)
+                {
+                    comment = parseComment();
+                    assert(t.text == "}");
+                }
                 if (t.text != "}")
-                    check(",");
-                skipComment();
+                    comment = trailingComment(",");
+                members ~= new EnumMember(mid, val, mcomment);
             }
             exit("}");
             if (!inExpr)
                 check(";");
             hascomment = false;
-            return new EnumDeclaration(id, members, vals, t.file, t.line, comment);
+            return new EnumDeclaration(id, members, t.file, t.line, comment);
         } else
         {
             tx = new EnumType("enum " ~ id);
@@ -1050,7 +1057,6 @@ memberfunc:
             } else
                 ++inits.length;
         }
-        skipComment();
         if (types.length == 1)
         {
             hascomment = false;

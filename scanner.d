@@ -188,9 +188,9 @@ class Scanner : Visitor
     override void visit(EnumDeclaration ast)
     {
         realdecls++;
-        foreach(v; ast.vals)
-            if (v)
-                visit(v);
+        foreach(m; ast.members)
+            if (m.val)
+                visit(m.val);
     }
 
     override void visit(DummyDeclaration ast)

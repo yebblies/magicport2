@@ -56,7 +56,16 @@ class Namer : Visitor
         if (ast.id.length)
             name = "enum " ~ ast.id;
         else
-            name = "enum " ~ ast.members[0];
+        {
+            foreach(m; ast.members)
+            {
+                if (m.id)
+                {
+                    name = "enum " ~ m.id;
+                    return;
+                }
+            }
+        }
     }
 }
 
