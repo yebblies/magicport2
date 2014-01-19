@@ -541,7 +541,6 @@ Expression[] parseArgs(string delim = "(")
             e ~= parseAssignExpr();
             if (t.text != map[delim])
                 check(",");
-            skipComment();
         } while (t.text != map[delim]);
     }
     exit(map[delim]);
