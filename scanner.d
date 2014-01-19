@@ -576,9 +576,10 @@ void funcBodies(Scanner scan)
                 if (typeMatch(tf1, tf2))
                 {
                     assert(!fd.hasbody && fb.hasbody, fd.id);
-                    assert(!(fd.comment && fb.comment), fd.id);
                     fd.fbody = fb.fbody;
                     fd.hasbody = true;
+                    assert(!(fd.comment && fb.comment), fd.id);
+                    if (fb.comment) fd.comment = fb.comment;
                     if (fb.initlist)
                         fd.initlist = fb.initlist;
                     foreach(i; 0..tf1.params.length)
@@ -639,6 +640,10 @@ void staticMemberInit(Scanner scan)
                     {
                         if (vd.id == vd1.id2)
                         {
+                            assert(!(vd.comment && vd1.comment), vd.id);
+                            if (vd1.comment) vd.comment = vd1.comment;
+                            assert(!(vd.trailingcomment && vd1.trailingcomment) || vd.trailingcomment == vd1.trailingcomment, vd.id);
+                            if (vd1.trailingcomment) vd.trailingcomment = vd1.trailingcomment;
                             vd.xinit = vd1.xinit;
                             found = true;
                             break structloop;
