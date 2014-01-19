@@ -834,6 +834,8 @@ class DPrinter : Visitor
 
     override void visit(TypedefDeclaration ast)
     {
+        if (ast.comment)
+            printComment(ast.comment);
         if (auto st = cast(ClassType)ast.t)
         {
             if (st.id == "union tree_node")
@@ -863,6 +865,8 @@ class DPrinter : Visitor
 
         auto tParams = ["T", "U", "V", "W", "X", "Y"];
 
+        if (ast.comment)
+            printComment(ast.comment);
         print("auto ");
         visitIdent(ast.id);
         print("(");
@@ -898,6 +902,8 @@ class DPrinter : Visitor
     override void visit(StructDeclaration ast)
     {
         bool isclass;
+        if (ast.comment)
+            printComment(ast.comment);
         if (ast.superid || parentlessclasses.canFind(ast.id))
             isclass = true;
         if (isclass)
@@ -964,6 +970,8 @@ class DPrinter : Visitor
 
     override void visit(ExternCDeclaration ast)
     {
+        if (ast.comment)
+            printComment(ast.comment);
         println("extern(C) {");
         inexternc++;
         foreach(d; ast.decls)
