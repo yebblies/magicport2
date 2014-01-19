@@ -261,7 +261,6 @@ Expression parseOrOrExpr()
     while (t.text == "||")
     {
         nextToken();
-        skipComment();
         e = new OrOrExpr(e, parseAndAndExpr());
     }
     return e;
@@ -273,7 +272,6 @@ Expression parseAndAndExpr()
     while (t.text == "&&")
     {
         nextToken();
-        skipComment();
         e = new AndAndExpr(e, parseOrExpr());
     }
     return e;
