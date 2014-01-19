@@ -1428,7 +1428,6 @@ Statement parseIfStatement()
     debug(PARSE) writeln("parseIfStatement");
     check("if");
     check("(");
-    skipComment();
     auto e = parseExpr();
     auto comment = trailingComment(")");
     auto sbody = parseStatement();
