@@ -739,9 +739,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             inFunc = 0;
             while(t.text != "}")
             {
-                skipComment();
                 d ~= parseDecl();
-                skipComment();
             }
             inFunc = save;
             exit("}");
@@ -941,8 +939,13 @@ func:
             }
             else if (t.text == ";")
             {
-                nextToken();
-            } else if (t.text == "{") {
+                auto trailing = trailingComment(";");
+                if (comment)
+                    comment ~= "\n" ~ trailing;
+                else
+                    comment = trailing;
+            }
+            else if (t.text == "{") {
                 inFunc++;
                 check("{");
                 fbody = parseStatements();

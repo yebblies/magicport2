@@ -578,7 +578,7 @@ void funcBodies(Scanner scan)
                     assert(!fd.hasbody && fb.hasbody, fd.id);
                     fd.fbody = fb.fbody;
                     fd.hasbody = true;
-                    assert(!(fd.comment && fb.comment), fd.id);
+                    //assert(!(fd.comment && fb.comment), fd.id);
                     if (fb.comment) fd.comment = fb.comment;
                     if (fb.initlist)
                         fd.initlist = fb.initlist;
