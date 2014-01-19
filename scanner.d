@@ -735,7 +735,7 @@ void scopeCtor(Scanner scan)
                 assert(te);
                 assert(te.id == "this");
                 inits[de.id] = new ExprInit(ae.e2);
-                cbody ~= new ExpressionStatement(new AssignExpr("=", de, new DotIdExpr(".", new IdentExpr("sc"), de.id)));
+                cbody ~= new ExpressionStatement(new AssignExpr("=", de, new DotIdExpr(".", new IdentExpr("sc"), de.id)), null);
             }
             foreach(m; scan.scopedecl.decls)
             {

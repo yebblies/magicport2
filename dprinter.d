@@ -1622,7 +1622,13 @@ class DPrinter : Visitor
             print(" ");
             visitX(ast.e);
         }
-        println(";");
+        if (ast.trailingcomment)
+        {
+            print("; ");
+            println(ast.trailingcomment.strip);
+        }
+        else
+            println(";");
     }
 
     override void visit(ExpressionStatement ast)
@@ -1630,9 +1636,21 @@ class DPrinter : Visitor
         if (ast.e)
         {
             visitX(ast.e);
-            println(";");
+            if (ast.trailingcomment)
+            {
+                print("; ");
+                println(ast.trailingcomment.strip);
+            }
+            else
+                println(";");
         } else {
-            println("{}");
+            if (ast.trailingcomment)
+            {
+                print("{} ");
+                println(ast.trailingcomment.strip);
+            }
+            else
+                println("{}");
         }
     }
 

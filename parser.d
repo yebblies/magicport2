@@ -29,11 +29,11 @@ string check(string s, size_t line = __LINE__)
     return nextToken();
 }
 string nextToken() { auto l = t.text; t = tx.front; tx.popFront(); return l; }
-void skipComment()
+void skipComment(size_t line = __LINE__)
 {
     while(t.type == TOKcomment)
     {
-        writeln("skipped comment: " ~ nextToken());
+        writefln("skipped comment(%d): %s", line, nextToken());
     }
 }
 string trailingComment(string s = ";")
@@ -1387,7 +1387,7 @@ Statement parseStatement()
         else
             fail();
     case "#":
-        return new ExpressionStatement(new DeclarationExpr(parseDecl(null, true)));
+        return new ExpressionStatement(new DeclarationExpr(parseDecl(null, true)), null);
     case "__try":
         return parseTryCatchStatementX();
     default:
@@ -1402,8 +1402,8 @@ Statement parseReturnStatement()
     Expression e;
     if (t.text != ";")
         e = parseExpr();
-    check(";");
-    return new ReturnStatement(e);
+    auto tc = trailingComment(";");
+    return new ReturnStatement(e, tc);
 }
 
 Statement parseForStatement()
@@ -1435,7 +1435,6 @@ Statement parseIfStatement()
     exit(")");
     skipComment();
     auto sbody = parseStatement();
-    skipComment();
     Statement selse;
     if (t.text == "else")
     {
@@ -1469,10 +1468,12 @@ Statement parseExpressionStatement()
         auto id = cast(IdentExpr)e;
         if (!id)
             error("this should be an identifier: '%s'", e);
+        if (t.text == ";")
+            nextToken();
         return new LabelStatement(id.id);
     }
-    check(";");
-    return new ExpressionStatement(e);
+    auto tc = trailingComment(";");
+    return new ExpressionStatement(e, tc);
 }
 
 Statement parseSwitchStatement()
@@ -1574,13 +1575,14 @@ Statement parseTryCatchStatement()
 
 Statement parseThrowStatement()
 {
+    assert(0);
     debug(PARSE) writeln("parseThrowStatement");
     check("throw");
     parseExpr();
     Expression e = new IdentExpr("assert");
     Expression[] args = [new LitExpr("1")];
     e = new CallExpr(e, args);
-    return new ExpressionStatement(e);
+    return new ExpressionStatement(e, null);
 }
 
 

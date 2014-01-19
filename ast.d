@@ -631,14 +631,16 @@ class CompoundStatement : Statement
 class ReturnStatement : Statement
 {
     Expression e;
-    this(Expression e) { this.e = e; }
+    string trailingcomment;
+    this(Expression e, string trailingcomment) { this.e = e; this.trailingcomment = trailingcomment; }
     mixin(visitor_str);
 }
 
 class ExpressionStatement : Statement
 {
     Expression e;
-    this(Expression e) { this.e = e; }
+    string trailingcomment;
+    this(Expression e, string trailingcomment) { this.e = e; this.trailingcomment = trailingcomment; }
     mixin(visitor_str);
 }
 
