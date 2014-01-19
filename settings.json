@@ -2407,9 +2407,13 @@
                 "defs",
                 "dstruct",
                 "dsymbol",
+                "dtemplate",
+                "expression",
                 "func",
+                "lexer",
                 "mars",
                 "mtype",
+                "target",
                 "root.outbuffer",
                 "root.rootobject",
                 "visitor"
