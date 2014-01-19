@@ -1271,7 +1271,6 @@ Param parseParam()
     }
     if (t.text == ",")
         nextToken();
-    skipComment();
     return new Param(tx, id, def);
 }
 
