@@ -566,6 +566,8 @@ class DPrinter : Visitor
             realarray = true;
         if (fd && !(ast.stc & STCstatic) && !cast(AnonStructDeclaration)D2)
             realarray = false;
+        if (ast.comment)
+            printComment(ast.comment);
         if (!ast.xinit && at && at.dim && !realarray && !cast(StructDeclaration)D2 && !cast(AnonStructDeclaration)D2)
         {
             visitX((ast.stc & STCstatic) | STCvirtual);
@@ -575,7 +577,17 @@ class DPrinter : Visitor
             print("] ");
             print(ast.id);
             if (!E)
-                println(";");
+            {
+                if (ast.trailingcomment)
+                {
+                    print("; ");
+                    println(ast.trailingcomment.strip);
+                }
+                else
+                {
+                    println(";");
+                }
+            }
             buffers ~= ast.id;
             return;
         }
