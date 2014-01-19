@@ -240,7 +240,16 @@ class EnumDeclaration : Declaration
     Expression[] vals;
     string file;
     size_t line;
-    this (string id, string[] members, Expression[] vals, string file, size_t line) { this.id = id; this.members = members; this.vals = vals; this.file = file; this.line = line; }
+    string comment;
+    this (string id, string[] members, Expression[] vals, string file, size_t line, string comment)
+    {
+        this.id = id;
+        this.members = members;
+        this.vals = vals;
+        this.file = file;
+        this.line = line;
+        this.comment = comment;
+    }
     mixin(visitor_str);
 }
 

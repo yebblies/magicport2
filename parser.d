@@ -630,6 +630,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
         check("struct");
         check("Array");
         check(";");
+        hascomment = false;
         return new DummyDeclaration("template<typename TYPE> struct Array;");
     }
     else if (t.text == "~")
@@ -673,7 +674,6 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
                 ++d.length;
                 es ~= parseExpr();
             }
-            skipComment();
             d[$-1] ~= parseDecl();
         }
         assert(l == level);
@@ -751,6 +751,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             if (t.text == ";")
             {
                 nextToken();
+                hascomment = false;
                 return new DummyDeclaration(kind ~ " " ~ id ~ ";");
             }
         }
@@ -785,7 +786,8 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             exit("}");
             if (!inExpr)
                 check(";");
-            return new EnumDeclaration(id, members, vals, t.file, t.line);
+            hascomment = false;
+            return new EnumDeclaration(id, members, vals, t.file, t.line, comment);
         } else
         {
             tx = new EnumType("enum " ~ id);
