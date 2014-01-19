@@ -827,6 +827,8 @@ class DPrinter : Visitor
 
     override void visit(VersionDeclaration ast)
     {
+        if (ast.comment)
+            printComment(ast.comment);
         versionCommon(ast);
     }
 
