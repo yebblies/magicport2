@@ -1426,11 +1426,10 @@ Statement parseIfStatement()
 {
     debug(PARSE) writeln("parseIfStatement");
     check("if");
-    enter("(");
+    check("(");
     skipComment();
     auto e = parseExpr();
-    exit(")");
-    skipComment();
+    auto comment = trailingComment(")");
     auto sbody = parseStatement();
     Statement selse;
     if (t.text == "else")
@@ -1438,7 +1437,7 @@ Statement parseIfStatement()
         nextToken();
         selse = parseStatement();
     }
-    return new IfStatement(e, sbody, selse);
+    return new IfStatement(e, sbody, selse, comment);
 }
 
 Statement parseDoWhileStatement()

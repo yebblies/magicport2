@@ -657,7 +657,8 @@ class IfStatement : Statement
     Expression e;
     Statement sbody;
     Statement selse;
-    this(Expression e, Statement sbody, Statement selse) { this.e = e; this.sbody = sbody; this.selse = selse; }
+    string trailingcomment;
+    this(Expression e, Statement sbody, Statement selse, string trailingcomment) { this.e = e; this.sbody = sbody; this.selse = selse; this.trailingcomment = trailingcomment; }
     mixin(visitor_str);
 }
 

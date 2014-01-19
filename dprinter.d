@@ -1682,7 +1682,15 @@ class DPrinter : Visitor
     {
         print("if (");
         visitX(ast.e);
-        println(")");
+        if (ast.trailingcomment)
+        {
+            print(") ");
+            println(ast.trailingcomment.strip);
+        }
+        else
+        {
+            println(")");
+        }
         if (!cast(CompoundStatement)ast.sbody)
             indent++;
         visitX(ast.sbody);
