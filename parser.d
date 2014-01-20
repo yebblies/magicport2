@@ -784,11 +784,11 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
                 }
                 if (t.type == TOKcomment)
                 {
-                    comment = parseComment();
+                    mcomment = parseComment();
                     assert(t.text == "}");
                 }
                 if (t.text != "}")
-                    comment = trailingComment(",");
+                    mcomment = trailingComment(",");
                 members ~= new EnumMember(mid, val, mcomment);
             }
             exit("}");

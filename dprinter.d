@@ -864,14 +864,14 @@ class DPrinter : Visitor
                 if (m.comment)
                 {
                     print(", ");
-                    println(ast.comment.strip);
+                    println(m.comment.strip);
                 }
                 else
                     println(",");
             }
             else
             {
-                printComment(m.comment);
+                printComment(m.comment.strip);
             }
         }
         indent--;
