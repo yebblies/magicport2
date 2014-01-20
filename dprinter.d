@@ -894,10 +894,6 @@ class DPrinter : Visitor
         println("");
     }
 
-    override void visit(DummyDeclaration ast)
-    {
-    }
-
     override void visit(ErrorDeclaration ast)
     {
         print("static assert(0, ");
@@ -1364,13 +1360,6 @@ class DPrinter : Visitor
         }
         if (ast.isConst)
             print(")");
-    }
-
-    override void visit(EnumType ast)
-    {
-        assert(!ast.isConst);
-        assert(ast.id[0..5] == "enum ");
-        visitIdent(ast.id[5..$]);
     }
 
     override void visit(PointerType ast)

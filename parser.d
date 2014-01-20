@@ -112,7 +112,6 @@ Declaration parsePreprocessor(ref bool hascomment, string comment)
         }
         hascomment = false;
         return new ImportDeclaration(fn);
-        break;
     case "define":
         nextToken();
         if (t.type != TOKid)
@@ -159,28 +158,6 @@ Declaration parsePreprocessor(ref bool hascomment, string comment)
         return new MacroUnDeclaration(parseIdent());
     case "pragma":
         nextToken();
-        if (t.text == "SC")
-        {
-            check("SC");
-            check("noreturn");
-            check("(");
-            check("asmerr");
-            check(")");
-            return new DummyDeclaration("#pragma SC noreturn(asmerr)");
-        } else if (t.text == "pack")
-        {
-            assert(0);
-            // nextToken();
-            // check("(");
-            // int v = 0;
-            // if (t.text == "1")
-            // {
-                // nextToken();
-                // v = 1;
-            // }
-            // check(")");
-            // return new AlignDeclaration(v);
-        }
         auto line = t.line;
         auto s = "#pragma ";
         while(t.line == line && t.type != TOKeof)
@@ -396,11 +373,6 @@ Expression parseUnaryExpr()
         return new PreExpr(op, parseUnaryExpr());
     case "delete":
         nextToken();
-        if (t.text == "[")
-        {
-            nextToken();
-            check("]");
-        }
         return new DeleteExpr(parseUnaryExpr());
     case "#":
         nextToken();
@@ -490,9 +462,6 @@ Expression parsePrimaryExpr()
             return new IdentExpr(type.id);
         }
         return new IdentExpr(parseIdent());
-    case TOKop:
-        if (t.text == "#")
-            goto case TOKid;
     default:
         switch (t.text)
         {
@@ -584,14 +553,6 @@ STC parseStorageClasses()
         case "virtual":
             nextToken();
             stc |= STCvirtual;
-            break;
-        case "__inline":
-            nextToken();
-            stc |= STCinline;
-            break;
-        case "register":
-            nextToken();
-            stc |= STCregister;
             break;
         case "extern":
             nextToken();
@@ -800,12 +761,6 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
         {
             tx = new EnumType("enum " ~ id);
         }
-    } else if (t.text == "friend")
-    {
-        while(t.text != ";")
-            nextToken();
-        nextToken();
-        return new DummyDeclaration("friend");
     }
 
     stc = parseStorageClasses();
@@ -822,8 +777,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             return new ExternCDeclaration(d, t.file, t.line, comment);
         } else {
             hascomment = false;
-            assert(0);
-            // return new ExternCDeclaration(parseDecl, t.file, t.line, comment);
+            return new ExternCDeclaration([parseDecl()], t.file, t.line, comment);
         }
     }
     if (t.text == "__attribute__")
@@ -844,13 +798,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
     }
 getid:
     auto type = tx ? tx : parseType();
-    
-    while (t.text == "*")
-    {
-        nextToken();
-        type = new PointerType(type);
-    }
-    
+
     string id;
     bool constructor;
     if (t.text == "(")
@@ -876,12 +824,6 @@ getid:
             fail();
     }
 
-    if (t.text == "__cdecl")
-    {
-        nextToken();
-        stc |= STCcdecl;
-    }
-    
     id = parseIdent();
     Type parseArrayPost(Type prev)
     {
@@ -895,12 +837,8 @@ getid:
         return new ArrayType(parseArrayPost(prev), dim);
     }
     type = parseArrayPost(type);
-    
-    if (t.text == ":")
-    {
-        assert(0, "No bitfields!");
-    }
-    else if (t.text == "(")
+
+    if (t.text == "(")
     {
         if (!inFunc)
         {
@@ -912,15 +850,6 @@ func:
             {
                 nextToken();
                 type.isConst = true;
-            }
-            if (t.text == "__attribute__")
-            {
-                nextToken();
-                check("(");
-                check("(");
-                check("analyzer_noreturn");
-                check(")");
-                check(")");
             }
             CallExpr[] initlist;
             if (t.text == ":" && constructor)
@@ -938,10 +867,7 @@ func:
             {
                 assert(stc & STCvirtual);
                 nextToken();
-                if (t.text == "0")
-                    nextToken();
-                else
-                    check("NULL");
+                check("0");
                 check(";");
                 stc |= STCabstract;
             }
@@ -1084,7 +1010,6 @@ memberfunc:
 string parseIdent()
 {
     debug(PARSE) writeln("parseIdent");
-    string[string] idents;
     if (t.type != TOKid)
         error("Identifier expected, not '%s'", t.text);
     if (t.text == "operator")
@@ -1092,10 +1017,7 @@ string parseIdent()
         nextToken();
         return "operator " ~ nextToken();
     }
-    if (auto p = (t.text in idents))
-        return *p;
-    auto x = nextToken().idup;
-    return idents[x] = x;
+    return nextToken();
 }
 
 /********************************************************/
@@ -1137,20 +1059,12 @@ Type parseType(string* id = null)
         if (t.text == "(")
         {
             check("(");
-            bool cdecl;
-            if (t.text == "__cdecl")
-            {
-                nextToken();
-                cdecl = true;
-            }
             if (t.text == "*")
                 check("*");
             *id = parseIdent();
             check(")");
             auto params = parseParams();
-            auto tf = new FunctionType(tx, params);
-            tf.cdecl = cdecl;
-            tx = tf;
+            tx = new FunctionType(tx, params);
         }
         else if (t.text != "," && t.text != ")")
             *id = parseIdent();
@@ -1205,9 +1119,6 @@ Type parseBasicType(bool flag = false)
     {
         switch(t.text)
         {
-        case "enum":
-            auto kind = nextToken();
-            return new EnumType(kind ~ ' ' ~ parseIdent());
         case "class", "struct", "union":
             auto kind = nextToken();
             return new ClassType(kind ~ ' ' ~ parseIdent());
@@ -1348,10 +1259,6 @@ Statement parseStatement()
         // return parseDanglingElseStatement();
     case "do":
         return parseDoWhileStatement();
-    case "try":
-        return parseTryCatchStatement();
-    case "throw":
-        return parseThrowStatement();
     case "#if", "#ifdef", "#ifndef":
         auto ndef = (t.text == "#ifndef");
         auto def = (t.text == "#ifdef" || t.text == "#ifndef");
@@ -1394,8 +1301,6 @@ Statement parseStatement()
             fail();
     case "#":
         return new ExpressionStatement(new DeclarationExpr(parseDecl(null, true)), null);
-    case "__try":
-        return parseTryCatchStatementX();
     default:
         return parseExpressionStatement();
     }
@@ -1545,48 +1450,3 @@ Statement parseGotoStatement()
     check(";");
     return new GotoStatement(id);
 }
-
-// Statement parseDanglingElseStatement()
-// {
-    // debug(PARSE) writeln("parseDanglingElseStatement");
-    // check("else");
-    // auto sbody = parseStatement();
-    // return new DanglingElseStatement(sbody);
-// }
-
-Statement parseTryCatchStatementX()
-{
-    debug(PARSE) writeln("parseTryCatchStatementX");
-    check("__try");
-    auto s = parseStatement();
-    check("__except");
-    auto p = parseArgs();
-    auto c = parseStatement();
-    return s;
-}
-
-Statement parseTryCatchStatement()
-{
-    debug(PARSE) writeln("parseTryCatchStatement");
-    check("try");
-    auto s = parseStatement();
-    check("catch");
-    auto p = parseParams();
-    auto c = parseStatement();
-    return s;
-}
-
-Statement parseThrowStatement()
-{
-    assert(0);
-    debug(PARSE) writeln("parseThrowStatement");
-    check("throw");
-    parseExpr();
-    Expression e = new IdentExpr("assert");
-    Expression[] args = [new LitExpr("1")];
-    e = new CallExpr(e, args);
-    return new ExpressionStatement(e, null);
-}
-
-
-/********************************************************/
