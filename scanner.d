@@ -768,7 +768,6 @@ Declaration[] stripDead(Declaration[] decls)
                 continue;
             switch(vd.id)
             {
-            case "ASYNCREAD":
             case "__C99FEATURES__":
             case "__USE_ISOC99":
             case "LOG":

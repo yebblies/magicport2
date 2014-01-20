@@ -1,7 +1,7 @@
 
 SRC=magicport2.d ast.d scanner.d tokens.d parser.d dprinter.d typenames.d visitor.d namer.d
 
-DFLAGS=-g -cov
+DFLAGS=-g
 
 LIBS=..\dmdgit\src\glue.lib ..\dmdgit\src\backend.lib ..\dmdgit\src\outbuffer.obj
 # LIBS=..\dmdgit\src\gluestub.obj ..\dmdgit\src\backend.lib
