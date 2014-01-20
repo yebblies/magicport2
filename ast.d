@@ -229,7 +229,6 @@ class ExternCDeclaration : Declaration
     size_t line;
     string comment;
     this(Declaration[] decls, string file, size_t line, string comment) { this.decls = decls; block = true; this.file = file; this.line = line; this.comment = comment; }
-    this(Declaration decls, string file, size_t line, string comment) { this.decls = [decls]; block = false; this.file = file; this.line = line; this.comment = comment; }
     mixin(visitor_str);
 }
 
@@ -267,7 +266,6 @@ class EnumDeclaration : Declaration
 class DummyDeclaration : Declaration
 {
     string s;
-    this() { }
     this(string s) { this.s = s; }
     mixin(visitor_str);
 }
@@ -283,13 +281,6 @@ class ProtDeclaration : Declaration
 {
     string id;
     this(string id) { this.id = id; }
-    mixin(visitor_str);
-}
-
-class AlignDeclaration : Declaration
-{
-    int id;
-    this(int id) { this.id = id; }
     mixin(visitor_str);
 }
 
@@ -529,7 +520,6 @@ class ExprInit : Init
 class ArrayInit : Init
 {
     Init[] xinit;
-    this (Expression[] e) { foreach(v; e) this.xinit ~= new ExprInit(v); }
     this (Init[] xinit) { this.xinit = xinit; }
     mixin(visitor_str);
 }
@@ -606,15 +596,6 @@ class TemplateType : Type
     this(Type next, Type param) { this.next = next; this.param = param; }
     mixin(visitor_str);
     override string mangle() { return next.mangle() ~ "!"; }
-}
-
-class QualifiedType : Type
-{
-    Type next;
-    string id;
-    this(Type next, string id) { this.next = next; this.id = id; }
-    mixin(visitor_str);
-    override string mangle() { return next.mangle() ~ "..."; }
 }
 
 /********************************************************/

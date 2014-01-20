@@ -27,7 +27,6 @@ class DPrinter : Visitor
     StructDeclaration P;
     Type inittype;
     string[] stackclasses;
-    bool align1;
     FuncDeclaration fd;
     Declaration D;
     Declaration D2;
@@ -142,13 +141,6 @@ class DPrinter : Visitor
         D = saveD;
         D2 = saveD2;
     }
-    /*void visit(int line = __LINE__)(string ast)
-    {
-        if (!ast)
-            writeln(line);
-        assert(ast);
-        print(ast);
-    }*/
     void visitX(T)(T[] arr) if (is(typeof(visitX(arr[0]))) && !is(T[] : string))
     {
         foreach(v; arr)
@@ -161,7 +153,6 @@ class DPrinter : Visitor
     {
         switch(s)
         {
-        case "I": print("1i"); return;
         case "NULL": print("null"); return;
         case "__IMPORT__": print("\"v\" ~ import(\"VERSION\")[0..$-1]"); return;
         case "import", "module", "version", "ref", "scope",
@@ -175,40 +166,6 @@ class DPrinter : Visitor
             print(s);
             return;
         }
-    }
-    
-    override void visit(Module ast)
-    {
-        visitX(ast.decls);
-    }
-
-    override void visit(ImportDeclaration ast)
-    {
-        return;
-        if (ast.fn == "assert.h")
-            return;
-        auto list =
-        [
-            "stdio.h" : "core.stdc.stdio",
-            "stdlib.h" : "core.stdc.stdlib",
-        ];
-        if (ast.fn in list)
-        {
-            print("import ");
-            print(list[ast.fn]);
-            println(";");
-            return;
-        }
-        auto v = split(ast.fn, "\\");
-        assert(v.length == 1, v[0]);
-        if (v[0].extension() == ".h" || v[0].extension() == "")
-        {
-            print("import ");
-            visitIdent(v[0].stripExtension());
-            print("; ");
-            println(ast.fn);
-        } else
-            assert(v[0].extension() == ".c");
     }
 
     static overriddenfuncs =
@@ -493,41 +450,7 @@ class DPrinter : Visitor
             indent--;
             println("}");
         } else {
-            FuncBodyDeclaration fbody;
-            foreach(fb; scan.funcBodyDeclarations)
-            {
-                if (fb.id2 == ast.id && fb.id == P.id)
-                {
-                    //writeln(fb.id, "::", fb.id2);
-                    if (fb.params.length == ast.params.length)
-                    {
-                        bool samep = true;
-                        foreach(i, p; fb.params)
-                        {
-                            if (!typeMatch(p.t, ast.params[i].t))
-                            {
-                                samep = false;
-                                break;
-                            }
-                        }
-                        if (samep)
-                        {
-                            assert(!fbody, "Duplicate definition of: " ~ fb.id);
-                            fbody = fb;
-                        }
-                    }
-                }
-            }
-            //if (ast.stc & STCabstract)
-                println(";");
-            /*else
-            {
-                println("{ assert(0); }");
-                if (P)
-                    writeln("Missing body - ", P.id, "::", ast.id);
-                else
-                    writeln("Missing body - ", ast.id);
-            }*/
+            println(";");
         }
         println("");
     }
@@ -548,16 +471,6 @@ class DPrinter : Visitor
         auto at = cast(ArrayType)ast.type;
         if (!D2)
             ast.stc &= ~STCstatic;
-        if (at)
-        {
-            if (auto tc = cast(ClassType)at.next)
-            {
-                if (tc.id == "NameId")
-                {
-                    manifest = true;
-                }
-            }
-        }
         if (!ast.type)
             manifest = true;
         bool realarray;
@@ -575,18 +488,9 @@ class DPrinter : Visitor
             visitX(at.dim);
             print("] ");
             print(ast.id);
+            assert(!ast.trailingcomment);
             if (!E)
-            {
-                if (ast.trailingcomment)
-                {
-                    print("; ");
-                    println(ast.trailingcomment.strip);
-                }
-                else
-                {
-                    println(";");
-                }
-            }
+                println(";");
             buffers ~= ast.id;
             return;
         }
@@ -601,11 +505,6 @@ class DPrinter : Visitor
                     // ast.xinit = vd.xinit;
                 // }
             // }
-            if (!manifest) print("extern(C++) ");
-            if (!manifest) gshared = true;
-        }
-        else if (!(ast.stc & STCconst) && !D2 && !fd && P)
-        {
             if (!manifest) print("extern(C++) ");
             if (!manifest) gshared = true;
         }
@@ -641,15 +540,7 @@ class DPrinter : Visitor
                 print(" ");
             if (realarray)
             {
-                if (auto at2 = cast(ArrayType)at.next)
-                {
-                    visitX(at2.next);
-                    print("[");
-                    visitX(at2.dim);
-                    print("]");
-                }
-                else
-                    visitX(at.next);
+                visitX(at.next);
                 print("[");
                 visitX(at.dim);
                 print("]");
@@ -756,19 +647,8 @@ class DPrinter : Visitor
             {
                 if (i)
                     print("else ");
-                auto ce = cast(CallExpr)c;
                 auto ie = cast(IdentExpr)c;
                 auto le = cast(LitExpr)c;
-                if (ce)
-                {
-                    auto fie = cast(IdentExpr)ce.func;
-                    if (fie && fie.id == "defined")
-                    {
-                        assert(ce.args.length == 1);
-                        ie = cast(IdentExpr)ce.args[0];
-                        assert(ie);
-                    }
-                }
                 if (ie)
                 {
                     switch(ie.id)
@@ -785,7 +665,6 @@ class DPrinter : Visitor
                     case "__OpenBSD__":    println("version(OpenBSD)"); break;
                     case "__sun":          println("version(Solaris)"); break;
 
-                    case "__DMC__":        println("version(DigitalMars)"); break;
                     case "IN_GCC":         println("version(GNU)"); break;
 
                     case "DMDV1":          println("version(DMDV1)"); break;
@@ -800,7 +679,7 @@ class DPrinter : Visitor
                     {
                     case "0": println("version(none)"); break;
                     case "1": println("version(all)"); break;
-                    default:            println("static if (" ~ ie.id ~ ")"); break;
+                    default:  assert(0);
                     }
                 }
                 else
@@ -835,13 +714,6 @@ class DPrinter : Visitor
     {
         if (ast.comment)
             printComment(ast.comment);
-        if (auto st = cast(ClassType)ast.t)
-        {
-            if (st.id == "union tree_node")
-                return;
-            if (st.id == "struct TYPE")
-                return;
-        }
         if (auto ft = cast(FunctionType)ast.t)
         {
             if (ft.cdecl)
@@ -885,11 +757,6 @@ class DPrinter : Visitor
                 print(", ");
         }
         print(") { return ");
-        if (!ast.e)
-        {
-            assert(0);
-            write(ast.id);
-        }
         visitX(ast.e);
         println("; }");
     }
@@ -930,8 +797,6 @@ class DPrinter : Visitor
             // base class aliasing rules are different in C++
             println("alias visit = super.visit;");
         }
-        if (align1)
-            println("align(1):");
         indent++;
         foreach(d; ast.decls)
             visitX(d);
@@ -978,27 +843,6 @@ class DPrinter : Visitor
         inexternc--;
         println("}");
     }
-
-    // override void visit(EnumDeclaration ast)
-    // {
-        // println("enum");
-        // println("{");
-        // foreach(i; 0..ast.members.length)
-        // {
-            // visitIdent(ast.members[i]);
-            // if (ast.vals[i])
-            // {
-                // print(" = ");
-                // visit(ast.vals[i]);
-            // }
-            // println(",");
-        // }
-        // println("};");
-        // print("alias uint ");
-        // visitIdent(ast.id);
-        // if (!E)
-            // println(";");
-    // }
 
     override void visit(EnumDeclaration ast)
     {
@@ -1069,14 +913,6 @@ class DPrinter : Visitor
         print(ast.id);
         println(":");
         indent++;
-    }
-
-    override void visit(AlignDeclaration ast)
-    {
-        auto align1save = align1;
-        scope(exit) align1 = align1save;
-        if (ast.id == 1)
-            align1 = true;
     }
 
     override void visit(LitExpr ast)

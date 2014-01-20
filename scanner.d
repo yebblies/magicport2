@@ -206,10 +206,6 @@ class Scanner : Visitor
     {
     }
 
-    override void visit(AlignDeclaration ast)
-    {
-    }
-
     override void visit(LitExpr ast)
     {
     }
@@ -430,11 +426,6 @@ class Scanner : Visitor
     {
         visit(ast.next);
         visit(ast.param);
-    }
-
-    override void visit(QualifiedType ast)
-    {
-        visit(ast.next);
     }
 
     override void visit(Param ast)

@@ -100,11 +100,6 @@ class Visitor
         assert(0);
     }
 
-    void visit(AlignDeclaration ast)
-    {
-        assert(0);
-    }
-
     void visit(LitExpr ast)
     {
         assert(0);
@@ -301,11 +296,6 @@ class Visitor
     }
 
     void visit(TemplateType ast)
-    {
-        assert(0);
-    }
-
-    void visit(QualifiedType ast)
     {
         assert(0);
     }

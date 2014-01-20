@@ -169,16 +169,17 @@ Declaration parsePreprocessor(ref bool hascomment, string comment)
             return new DummyDeclaration("#pragma SC noreturn(asmerr)");
         } else if (t.text == "pack")
         {
-            nextToken();
-            check("(");
-            int v = 0;
-            if (t.text == "1")
-            {
-                nextToken();
-                v = 1;
-            }
-            check(")");
-            return new AlignDeclaration(v);
+            assert(0);
+            // nextToken();
+            // check("(");
+            // int v = 0;
+            // if (t.text == "1")
+            // {
+                // nextToken();
+                // v = 1;
+            // }
+            // check(")");
+            // return new AlignDeclaration(v);
         }
         auto line = t.line;
         auto s = "#pragma ";
@@ -821,7 +822,8 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             return new ExternCDeclaration(d, t.file, t.line, comment);
         } else {
             hascomment = false;
-            return new ExternCDeclaration(parseDecl, t.file, t.line, comment);
+            assert(0);
+            // return new ExternCDeclaration(parseDecl, t.file, t.line, comment);
         }
     }
     if (t.text == "__attribute__")
