@@ -21,9 +21,12 @@ void main(string[] args)
     auto settings = parseJSON(readText("settings.json")).object;
     auto src = settings["src"].array.map!"a.str"().array;
     auto mapping = settings["mapping"].array.loadMapping();
-    basicTypes = settings["basicTypes"].array.map!"a.str".array();
-    structTypes = settings["structTypes"].array.map!"a.str".array();
-    classTypes = settings["classTypes"].array.map!"a.str".array();
+    foreach(t; settings["basicTypes"].array.map!"a.str")
+        basicTypes[t] = false;
+    foreach(t; settings["structTypes"].array.map!"a.str")
+        structTypes[t] = false;
+    foreach(t; settings["classTypes"].array.map!"a.str")
+        classTypes[t] = false;
 
     auto scan = new Scanner();
     foreach(xfn; src)
@@ -36,6 +39,16 @@ void main(string[] args)
         asts ~= parse(Lexer(pp, fn), fn);
         asts[$-1].visit(scan);
     }
+
+    foreach(t, used; basicTypes)
+        if (!used)
+            writeln("type ", t, " not referenced");
+    foreach(t, used; structTypes)
+        if (!used)
+            writeln("type ", t, " not referenced");
+    foreach(t, used; classTypes)
+        if (!used)
+            writeln("type ", t, " not referenced");
 
     writeln("collapsing ast...");
     auto superast = collapse(asts, scan);

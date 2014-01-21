@@ -395,7 +395,7 @@ class DPrinter : Visitor
         auto nonfinalclass = P && nonfinalclasses.canFind(P.id);
         if (!virtual && !(ast.stc & STCabstract) && nonfinalclass)
             print("final ");
-        if (!inexternc && (!P || !classTypes.canFind(P.id)) && ast.type.id != ast.id)
+        if (!inexternc && (!P || !classTypes.lookup(P.id)) && ast.type.id != ast.id)
             print("extern(C++) ");
         visitX(ast.stc);
         if (ast.type.id == ast.id)
@@ -419,7 +419,7 @@ class DPrinter : Visitor
             println("{");
             indent++;
             println("mixin(dmd_trace_code);");
-            if (ast.initlist.length == 1 && classTypes.canFind((cast(IdentExpr)ast.initlist[0].func).id))
+            if (ast.initlist.length == 1 && classTypes.lookup((cast(IdentExpr)ast.initlist[0].func).id))
             {
                 print("super(");
                 printArgs(ast.initlist[0].args);
@@ -929,7 +929,7 @@ class DPrinter : Visitor
     {
         if (ast.id == "this" && P)
         {
-            if (P && structTypes.canFind(P.id))
+            if (P && structTypes.lookup(P.id))
             {
                 print("&this");
                 return;

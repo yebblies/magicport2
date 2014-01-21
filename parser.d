@@ -674,9 +674,9 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
             return new AnonStructDeclaration(kind, id, d);
         }
         auto id = parseIdent();
-        if (kind == "class" && !classTypes.canFind(id))
+        if (kind == "class" && !classTypes.lookup(id))
             error("class %s is not in the class types list", id);
-        else if (kind != "class" && !structTypes.canFind(id))
+        else if (kind != "class" && !structTypes.lookup(id))
             error("%s %s is not in the struct types list", kind, id);
         string s;
         if (t.text == ":")
@@ -1102,9 +1102,9 @@ Type parseBasicType(bool flag = false)
         }
         return new BasicType(id);
     }
-    if (basicTypes.canFind(t.text))
+    if (basicTypes.lookup(t.text))
         return new BasicType(parseIdent());
-    else if (classTypes.canFind(t.text) || structTypes.canFind(t.text))
+    else if (classTypes.lookup(t.text) || structTypes.lookup(t.text))
     {
         Type tx = new ClassType(parseIdent());
         if (t.text == "::" && flag)
@@ -1132,11 +1132,11 @@ Type parseBasicType(bool flag = false)
 
 bool isType()
 {
-    if (basicTypes.canFind(t.text))
+    if (basicTypes.lookup(t.text))
         return true;
-    else if (classTypes.canFind(t.text))
+    else if (classTypes.lookup(t.text))
         return true;
-    else if (structTypes.canFind(t.text))
+    else if (structTypes.lookup(t.text))
         return true;
     else
     {
