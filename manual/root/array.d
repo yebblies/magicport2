@@ -13,6 +13,8 @@ public:
 
 private:
     size_t allocdim;
+    enum SMALLARRAYCAP = 1;
+    T[SMALLARRAYCAP] smallarray;    // inline storage for small arrays
 
 public:
     void push(T ptr)
@@ -30,12 +32,28 @@ public:
         if (allocdim - dim < nentries)
         {
             if (allocdim == 0)
-            {   // Not properly initialized, someone memset it to zero
-                allocdim = nentries;
+            {
+                // Not properly initialized, someone memset it to zero
+                if (nentries <= SMALLARRAYCAP)
+                {
+                    allocdim = SMALLARRAYCAP;
+                    data = SMALLARRAYCAP ? smallarray.ptr : null;
+                }
+                else
+                {
+                    allocdim = nentries;
+                    data = cast(T*)mem.malloc(allocdim * (*data).sizeof);
+                }
+            }
+            else if (allocdim == SMALLARRAYCAP)
+            {
+                allocdim = dim + nentries;
                 data = cast(T*)mem.malloc(allocdim * (*data).sizeof);
+                memcpy(data, smallarray.ptr, dim * (*data).sizeof);
             }
             else
-            {   allocdim = dim + nentries;
+            {
+                allocdim = dim + nentries;
                 data = cast(T*)mem.realloc(data, allocdim * (*data).sizeof);
             }
         }
