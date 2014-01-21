@@ -376,6 +376,10 @@ class DPrinter : Visitor
         if (ast.comment)
             printComment(ast.comment);
         bool virtual = (ast.stc & STCvirtual) != 0;
+        if (!virtual && ast.id == "visit")
+        {
+            print("override ");
+        }
         foreach(m; overriddenfuncs)
         {
             if (m[0] == "Type" && m[1] == "size" && ast.params.length != 0)
