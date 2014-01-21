@@ -241,7 +241,6 @@
             ],
             "members" :
             [
-                "function inNonRoot",
                 "function search_toHash",
                 "function search_toString",
                 "struct StructFlags",
