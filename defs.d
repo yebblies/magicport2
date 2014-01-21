@@ -88,6 +88,7 @@ extern extern(C++) void obj_start(char *srcfile);
 extern extern(C++) void obj_end(Library library, File* objfile);
 extern extern(C++) void obj_write_deferred(Library library);
 extern extern(C++) Expression createTypeInfoArray(Scope* sc, Expression *args, size_t dim);
+extern extern(C++) int binary(const(char)* p, const(char)** tab, int n);
 
 uint rol(uint x, uint n)
 {
@@ -96,16 +97,6 @@ uint rol(uint x, uint n)
 uint ror(uint x, uint n)
 {
     return (x >> n) | (x << (32-n));
-}
-
-// Util
-
-int binary(char* p, const(char)** tab, size_t n)
-{
-    for (int i = 0; i < n; ++i)
-        if (!strcmp(p, tab[i]))
-            return i;
-    return -1;
 }
 
 int main(string[] args)
