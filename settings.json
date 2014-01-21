@@ -990,6 +990,7 @@
                 "lexer",
                 "mars",
                 "mtype",
+                "opover",
                 "root.rmem",
                 "root.rootobject"
             ],
@@ -2306,13 +2307,18 @@
                 "dtemplate",
                 "expression",
                 "func",
+                "id",
                 "identifier",
                 "lexer",
                 "mars",
-                "mtype"
+                "mtype",
+                "visitor"
             ],
             "members" :
             [
+                "function isCommutative",
+                "function opId",
+                "function opId_r",
                 "function isAggregate",
                 "function opToArg",
                 "function build_overload",
@@ -3062,6 +3068,9 @@
         "Visitor",
         "CppMangleVisitor",
         "ToJsonVisitor",
-        "InlineCostVisitor"
+        "InlineCostVisitor",
+        "CommutativeVisitor",
+        "OpIdVisitor",
+        "OpIdRVisitor"
     ]
 }
