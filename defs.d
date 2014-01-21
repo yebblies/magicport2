@@ -110,7 +110,6 @@ int binary(char* p, const(char)** tab, size_t n)
 
 int main(string[] args)
 {
-    scope(success) exit(0);
     scope(failure) tracedepth = -1;
     GC.disable();
 
