@@ -763,6 +763,7 @@
                 "lexer",
                 "longdouble",
                 "mars",
+                "dmodule",
                 "opover",
                 "root.outbuffer",
                 "root.port",
@@ -909,7 +910,6 @@
                 "function templateParameterLookup",
                 "function deduceBaseClassParameters",
                 "function aliasParameterSemantic",
-                "function isPseudoDsymbol",
                 "function definitelyValueParameter"
             ]
         },
@@ -1339,8 +1339,7 @@
             "members" :
             [
                 "function inifile",
-                "function skipspace",
-                "variable SYSCONFDIR"
+                "function skipspace"
             ]
         },
         {
