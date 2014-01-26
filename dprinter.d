@@ -1518,6 +1518,13 @@ class DPrinter : Visitor
 
     override void visit(VersionStatement ast)
     {
+        auto ne = cast(NotExpr)ast.cond[0];
+        auto ie = ne ? cast(IdentExpr)ne.e : null;
+        if (ie && ie.id == "SYSCONFDIR")
+        {
+            println("enum SYSCONFDIR = \"/etc/dmd.conf\";");
+            return;
+        }
         versionCommon(ast);
     }
 
