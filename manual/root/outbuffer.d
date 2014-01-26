@@ -26,7 +26,6 @@ struct OutBuffer
     void prependstring(const(char)* string);
     void writenl();                     // write newline
     void writeByte(uint b);
-    void writebyte(uint b) { writeByte(b); }
     void writeUTF8(uint b);
     void prependbyte(uint b);
     void writewchar(uint w);
@@ -54,6 +53,8 @@ struct OutBuffer
     size_t insert(size_t offset, const(void)* data, size_t nbytes);
     size_t insert(size_t offset, const(char)* data, size_t nbytes) { return insert(offset, cast(const(void)*)data, nbytes); }
     void remove(size_t offset, size_t nbytes);
-    char* toChars();
+    // Append terminating null if necessary and get view of internal buffer
+    char* peekString();
+    // Append terminating null if necessary and take ownership of data
     char* extractString();
 };
