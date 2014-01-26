@@ -1,9 +1,10 @@
 
 SRC=magicport2.d ast.d scanner.d tokens.d parser.d dprinter.d typenames.d visitor.d namer.d
 
-PHOBOSLIB=../phobos/generated/linux/release/64
+PHOBOSLIB32=../phobos/generated/linux/release/32
+PHOBOSLIB64=../phobos/generated/linux/release/64
 
-DFLAGS=-g -I../druntime/import -I../phobos -L-L$(PHOBOSLIB) -L--export-dynamic
+DFLAGS=-g -I../druntime/import -I../phobos -L-L$(PHOBOSLIB32) -L-L$(PHOBOSLIB64) -L--export-dynamic
 
 LIBS=../dmd/src/outbuffer.o ../dmd/src/glue.a ../dmd/src/backend.a
 # LIBS=../dmd/src/gluestub.o ../dmd/src/backend.a
@@ -57,18 +58,18 @@ DSRC= $(GENSRC) $(COPYSRC)
 
 default: build1 build2
 
-$(GENSRC) $(COPYSRC): magicport2 $(MANUALSRC)
+$(GENSRC) $(COPYSRC): magicport2 $(MANUALSRC) settings.json
 	./magicport2 ../dmd/src/
 
 build1: port/dmd
 port/dmd: $(DSRC) defs.d $(LIBS)
 	$(COMPILER) $(DSRC) defs -c -ofport/dmd.o $(FLAGS)
-	g++ -oport/dmd port/dmd.o $(LIBS) -L$(PHOBOSLIB) -lphobos2
+	g++ -oport/dmd port/dmd.o $(LIBS) -L$(PHOBOSLIB32) -L$(PHOBOSLIB64) -lphobos2
 
 build2: port/dmdx
 port/dmdx: $(DSRC) defs.d port/dmd $(LIBS)
-	LD_LIBRARY_PATH=$(PHOBOSLIB) port/dmd $(DSRC) defs -c -ofport/dmdx.o $(FLAGS)
-	g++ -oport/dmdx port/dmd.o $(LIBS) -L$(PHOBOSLIB) -lphobos2
+	LD_LIBRARY_PATH=$(PHOBOSLIB32):$(PHOBOSLIB64) port/dmd $(DSRC) defs -c -ofport/dmdx.o $(FLAGS)
+	g++ -oport/dmdx port/dmdx.o $(LIBS) -L$(PHOBOSLIB32) -L$(PHOBOSLIB64) -lphobos2
 
 magicport2 : $(SRC)
 	$(COMPILER) $(SRC) $(DFLAGS)
