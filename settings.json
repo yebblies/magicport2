@@ -2594,13 +2594,7 @@
         "ClassFlags",
         "FILE",
         "PrevSibling",
-        "TemplatePrevious"
-    ],
-    "classTypes" :
-    [
-        "Section",
-        "ParamSection",
-        "MacroSection",
+        "TemplatePrevious",
 
         "Objects",
         "Expressions",
@@ -2630,7 +2624,13 @@
         "GotoCaseStatements",
         "TemplateInstances",
         "ReturnStatements",
-        "Files",
+        "Files"
+    ],
+    "classTypes" :
+    [
+        "Section",
+        "ParamSection",
+        "MacroSection",
 
         "Object",
         "RootObject",
@@ -2923,6 +2923,7 @@
         "InlineCostVisitor",
         "CommutativeVisitor",
         "OpIdVisitor",
-        "OpIdRVisitor"
+        "OpIdRVisitor",
+        "VisualCPPMangler"
     ]
 }

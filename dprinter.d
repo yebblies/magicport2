@@ -615,6 +615,8 @@ class DPrinter : Visitor
             auto id = ct.id;
             if (id.startsWith("class "))
                 id = id[6..$];
+            if (classTypes.lookup(id))
+                return true;
             foreach(sd; scan.structsUsingInheritance)
             {
                 if (sd.id == id)
@@ -631,9 +633,7 @@ class DPrinter : Visitor
     override void visit(ConstructDeclaration ast)
     {
         stackclasses ~= ast.id;
-        visitX(ast.type);
-        if (!isClass(ast.type))
-            print("*");
+        visitX(new PointerType(ast.type));
         print(" ");
         visitIdent(ast.id);
         print(" = new ");
