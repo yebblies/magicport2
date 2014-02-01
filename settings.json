@@ -633,7 +633,8 @@
             ],
             "members" :
             [
-                "struct Visitor"
+                "struct Visitor",
+                "struct StoppableVisitor"
             ]
         },
         {
@@ -1416,7 +1417,6 @@
             [
                 "function fixupLabelName",
                 "function checkLabeledLoop",
-                "typedef sapply_fp_t",
                 "enum BE",
                 "struct Statement",
                 "struct ErrorStatement",
@@ -1467,11 +1467,14 @@
             "package" : "",
             "imports" :
             [
-
+                "defs",
+                "statement",
+                "visitor"
             ],
             "members" :
             [
-                "macro scondApply"
+                "struct PostorderStatementVisitor",
+                "function walkPostorder"
             ]
         },
         {
@@ -2484,7 +2487,6 @@
         "utf16_t",
         "utf8_t",
         "ForeachDg",
-        "sapply_fp_t",
         "fp_speller_t",
         "builtin_fp",
         
@@ -2556,9 +2558,6 @@
         "UnionDoubleLong",
         "Ctxt",
         "WIN32_FIND_DATAA",
-        "UsesEH",
-        "ComeFrom",
-        "HasCode",
         "DArray",
         "Compiler",
         "ArrayOp",
@@ -2917,6 +2916,7 @@
         "Type",
 
         "Visitor",
+        "StoppableVisitor",
         "CppMangleVisitor",
         "ToJsonVisitor",
         "InlineCostVisitor",
@@ -2924,6 +2924,10 @@
         "OpIdVisitor",
         "OpIdRVisitor",
         "VisualCPPMangler",
-        "IntRangeVisitor"
+        "IntRangeVisitor",
+        "UsesEH",
+        "ComeFrom",
+        "HasCode",
+        "PostorderStatementVisitor"
     ]
 }

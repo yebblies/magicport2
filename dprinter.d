@@ -341,6 +341,7 @@ class DPrinter : Visitor
         "Statement",
         "StaticCtorDeclaration",
         "StaticDtorDeclaration",
+        "StoppableVisitor",
         "StorageClassDeclaration",
         "StructDeclaration",
         "SymbolExp",
@@ -796,7 +797,7 @@ class DPrinter : Visitor
             // print(" : RootObject");
         println("");
         println("{");
-        if (ast.superid == "Visitor")
+        if (ast.superid == "Visitor" || ast.superid == "StoppableVisitor")
         {
             // base class aliasing rules are different in C++
             println("alias visit = super.visit;");
