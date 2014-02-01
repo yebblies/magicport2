@@ -992,7 +992,8 @@
                 "mtype",
                 "opover",
                 "root.rmem",
-                "root.rootobject"
+                "root.rootobject",
+                "visitor"
             ],
             "members" :
             [
@@ -1000,10 +1001,7 @@
                 "function typeMerge",
                 "function arrayTypeCompatible",
                 "function arrayTypeCompatibleWithoutCasting",
-                "function getMask",
-                "function unsignedBitwiseAnd",
-                "function unsignedBitwiseOr",
-                "function unsignedBitwiseXor"
+                "function getIntRange"
             ]
         },
         {
@@ -1381,6 +1379,7 @@
                 "aggregate",
                 "arraytypes",
                 "attrib",
+                "dcast",
                 "cond",
                 "ctfeexpr",
                 "dclass",
@@ -2924,6 +2923,7 @@
         "CommutativeVisitor",
         "OpIdVisitor",
         "OpIdRVisitor",
-        "VisualCPPMangler"
+        "VisualCPPMangler",
+        "IntRangeVisitor"
     ]
 }
