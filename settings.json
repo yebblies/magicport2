@@ -254,18 +254,24 @@
             "package" : "",
             "imports" :
             [
+                "aggregate",
                 "arraytypes",
+                "attrib",
                 "declaration",
                 "defs",
                 "dstruct",
                 "dsymbol",
                 "expression",
                 "func",
+                "id",
+                "identifier",
                 "init",
                 "lexer",
                 "mars",
+                "dmodule",
                 "mtype",
                 "statement",
+                "dtemplate",
                 "visitor"
             ],
             "members" :
@@ -277,9 +283,9 @@
                 "struct InlineCostVisitor",
                 "struct InlineDoState",
                 "function arrayExpressiondoInline",
-                "struct InlineScanState",
-                "function arrayInlineScan",
-                "function scanVar"
+                "struct InlineScanVisitor",
+                "function inlineScan",
+                "function expandInline"
             ]
         },
         {
@@ -1970,6 +1976,7 @@
                 "expression",
                 "id",
                 "identifier",
+                "inline",
                 "interpret",
                 "json",
                 "lexer",
@@ -2534,7 +2541,6 @@
         "code",
         "block",
         "InlineDoState",
-        "InlineScanState",
         "CtfeStack",
         "InterState",
         "CtfeStatus",
@@ -2920,6 +2926,7 @@
         "CppMangleVisitor",
         "ToJsonVisitor",
         "InlineCostVisitor",
+        "InlineScanVisitor",
         "CommutativeVisitor",
         "OpIdVisitor",
         "OpIdRVisitor",
