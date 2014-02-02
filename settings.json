@@ -565,7 +565,9 @@
                 "mars",
                 "mtype",
                 "root.aav",
-                "statement"
+                "statement",
+                "root.outbuffer",
+                "visitor"
             ],
             "members" :
             [
@@ -573,7 +575,12 @@
                 "struct ArrayOp",
                 "function isDruntimeArrayOp",
                 "function buildArrayOp",
-                "function isArrayOpValid"
+                "function isArrayOpValid",
+                "function arrayOpBinExp*Scope*",
+                "function arrayOpBinAssignExp*Scope*",
+                "function buildArrayIdent",
+                "function buildArrayLoop",
+                "function isArrayOperand"
             ]
         },
         {
@@ -989,6 +996,7 @@
             "imports" :
             [
                 "aliasthis",
+                "arrayop",
                 "dclass",
                 "defs",
                 "dscope",
@@ -2935,6 +2943,8 @@
         "UsesEH",
         "ComeFrom",
         "HasCode",
-        "PostorderStatementVisitor"
+        "PostorderStatementVisitor",
+        "BuildArrayIdentVisitor",
+        "BuildArrayLoopVisitor"
     ]
 }

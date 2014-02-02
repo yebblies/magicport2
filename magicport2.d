@@ -125,7 +125,16 @@ void main(string[] args)
             if (auto p = d in map)
             {
                 if (!p.d)
+                {
                     writeln(d, " needs mangled name");
+                    foreach(id, x; longmap)
+                    {
+                        if (id.startsWith(d))
+                        {
+                            writeln(" - ", id);
+                        }
+                    }
+                }
                 else
                 {
                     printer.visitX(p.d);
