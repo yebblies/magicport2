@@ -255,6 +255,7 @@
             "imports" :
             [
                 "aggregate",
+                "apply",
                 "arraytypes",
                 "attrib",
                 "declaration",
@@ -336,11 +337,15 @@
             "package" : "",
             "imports" :
             [
-
+                "arraytypes",
+                "defs",
+                "expression",
+                "visitor"
             ],
             "members" :
             [
-                "macro condApply"
+                "struct PostorderExpressionVisitor",
+                "function walkPostorderExpression*StoppableVisitor*"
             ]
         },
         {
@@ -784,6 +789,7 @@
                 "root.rmem",
                 "root.rootobject",
                 "root.stringtable",
+                "sideeffect",
                 "target",
                 "visitor"
             ],
@@ -1327,14 +1333,16 @@
             "package" : "",
             "imports" :
             [
+                "apply",
                 "defs",
                 "expression",
                 "lexer",
-                "mtype"
+                "mtype",
+                "visitor"
             ],
             "members" :
             [
-                "function lambdaHasSideEffect",
+                "function hasSideEffect",
                 "version function lambdaUseValue"
             ]
         },
@@ -1488,7 +1496,7 @@
             "members" :
             [
                 "struct PostorderStatementVisitor",
-                "function walkPostorder"
+                "function walkPostorderStatement*StoppableVisitor*"
             ]
         },
         {
@@ -1856,6 +1864,7 @@
                 "mtype",
                 "root.port",
                 "root.rmem",
+                "sideeffect",
                 "utf"
             ],
             "members" :
@@ -2296,12 +2305,14 @@
             "package" : "",
             "imports" :
             [
+                "apply",
                 "declaration",
                 "defs",
                 "dscope",
                 "expression",
                 "lexer",
-                "mars"
+                "mars",
+                "visitor"
             ],
             "members" :
             [
@@ -2404,6 +2415,7 @@
                 "function isTypeFunction",
                 "function isFunctionParameter",
                 "function isTemplateParameter",
+                "function isReservedName",
                 "function highlightText",
                 "function highlightCode",
                 "function highlightCode3",
@@ -2945,6 +2957,12 @@
         "HasCode",
         "PostorderStatementVisitor",
         "BuildArrayIdentVisitor",
-        "BuildArrayLoopVisitor"
+        "BuildArrayLoopVisitor",
+        "LambdaInlineCost",
+        "LambdaSetParent",
+        "LambdaCheckForNestedRef",
+        "PostorderExpressionVisitor",
+        "ApplyFpVisitor",
+        "LambdaHasSideEffect"
     ]
 }
