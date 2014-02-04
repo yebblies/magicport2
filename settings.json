@@ -577,8 +577,6 @@
             "members" :
             [
                 "variable arrayfuncs",
-                "struct ArrayOp",
-                "function isDruntimeArrayOp",
                 "function buildArrayOp",
                 "function isArrayOpValid",
                 "function arrayOpBinExp*Scope*",
@@ -2586,7 +2584,6 @@
         "WIN32_FIND_DATAA",
         "DArray",
         "Compiler",
-        "ArrayOp",
         "utimbuf",
         "Global",
         "Symbol",
