@@ -1400,6 +1400,7 @@
                 "aggregate",
                 "arraytypes",
                 "attrib",
+                "canthrow",
                 "dcast",
                 "cond",
                 "ctfeexpr",
@@ -1695,6 +1696,7 @@
             [
                 "arraytypes",
                 "attrib",
+                "apply",
                 "declaration",
                 "defs",
                 "dstruct",
@@ -1705,12 +1707,12 @@
                 "lexer",
                 "mars",
                 "mtype",
-                "root.rootobject"
+                "root.rootobject",
+                "visitor"
             ],
             "members" :
             [
-                "struct CanThrow",
-                "function lambdaCanThrow",
+                "function canThrow",
                 "function Dsymbol_canThrow"
             ]
         },
@@ -2542,7 +2544,6 @@
         "AA",
         "Array",
         "SCstring",
-        "CanThrow",
         "IntRange",
         "SignExtendedNumber",
         "CppMangleState",
@@ -2960,6 +2961,7 @@
         "LambdaCheckForNestedRef",
         "PostorderExpressionVisitor",
         "ApplyFpVisitor",
-        "LambdaHasSideEffect"
+        "LambdaHasSideEffect",
+        "CanThrow"
     ]
 }
