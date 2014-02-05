@@ -797,12 +797,12 @@ class DPrinter : Visitor
             // print(" : RootObject");
         println("");
         println("{");
+        indent++;
         if (ast.superid == "Visitor" || ast.superid == "StoppableVisitor")
         {
             // base class aliasing rules are different in C++
             println("alias visit = super.visit;");
         }
-        indent++;
         foreach(d; ast.decls)
             visitX(d);
         indent--;
