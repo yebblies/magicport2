@@ -1041,20 +1041,24 @@
             "package" : "",
             "imports" :
             [
+                "constfold",
+                "dclass",
                 "declaration",
                 "defs",
                 "expression",
                 "init",
                 "lexer",
+                "longdouble",
                 "mars",
-                "mtype"
+                "mtype",
+                "sideeffect",
+                "visitor"
             ],
             "members" :
             [
                 "function expandVar",
                 "function fromConstInitializer",
-                "function shift_optimize",
-                "function setLengthVarIfKnown"
+                "function Expression_optimize"
             ]
         },
         {
@@ -2962,6 +2966,7 @@
         "PostorderExpressionVisitor",
         "ApplyFpVisitor",
         "LambdaHasSideEffect",
-        "CanThrow"
+        "CanThrow",
+        "OptimizeVisitor"
     ]
 }
