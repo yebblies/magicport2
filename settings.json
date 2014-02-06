@@ -1018,6 +1018,7 @@
             [
                 "function isVoidArrayLiteral",
                 "function typeMerge",
+                "function integralPromotions",
                 "function arrayTypeCompatible",
                 "function arrayTypeCompatibleWithoutCasting",
                 "function getIntRange"
@@ -2314,12 +2315,16 @@
                 "defs",
                 "dscope",
                 "expression",
+                "func",
                 "lexer",
                 "mars",
+                "mtype",
+                "statement",
                 "visitor"
             ],
             "members" :
             [
+                "function toDelegate",
                 "function lambdaSetParent",
                 "function lambdaCheckForNestedRef"
             ]
