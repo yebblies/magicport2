@@ -479,6 +479,7 @@
             "imports" :
             [
                 "aggregate",
+                "attrib",
                 "arraytypes",
                 "dclass",
                 "declaration",
