@@ -1875,6 +1875,7 @@
             "members" :
             [
                 "function expType",
+                "function isConst",
                 "function Neg",
                 "function Com",
                 "function Not",
