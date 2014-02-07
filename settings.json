@@ -216,6 +216,7 @@
             "imports" :
             [
                 "aggregate",
+                "argtypes",
                 "arraytypes",
                 "clone",
                 "declaration",
@@ -461,14 +462,15 @@
             "package" : "",
             "imports" :
             [
+                "declaration",
                 "defs",
                 "mars",
-                "mtype"
+                "mtype",
+                "visitor"
             ],
             "members" :
             [
-                "function mergeFloatToInt",
-                "function argtypemerge"
+                "function toArgTypes"
             ]
         },
         {
@@ -2091,6 +2093,7 @@
                 "aggregate",
                 "aliasthis",
                 "apply",
+                "argtypes",
                 "arrayop",
                 "arraytypes",
                 "attrib",
@@ -2973,6 +2976,7 @@
         "ApplyFpVisitor",
         "LambdaHasSideEffect",
         "CanThrow",
-        "OptimizeVisitor"
+        "OptimizeVisitor",
+        "ToArgTypes"
     ]
 }

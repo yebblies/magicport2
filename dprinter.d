@@ -179,6 +179,7 @@ class DPrinter : Visitor
         ["AttribDeclaration", "kind"],
         ["AttribDeclaration", "oneMember"],
         ["AttribDeclaration", "semantic"],
+        ["AttribDeclaration", "semantic2"],
         ["AttribDeclaration", "semantic3"],
         ["AttribDeclaration", "setFieldOffset"],
         ["AttribDeclaration", "toCBuffer"],
