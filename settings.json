@@ -28,6 +28,7 @@
             "package" : "",
             "imports" :
             [
+                "apply",
                 "arraytypes",
                 "builtin",
                 "constfold",
@@ -47,7 +48,8 @@
                 "root.array",
                 "root.rootobject",
                 "statement",
-                "utf"
+                "utf",
+                "visitor"
             ],
             "members" :
             [
@@ -2190,7 +2192,6 @@
                 "function extractOpDollarSideEffect",
                 "function resolveOpDollarScope*ArrayExp*",
                 "function resolveOpDollarScope*SliceExp*",
-                "typedef apply_fp_t",
                 "enum CtfeGoal",
                 "variable WANTflags",
                 "variable WANTvalue",
@@ -2522,7 +2523,6 @@
         "fp2_t",
         "Dsymbol_apply_ft_t",
         "pid_t",
-        "apply_fp_t",
         "utf32_t",
         "utf16_t",
         "utf8_t",
@@ -2972,10 +2972,10 @@
         "LambdaSetParent",
         "LambdaCheckForNestedRef",
         "PostorderExpressionVisitor",
-        "ApplyFpVisitor",
         "LambdaHasSideEffect",
         "CanThrow",
         "OptimizeVisitor",
-        "ToArgTypes"
+        "ToArgTypes",
+        "VarWalker"
     ]
 }
