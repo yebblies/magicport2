@@ -1006,12 +1006,19 @@
             [
                 "aliasthis",
                 "arrayop",
+                "arraytypes",
                 "dclass",
+                "declaration",
                 "defs",
                 "dscope",
+                "dstruct",
+                "dsymbol",
                 "expression",
+                "func",
+                "id",
                 "intrange",
                 "lexer",
+                "longdouble",
                 "mars",
                 "mtype",
                 "opover",
@@ -1021,6 +1028,7 @@
             ],
             "members" :
             [
+                "function implicitConvTo",
                 "function isVoidArrayLiteral",
                 "function typeMerge",
                 "function integralPromotions",
@@ -2978,6 +2986,7 @@
         "CanThrow",
         "OptimizeVisitor",
         "ToArgTypes",
-        "VarWalker"
+        "VarWalker",
+        "ImplicitConvTo"
     ]
 }
