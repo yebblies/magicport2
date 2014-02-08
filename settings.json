@@ -1350,7 +1350,8 @@
             ],
             "members" :
             [
-                "function hasSideEffect"
+                "function hasSideEffect",
+                "function discardValue"
             ]
         },
         {
@@ -1439,6 +1440,7 @@
                 "root.outbuffer",
                 "root.rootobject",
                 "sapply",
+                "sideeffect",
                 "staticassert",
                 "target",
                 "visitor"
