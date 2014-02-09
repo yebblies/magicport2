@@ -536,12 +536,25 @@
             "package" : "",
             "imports" :
             [
-                "dscope"
+                "attrib",
+                "declaration",
+                "defs",
+                "dscope",
+                "dsymbol",
+                "expression",
+                "init",
+                "lexer",
+                "mtype",
+                "root.outbuffer",
+                "statement",
+                "visitor"
             ],
             "members" :
             [
                 "struct HdrGenState",
-                "variable TEST_EMIT_ALL"
+                "variable TEST_EMIT_ALL",
+                "struct PrettyPrintVisitor",
+                "function toCBuffer"
             ]
         },
         {
@@ -2990,6 +3003,7 @@
         "ToArgTypes",
         "VarWalker",
         "ImplicitConvTo",
-        "CtfeCompiler"
+        "CtfeCompiler",
+        "PrettyPrintVisitor"
     ]
 }
