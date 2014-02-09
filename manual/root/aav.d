@@ -5,6 +5,7 @@ import root.rootobject;
 import defs;
 
 struct AA;
+
 RootObject _aaGetRvalue(AA* aa, RootObject o)
 {
     tracein("_aaGetRvalue");
@@ -16,6 +17,7 @@ RootObject _aaGetRvalue(AA* aa, RootObject o)
         return *p;
     return null;
 }
+
 RootObject* _aaGet(AA** aa, RootObject o)
 {
     tracein("_aaGet");
@@ -28,4 +30,10 @@ RootObject* _aaGet(AA** aa, RootObject o)
     else
         (*x)[k] = null;
     return k in *x;
+}
+
+size_t _aaLen(AA* aa)
+{
+    auto x = *cast(RootObject[void*]*)&aa;
+    return x.length;
 }
