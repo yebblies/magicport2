@@ -62,6 +62,8 @@
                 "variable ctfeStack",
                 "function printCtfePerformanceStats",
                 "struct CompiledCtfeFunction",
+                "struct CtfeCompiler",
+                "function ctfeCompile",
                 "function ctfeInterpretForPragmaMsg",
                 "function stopPointersEscaping",
                 "function stopPointersEscapingFromArray",
@@ -2987,6 +2989,7 @@
         "OptimizeVisitor",
         "ToArgTypes",
         "VarWalker",
-        "ImplicitConvTo"
+        "ImplicitConvTo",
+        "CtfeCompiler"
     ]
 }
