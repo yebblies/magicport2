@@ -29,6 +29,7 @@
             "imports" :
             [
                 "apply",
+                "attrib",
                 "arraytypes",
                 "builtin",
                 "constfold",
@@ -36,6 +37,7 @@
                 "dclass",
                 "declaration",
                 "defs",
+                "dstruct",
                 "dsymbol",
                 "dtemplate",
                 "expression",
@@ -64,6 +66,7 @@
                 "struct CompiledCtfeFunction",
                 "struct CtfeCompiler",
                 "function ctfeCompile",
+                "function ctfeInterpret",
                 "function ctfeInterpretForPragmaMsg",
                 "function stopPointersEscaping",
                 "function stopPointersEscapingFromArray",
@@ -72,15 +75,7 @@
                 "function scrubArray",
                 "function isAnErrorException",
                 "function chainExceptions",
-                "function resolveReferences",
-                "function getVarExp",
-                "function recursivelyCreateArrayLiteral",
-                "function findParentVar",
-                "function interpretAssignToIndex",
-                "function interpretAssignToSlice",
-                "function isPointerCmpExp",
-                "function reverseRelation",
-                "function showCtfeBackTrace",
+                "struct Interpreter",
                 "function interpret_length",
                 "function interpret_keys",
                 "function interpret_values",
@@ -536,17 +531,30 @@
             "package" : "",
             "imports" :
             [
+                "arraytypes",
                 "attrib",
+                "complex",
+                "ctfeexpr",
                 "declaration",
                 "defs",
+                "doc",
                 "dscope",
                 "dsymbol",
                 "expression",
+                "identifier",
                 "init",
                 "lexer",
+                "longdouble",
+                "mars",
+                "dmodule",
                 "mtype",
+                "parse",
                 "root.outbuffer",
+                "root.port",
+                "root.rootobject",
                 "statement",
+                "target",
+                "dtemplate",
                 "visitor"
             ],
             "members" :
@@ -554,7 +562,17 @@
                 "struct HdrGenState",
                 "variable TEST_EMIT_ALL",
                 "struct PrettyPrintVisitor",
-                "function toCBuffer"
+                "function toCBufferStatement*OutBuffer*HdrGenState*",
+                "function toCBufferType*OutBuffer*Identifier*HdrGenState*",
+                "function toBufferShort",
+                "function trustToBuffer",
+                "function linkageToBuffer",
+                "function functionToBufferFull",
+                "function functionToBufferWithIdent",
+                "function toCBufferExpression*OutBuffer*HdrGenState*",
+                "function sizeToCBuffer",
+                "function expToCBuffer",
+                "function argsToCBuffer"
             ]
         },
         {
@@ -834,7 +852,6 @@
                 "variable TFLAGSvector",
                 "function semanticLengthScope*TupleDeclaration*Expression*",
                 "function semanticLengthScope*Type*Expression*",
-                "function functionToCBuffer2",
                 "function argsToDecoBufferDg",
                 "function isTPLDg",
                 "function dimDgvoid*size_tParameter*",
@@ -1039,11 +1056,15 @@
                 "opover",
                 "root.rmem",
                 "root.rootobject",
+                "root.outbuffer",
+                "utf",
                 "visitor"
             ],
             "members" :
             [
+                "function implicitCastTo",
                 "function implicitConvTo",
+                "function castTo",
                 "function isVoidArrayLiteral",
                 "function typeMerge",
                 "function integralPromotions",
@@ -2198,9 +2219,6 @@
                 "function checkDefCtor",
                 "function callCpCtor",
                 "function functionParameters",
-                "function expToCBuffer",
-                "function sizeToCBuffer",
-                "function argsToCBuffer",
                 "function argExpTypesToCBuffer",
                 "variable EXP_CANT_INTERPRET",
                 "variable EXP_CONTINUE_INTERPRET",
@@ -2208,7 +2226,6 @@
                 "variable EXP_GOTO_INTERPRET",
                 "variable EXP_VOID_INTERPRET",
                 "function RealEquals",
-                "function floatToBuffer",
                 "function realToMangleBuffer",
                 "function typeDotIdExp",
                 "function modifyFieldVar",
@@ -3004,6 +3021,9 @@
         "VarWalker",
         "ImplicitConvTo",
         "CtfeCompiler",
-        "PrettyPrintVisitor"
+        "PrettyPrintVisitor",
+        "ImplicitCastTo",
+        "CastTo",
+        "Interpreter"
     ]
 }
