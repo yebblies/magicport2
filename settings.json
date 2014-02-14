@@ -1187,6 +1187,11 @@
             ],
             "members" :
             [
+                "enum ILS",
+                "enum BUILTIN",
+                "struct StatementRewriteWalker",
+                "struct NrvoWalker",
+                "struct FuncDeclaration",
                 "function overloadApply",
                 "function MODMatchToBuffer",
                 "function resolveFuncCall",
@@ -1194,10 +1199,6 @@
                 "function traverseIndirections",
                 "function markAsNeedingClosure",
                 "function checkEscapingSiblings",
-                "function unitTestId",
-                "enum ILS",
-                "enum BUILTIN",
-                "struct FuncDeclaration",
                 "struct FuncAliasDeclaration",
                 "struct FuncLiteralDeclaration",
                 "struct CtorDeclaration",
@@ -1208,6 +1209,7 @@
                 "struct StaticDtorDeclaration",
                 "struct SharedStaticDtorDeclaration",
                 "struct InvariantDeclaration",
+                "function unitTestId",
                 "struct UnitTestDeclaration",
                 "struct NewDeclaration",
                 "struct DeleteDeclaration"
@@ -2101,7 +2103,7 @@
                 "function toWinPath",
                 "variable global",
                 "function errorLocchar*??",
-                "function errorchar*unsignedchar*??",
+                "function errorchar*unsignedunsignedchar*??",
                 "function warning",
                 "function errorSupplemental",
                 "function deprecation",
@@ -2699,7 +2701,6 @@
         "GotoStatements",
         "GotoCaseStatements",
         "TemplateInstances",
-        "ReturnStatements",
         "Files"
     ],
     "classTypes" :
@@ -3024,6 +3025,8 @@
         "PrettyPrintVisitor",
         "ImplicitCastTo",
         "CastTo",
-        "Interpreter"
+        "Interpreter",
+        "StatementRewriteWalker",
+        "NrvoWalker"
     ]
 }

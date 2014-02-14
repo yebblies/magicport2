@@ -307,6 +307,7 @@ class DPrinter : Visitor
         ["VarDeclaration", "toObjFile"],
         ["VarDeclaration", "toSymbol"],
         [null, "accept"],
+        [null, "visit"],
     ];
 
     auto nonfinalclasses =
@@ -335,6 +336,7 @@ class DPrinter : Visitor
         "ScopeDsymbol",
         "Section",
         "Statement",
+        "StatementRewriteWalker",
         "StaticCtorDeclaration",
         "StaticDtorDeclaration",
         "StoppableVisitor",
@@ -794,7 +796,7 @@ class DPrinter : Visitor
         println("");
         println("{");
         indent++;
-        if (ast.superid == "Visitor" || ast.superid == "StoppableVisitor")
+        if (ast.superid == "Visitor" || ast.superid == "StoppableVisitor" || ast.superid == "StatementRewriteWalker")
         {
             // base class aliasing rules are different in C++
             println("alias visit = super.visit;");

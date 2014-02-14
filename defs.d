@@ -90,6 +90,7 @@ extern extern(C++) void obj_write_deferred(Library library);
 extern extern(C++) Expression createTypeInfoArray(Scope* sc, Expression *args, size_t dim);
 extern extern(C++) int binary(const(char)* p, const(char)** tab, int n);
 extern extern(C++) dt_t** Expression_toDt(Expression e, dt_t** pdt);
+extern extern(C++) elem* toElem(Expression e, IRState *irs);
 
 uint rol(uint x, uint n)
 {
