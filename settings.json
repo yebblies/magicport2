@@ -153,7 +153,11 @@
             ],
             "members" :
             [
+                "struct CtfeStatus",
+                "struct ClassReferenceExp",
+                "struct VoidInitExp",
                 "function findFieldIndexByName",
+                "struct ThrownExceptionExp",
                 "function exceptionOrCantInterpret",
                 "function needToCopyLiteral",
                 "function copyLiteralArray",
@@ -202,11 +206,7 @@
                 "function assignAssocArrayElement",
                 "function changeArrayLiteralLength",
                 "function isCtfeValueValid",
-                "function showCtfeExpr",
-                "struct CtfeStatus",
-                "struct ClassReferenceExp",
-                "struct VoidInitExp",
-                "struct ThrownExceptionExp"
+                "function showCtfeExpr"
             ]
         },
         {
