@@ -68,6 +68,7 @@
                 "function ctfeCompile",
                 "function ctfeInterpret",
                 "function ctfeInterpretForPragmaMsg",
+                "function interpret",
                 "function stopPointersEscaping",
                 "function stopPointersEscapingFromArray",
                 "function scrubReturnValue",
@@ -82,7 +83,12 @@
                 "function interpret_aaApply",
                 "function returnedArrayType",
                 "function foreachApplyUtf",
-                "function evaluateIfBuiltin"
+                "function evaluateIfBuiltin",
+                "function hasValue",
+                "function getValueVarDeclaration*",
+                "function setValueNull",
+                "function setValueWithoutChecking",
+                "function setValue"
             ]
         },
         {
@@ -206,7 +212,8 @@
                 "function assignAssocArrayElement",
                 "function changeArrayLiteralLength",
                 "function isCtfeValueValid",
-                "function showCtfeExpr"
+                "function showCtfeExpr",
+                "function voidInitLiteral"
             ]
         },
         {
@@ -260,6 +267,7 @@
                 "attrib",
                 "declaration",
                 "defs",
+                "dscope",
                 "dstruct",
                 "dsymbol",
                 "expression",
@@ -283,10 +291,12 @@
                 "function tooCostly",
                 "struct InlineCostVisitor",
                 "struct InlineDoState",
+                "function inlineAsStatement",
                 "function arrayExpressiondoInline",
                 "struct InlineScanVisitor",
                 "function inlineScan",
-                "function expandInline"
+                "function expandInline",
+                "function inlineCopy"
             ]
         },
         {
@@ -3027,6 +3037,7 @@
         "CastTo",
         "Interpreter",
         "StatementRewriteWalker",
-        "NrvoWalker"
+        "NrvoWalker",
+        "InlineAsStatement"
     ]
 }
