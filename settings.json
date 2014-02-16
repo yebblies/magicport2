@@ -248,6 +248,7 @@
             [
                 "function search_toHash",
                 "function search_toString",
+                "function semanticTypeInfo",
                 "struct StructFlags",
                 "enum StructPOD",
                 "struct StructDeclaration",
@@ -3039,6 +3040,7 @@
         "NrvoWalker",
         "InlineAsStatement",
         "InlineStatement",
-        "InlineExpression"
+        "InlineExpression",
+        "FullTypeInfoVisitor"
     ]
 }
