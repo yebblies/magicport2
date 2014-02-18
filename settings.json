@@ -2397,8 +2397,10 @@
                 "aggregate",
                 "arraytypes",
                 "declaration",
+                "dclass",
                 "defs",
                 "dscope",
+                "dstruct",
                 "dsymbol",
                 "dtemplate",
                 "expression",
@@ -2417,6 +2419,8 @@
                 "function opId_r",
                 "function isAggregate",
                 "function opToArg",
+                "function op_overload",
+                "function compare_overload",
                 "function build_overload",
                 "function search_function",
                 "function inferApplyArgTypesX",
@@ -3042,6 +3046,7 @@
         "InlineAsStatement",
         "InlineStatement",
         "InlineExpression",
-        "FullTypeInfoVisitor"
+        "FullTypeInfoVisitor",
+        "OpOverload"
     ]
 }
