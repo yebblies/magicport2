@@ -96,6 +96,7 @@
             [
                 "aggregate",
                 "arraytypes",
+                "clone",
                 "declaration",
                 "defs",
                 "dmodule",
@@ -403,13 +404,40 @@
             "package" : "",
             "imports" :
             [
+                "aggregate",
+                "arraytypes",
                 "declaration",
                 "defs",
-                "mars"
+                "dscope",
+                "dstruct",
+                "dsymbol",
+                "dtemplate",
+                "expression",
+                "func",
+                "id",
+                "identifier",
+                "init",
+                "lexer",
+                "mars",
+                "mtype",
+                "opover",
+                "statement"
             ],
             "members" :
             [
-                "function mergeFuncAttrs"
+                "function mergeFuncAttrs",
+                "function hasIdentityOpAssign",
+                "function needOpAssign",
+                "function buildOpAssign",
+                "function needOpEquals",
+                "function hasIdentityOpEquals",
+                "function buildOpEquals",
+                "function buildXopEquals",
+                "function buildXopCmp",
+                "function buildCpCtor",
+                "function buildPostBlit",
+                "function buildDtor",
+                "function buildInv"
             ]
         },
         {
@@ -2161,6 +2189,7 @@
                 "canthrow",
                 "complex",
                 "constfold",
+                "clone",
                 "ctfeexpr",
                 "dcast",
                 "dclass",
@@ -2411,6 +2440,7 @@
                 "lexer",
                 "mars",
                 "mtype",
+                "statement",
                 "visitor"
             ],
             "members" :
@@ -2424,6 +2454,8 @@
                 "function compare_overload",
                 "function build_overload",
                 "function search_function",
+                "function inferAggregate",
+                "function inferApplyArgTypes",
                 "function inferApplyArgTypesX",
                 "function inferApplyArgTypesY",
                 "version function inferApplyArgTypesZ"
