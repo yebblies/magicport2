@@ -2343,6 +2343,7 @@
                 "struct DivExp",
                 "struct ModExp",
                 "struct PowExp",
+                "function loadStdMath",
                 "struct ShlExp",
                 "struct ShrExp",
                 "struct UshrExp",
