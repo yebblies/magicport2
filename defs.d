@@ -23,6 +23,7 @@ import lib;
 import root.file;
 import expression;
 import dscope;
+import mtype;
 
 // win32
 
@@ -90,6 +91,7 @@ extern extern(C++) void obj_write_deferred(Library library);
 extern extern(C++) Expression createTypeInfoArray(Scope* sc, Expression *args, size_t dim);
 extern extern(C++) dt_t** Expression_toDt(Expression e, dt_t** pdt);
 extern extern(C++) elem* toElem(Expression e, IRState *irs);
+extern extern(C++) RET retStyle(TypeFunction tf);
 
 uint rol(uint x, uint n)
 {
