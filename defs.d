@@ -24,6 +24,7 @@ import root.file;
 import expression;
 import dscope;
 import mtype;
+import statement;
 
 // win32
 
@@ -92,6 +93,7 @@ extern extern(C++) Expression createTypeInfoArray(Scope* sc, Expression *args, s
 extern extern(C++) dt_t** Expression_toDt(Expression e, dt_t** pdt);
 extern extern(C++) elem* toElem(Expression e, IRState *irs);
 extern extern(C++) RET retStyle(TypeFunction tf);
+extern extern(C++) Statement asmSemantic(AsmStatement s, Scope *sc);
 
 uint rol(uint x, uint n)
 {
