@@ -484,15 +484,20 @@
                 "dstruct",
                 "dsymbol",
                 "expression",
+                "func",
                 "lexer",
                 "mars",
                 "mtype"
             ],
             "members" :
             [
+                "function getAccess",
                 "function accessCheckX",
+                "function accessCheckAggregateDeclaration*LocScope*Dsymbol*",
+                "function isFriendOf",
                 "function hasPackageAccess",
-                "function accessCheck"
+                "function hasPrivateAccess",
+                "function accessCheckLocScope*Expression*Declaration*"
             ]
         },
         {
@@ -846,6 +851,7 @@
                 "defs",
                 "denum",
                 "dimport",
+                "dmangle",
                 "dscope",
                 "dstruct",
                 "dsymbol",
@@ -952,6 +958,7 @@
                 "dclass",
                 "declaration",
                 "defs",
+                "dmangle",
                 "dmodule",
                 "doc",
                 "dscope",
@@ -1020,6 +1027,7 @@
             [
                 "arraytypes",
                 "defs",
+                "dmangle",
                 "expression",
                 "func",
                 "lexer",
@@ -1842,19 +1850,29 @@
             "package" : "",
             "imports" :
             [
+                "aggregate",
                 "declaration",
+                "cppmangle",
+                "dclass",
                 "defs",
+                "dmodule",
                 "dsymbol",
+                "dstruct",
                 "dtemplate",
                 "expression",
                 "func",
+                "id",
                 "mars",
                 "mtype",
-                "root.outbuffer"
+                "root.outbuffer",
+                "visitor"
             ],
             "members" :
             [
-                "function mangle"
+                "function mangleDecl",
+                "struct Mangler",
+                "function mangle",
+                "function mangleExact"
             ]
         },
         {
@@ -2226,6 +2244,7 @@
                 "delegatize",
                 "denum",
                 "dimport",
+                "dmangle",
                 "dmodule",
                 "doc",
                 "dscope",
@@ -3120,6 +3139,7 @@
         "DeduceType",
         "InferType",
         "EmitComment",
-        "ToDocBuffer"
+        "ToDocBuffer",
+        "Mangler"
     ]
 }
