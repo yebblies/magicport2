@@ -1,6 +1,8 @@
 
 module longdouble;
 
+import core.stdc.stdio;
+
 import defs;
 
 real ldouble(T)(T x) { return cast(real)x; }

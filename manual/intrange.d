@@ -1,6 +1,8 @@
 
 module intrange;
 
+import core.stdc.stdio;
+
 import mars;
 import mtype;
 import expression;
