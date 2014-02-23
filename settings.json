@@ -2169,6 +2169,7 @@
                 "cond",
                 "core.stdc.ctype",
                 "core.stdc.errno",
+                "core.stdc.limits",
                 "core.stdc.stdarg",
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
