@@ -1,7 +1,6 @@
 
 // c library
 
-public import core.stdc.time : time_t, ctime, time;
 public import core.stdc.stdint : int64_t, uint64_t, int32_t, uint32_t, int16_t, uint16_t, int8_t, uint8_t;
 
 private import core.stdc.string : strcmp, strlen, strncmp, strchr, memset, memmove, strdup, strcpy, strcat, xmemcmp = memcmp, memcpy, strrchr, strstr;

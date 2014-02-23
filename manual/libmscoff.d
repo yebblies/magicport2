@@ -20,6 +20,8 @@ module libmscoff;
 
 import core.stdc.stdio;
 import core.stdc.stdlib;
+import core.stdc.time;
+
 import root.file, root.filename, root.outbuffer, root.stringtable;
 import defs, mars, lib, scanmscoff;
 
