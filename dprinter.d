@@ -956,6 +956,7 @@ class DPrinter : Visitor
         {
             assert(ast.args.length == 1);
             visitX(ast.args[0]);
+            return;
         }
         else if (ie && ie.id == "va_start")
         {
@@ -965,14 +966,20 @@ class DPrinter : Visitor
             print(", __va_argsave); else va_start(");
             printArgs(ast.args);
             print(")");
+            return;
         }
-        else
+        if (ie && ie.id == "memcmp")
         {
-            visitX(ast.func);
-            print("(");
-            printArgs(ast.args);
-            print(")");
+            auto le = cast(LitExpr)ast.args[1];
+            if (le && le.val[0] == '"')
+            {
+                ast.args[1] = new CastExpr(new PointerType(new BasicType("char")), ast.args[1]);
+            }
         }
+        visitX(ast.func);
+        print("(");
+        printArgs(ast.args);
+        print(")");
     }
 
     override void visit(CmpExpr ast)

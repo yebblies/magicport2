@@ -1,8 +1,9 @@
 
 module root.array;
 
+import core.stdc.string;
+
 import root.rmem;
-import defs;
 
 extern(C++)
 struct Array(T)

@@ -20,6 +20,7 @@ module libmscoff;
 
 import core.stdc.stdio;
 import core.stdc.stdlib;
+import core.stdc.string;
 import core.stdc.time;
 
 import root.file, root.filename, root.outbuffer, root.stringtable;
@@ -127,7 +128,7 @@ public:
             exit(EXIT_FAILURE);
         }
 
-        if (memcmp(cast(char*)buf, "!<arch>\n", 8) == 0)
+        if (memcmp(cast(char*)buf, cast(char*)"!<arch>\n", 8) == 0)
         {
             /* It's a library file.
              * Pull each object module out of the library and add it
@@ -180,7 +181,7 @@ public:
 
                 //printf("header.object_name = '%.*s'\n", OBJECT_NAME_SIZE, header.object_name);
 
-                if (memcmp(header.object_name.ptr, "/               ", OBJECT_NAME_SIZE) == 0)
+                if (memcmp(header.object_name.ptr, cast(char*)"/               ", OBJECT_NAME_SIZE) == 0)
                 {
                     if (!flm)
                     {
@@ -237,7 +238,7 @@ public:
                         }
                     }
                 }
-                else if (memcmp(header.object_name.ptr, "//              ", OBJECT_NAME_SIZE) == 0)
+                else if (memcmp(header.object_name.ptr, cast(char*)"//              ", OBJECT_NAME_SIZE) == 0)
                 {
                     if (!lnm)
                     {

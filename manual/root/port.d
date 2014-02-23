@@ -2,6 +2,7 @@
 module root.port;
 
 import core.stdc.ctype;
+import core.stdc.string;
 
 import defs;
 import target;
@@ -45,7 +46,7 @@ struct Port
     }
     static bool isNan(double r) { return !(r == r); }
     static real fmodl(real a, real b) { return a % b; }
-    static real fequal(real a, real b) { return xmemcmp(&a, &b, 10) == 0; }
+    static real fequal(real a, real b) { return memcmp(&a, &b, 10) == 0; }
     static int memicmp(const char* s1, const char* s2, size_t n)
     {
         int result = 0;

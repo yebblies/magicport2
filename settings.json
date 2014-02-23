@@ -33,6 +33,7 @@
                 "arraytypes",
                 "builtin",
                 "constfold",
+                "core.stdc.string",
                 "ctfeexpr",
                 "dclass",
                 "declaration",
@@ -97,6 +98,7 @@
                 "aggregate",
                 "arraytypes",
                 "clone",
+                "core.stdc.string",
                 "declaration",
                 "defs",
                 "dmodule",
@@ -138,6 +140,7 @@
                 "complex",
                 "constfold",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "dclass",
                 "declaration",
                 "defs",
@@ -267,6 +270,7 @@
                 "arraytypes",
                 "attrib",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "declaration",
                 "defs",
                 "dscope",
@@ -448,6 +452,7 @@
             "imports" :
             [
                 "arraytypes",
+                "core.stdc.string",
                 "defs",
                 "dmodule",
                 "dmodule",
@@ -528,6 +533,7 @@
                 "attrib",
                 "arraytypes",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "dclass",
                 "declaration",
                 "defs",
@@ -584,6 +590,7 @@
                 "complex",
                 "core.stdc.ctype",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "ctfeexpr",
                 "declaration",
                 "defs",
@@ -633,6 +640,7 @@
             "imports" :
             [
                 "core.stdc.stdlib",
+                "core.stdc.string",
                 "defs",
                 "root.array",
                 "root.filename",
@@ -855,6 +863,7 @@
                 "core.stdc.stdarg",
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
+                "core.stdc.string",
                 "ctfeexpr",
                 "dcast",
                 "dclass",
@@ -967,6 +976,7 @@
                 "attrib",
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
+                "core.stdc.string",
                 "dcast",
                 "dclass",
                 "declaration",
@@ -1040,6 +1050,7 @@
             [
                 "arraytypes",
                 "core.stdc.math",
+                "core.stdc.string",
                 "defs",
                 "dmangle",
                 "expression",
@@ -1078,6 +1089,7 @@
                 "arraytypes",
                 "attrib",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "dclass",
                 "declaration",
                 "defs",
@@ -1109,6 +1121,7 @@
                 "arrayop",
                 "arraytypes",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "dclass",
                 "declaration",
                 "defs",
@@ -1153,6 +1166,7 @@
             "package" : "",
             "imports" :
             [
+                "core.stdc.string",
                 "defs"
             ],
             "members" :
@@ -1194,6 +1208,7 @@
                 "core.stdc.ctype",
                 "core.stdc.errno",
                 "core.stdc.stdlib",
+                "core.stdc.string",
                 "defs",
                 "root.array",
                 "root.file",
@@ -1214,6 +1229,7 @@
             "imports" :
             [
                 "core.stdc.stdlib",
+                "core.stdc.string",
                 "defs"
             ],
             "members" :
@@ -1236,6 +1252,7 @@
                 "attrib",
                 "builtin",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "ctfeexpr",
                 "dclass",
                 "declaration",
@@ -1434,6 +1451,7 @@
                 "arraytypes",
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
+                "core.stdc.string",
                 "defs",
                 "dimport",
                 "dmacro",
@@ -1490,6 +1508,7 @@
             [
                 "core.stdc.ctype",
                 "core.stdc.stdlib",
+                "core.stdc.string",
                 "defs",
                 "root.file",
                 "root.filename",
@@ -1522,6 +1541,7 @@
             "imports" :
             [
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "defs",
                 "id",
                 "lexer",
@@ -1654,6 +1674,7 @@
                 "attrib",
                 "core.stdc.stdarg",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "dclass",
                 "declaration",
                 "declaration",
@@ -1709,6 +1730,7 @@
             "imports" :
             [
                 "core.stdc.ctype",
+                "core.stdc.string",
                 "defs",
                 "doc",
                 "root.outbuffer",
@@ -1730,6 +1752,7 @@
                 "core.stdc.ctype",
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
+                "core.stdc.string",
                 "defs",
                 "mars",
                 "root.file",
@@ -1758,6 +1781,7 @@
                 "aggregate",
                 "arraytypes",
                 "attrib",
+                "core.stdc.string",
                 "declaration",
                 "dclass",
                 "defs",
@@ -1815,6 +1839,7 @@
                 "arraytypes",
                 "cond",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "dclass",
                 "declaration",
                 "defs",
@@ -1889,6 +1914,7 @@
                 "aggregate",
                 "core.stdc.ctype",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "declaration",
                 "cppmangle",
                 "dclass",
@@ -1922,6 +1948,7 @@
                 "core.stdc.errno",
                 "core.stdc.stdarg",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "core.stdc.time",
                 "defs",
                 "dmodule",
@@ -1969,6 +1996,7 @@
                 "attrib",
                 "cond",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "dclass",
                 "declaration",
                 "defs",
@@ -2036,6 +2064,7 @@
                 "arraytypes",
                 "builtin",
                 "complex",
+                "core.stdc.string",
                 "declaration",
                 "defs",
                 "dstruct",
@@ -2117,6 +2146,7 @@
             [
                 "arraytypes",
                 "attrib",
+                "core.stdc.string",
                 "declaration",
                 "defs",
                 "dmodule",
@@ -2176,6 +2206,7 @@
                 "core.stdc.stdint",
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
+                "core.stdc.string",
                 "defs",
                 "doc",
                 "dinifile",
@@ -2287,6 +2318,7 @@
                 "constfold",
                 "core.stdc.stdarg",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "clone",
                 "ctfeexpr",
                 "dcast",
@@ -2526,6 +2558,7 @@
                 "aggregate",
                 "arraytypes",
                 "core.stdc.stdio",
+                "core.stdc.string",
                 "declaration",
                 "dclass",
                 "defs",
@@ -2571,6 +2604,7 @@
                 "attrib",
                 "core.stdc.ctype",
                 "core.stdc.stdlib",
+                "core.stdc.string",
                 "core.stdc.time",
                 "dclass",
                 "declaration",
@@ -2650,6 +2684,7 @@
             "imports" :
             [
                 "arraytypes",
+                "core.stdc.string",
                 "declaration",
                 "defs",
                 "dstruct",

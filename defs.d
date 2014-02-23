@@ -1,8 +1,6 @@
 
 // c library
 
-private import core.stdc.string : strcmp, strlen, strncmp, strchr, memset, memmove, strdup, strcpy, strcat, xmemcmp = memcmp, memcpy, strrchr, strstr;
-
 private import core.memory;
 
 // generated source
@@ -48,12 +46,6 @@ else version(Posix)
 }
 else
     static assert(0);
-
-// c lib
-
-// So we can accept string literals
-int memcmp(const char* a, const char* b, size_t len) { return .xmemcmp(a, b, len); }
-int memcmp(const void* a, const void* b, size_t len) { return .xmemcmp(a, b, len); }
 
 // Not defined for some reason
 extern(C) int stricmp(const char*, const char*);
