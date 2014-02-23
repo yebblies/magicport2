@@ -631,6 +631,7 @@
             "package" : "root",
             "imports" :
             [
+                "core.stdc.stdlib",
                 "defs",
                 "root.array",
                 "root.filename",
@@ -852,6 +853,7 @@
                 "core.stdc.float_",
                 "core.stdc.stdarg",
                 "core.stdc.stdio",
+                "core.stdc.stdlib",
                 "ctfeexpr",
                 "dcast",
                 "dclass",
@@ -963,6 +965,7 @@
                 "arraytypes",
                 "attrib",
                 "core.stdc.stdio",
+                "core.stdc.stdlib",
                 "dcast",
                 "dclass",
                 "declaration",
@@ -1186,6 +1189,7 @@
             "package" : "root",
             "imports" :
             [
+                "core.stdc.stdlib",
                 "defs",
                 "root.array",
                 "root.file",
@@ -1205,6 +1209,7 @@
             "package" : "root",
             "imports" :
             [
+                "core.stdc.stdlib",
                 "defs"
             ],
             "members" :
@@ -1424,6 +1429,7 @@
                 "aggregate",
                 "arraytypes",
                 "core.stdc.stdio",
+                "core.stdc.stdlib",
                 "defs",
                 "dimport",
                 "dmacro",
@@ -1478,6 +1484,7 @@
             "package" : "",
             "imports" :
             [
+                "core.stdc.stdlib",
                 "defs",
                 "root.file",
                 "root.filename",
@@ -1715,6 +1722,7 @@
             "imports" :
             [
                 "core.stdc.stdio",
+                "core.stdc.stdlib",
                 "defs",
                 "mars",
                 "root.file",
@@ -2152,6 +2160,7 @@
                 "cond",
                 "core.stdc.stdarg",
                 "core.stdc.stdio",
+                "core.stdc.stdlib",
                 "defs",
                 "doc",
                 "dinifile",
@@ -2545,6 +2554,7 @@
                 "aggregate",
                 "arraytypes",
                 "attrib",
+                "core.stdc.stdlib",
                 "dclass",
                 "declaration",
                 "defs",

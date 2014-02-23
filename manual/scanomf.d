@@ -14,6 +14,8 @@
  
 module scanomf;
 
+import core.stdc.stdlib;
+
 import root.outbuffer;
 import arraytypes, defs, mars;
 

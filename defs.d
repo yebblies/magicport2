@@ -1,7 +1,6 @@
 
 // c library
 
-public import core.stdc.stdlib : alloca, exit, EXIT_FAILURE, EXIT_SUCCESS, strtol, strtoull, getenv, malloc, calloc, free;
 public import core.stdc.ctype : isspace, isdigit, isalnum, isprint, isalpha, isxdigit, islower, tolower, toupper;
 public import core.stdc.errno : errno, EEXIST, ERANGE;
 public import core.stdc.limits : INT_MAX;
