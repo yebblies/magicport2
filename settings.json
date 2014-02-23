@@ -844,6 +844,7 @@
                 "arraytypes",
                 "attrib",
                 "complex",
+                "core.stdc.float_",
                 "core.stdc.stdarg",
                 "ctfeexpr",
                 "dcast",
