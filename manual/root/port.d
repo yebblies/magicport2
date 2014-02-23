@@ -1,6 +1,8 @@
 
 module root.port;
 
+import core.stdc.ctype;
+
 import defs;
 import target;
 

@@ -582,6 +582,7 @@
                 "arraytypes",
                 "attrib",
                 "complex",
+                "core.stdc.ctype",
                 "core.stdc.stdio",
                 "ctfeexpr",
                 "declaration",
@@ -1189,6 +1190,7 @@
             "package" : "root",
             "imports" :
             [
+                "core.stdc.ctype",
                 "core.stdc.stdlib",
                 "defs",
                 "root.array",
@@ -1484,6 +1486,7 @@
             "package" : "",
             "imports" :
             [
+                "core.stdc.ctype",
                 "core.stdc.stdlib",
                 "defs",
                 "root.file",
@@ -1703,6 +1706,7 @@
             "package" : "",
             "imports" :
             [
+                "core.stdc.ctype",
                 "defs",
                 "doc",
                 "root.outbuffer",
@@ -1721,6 +1725,7 @@
             "package" : "",
             "imports" :
             [
+                "core.stdc.ctype",
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
                 "defs",
@@ -1880,6 +1885,7 @@
             "imports" :
             [
                 "aggregate",
+                "core.stdc.ctype",
                 "core.stdc.stdio",
                 "declaration",
                 "cppmangle",
@@ -1910,6 +1916,7 @@
             "package" : "",
             "imports" :
             [
+                "core.stdc.ctype",
                 "core.stdc.stdarg",
                 "core.stdc.stdio",
                 "defs",
@@ -2158,6 +2165,7 @@
                 "arraytypes",
                 "builtin",
                 "cond",
+                "core.stdc.ctype",
                 "core.stdc.stdarg",
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
@@ -2554,6 +2562,7 @@
                 "aggregate",
                 "arraytypes",
                 "attrib",
+                "core.stdc.ctype",
                 "core.stdc.stdlib",
                 "dclass",
                 "declaration",

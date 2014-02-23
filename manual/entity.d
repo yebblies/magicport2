@@ -9,7 +9,7 @@
 
 module entity;
 
-import defs;
+import core.stdc.ctype;
 
 /*********************************************
  * Convert from named entity to its encoding.
