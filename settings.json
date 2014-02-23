@@ -16,7 +16,7 @@
         "arrayop.c", "aliasthis.h", "aliasthis.c", "json.h", "json.c",
         "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sapply.c", "sideeffect.c",
         "ctfe.h", "canthrow.c", "target.c", "target.h", "id.c", "id.h",
-        "impcnvtab.c", "visitor.h",
+        "impcnvtab.c", "visitor.h", "lib.h",
         "root/filename.h", "root/filename.c",
         "root/file.h", "root/file.c",
         "root/speller.h", "root/speller.c"
@@ -2612,6 +2612,18 @@
             [
                 "version struct CppMangleVisitor"
             ]
+        },
+        {
+            "module" : "lib",
+            "package" : "",
+            "imports" :
+            [
+                "defs",
+                "mars"
+            ],
+            "members" : [
+                "struct Library"
+            ]
         }
     ],
     "basicTypes" :
@@ -2799,7 +2811,6 @@
         "Blocks",
         "ScopeStatements",
         "CaseStatements",
-        "Dts",
         "AliasDeclarations",
         "GotoStatements",
         "GotoCaseStatements",

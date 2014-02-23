@@ -26,14 +26,14 @@ GENSRC=$(DP)\access.d $(DP)\aggregate.d $(DP)\aliasthis.d $(DP)\apply.d \
 	$(DP)\parse.d $(DP)\sapply.d $(DP)\dscope.d $(DP)\sideeffect.d \
 	$(DP)\statement.d $(DP)\staticassert.d $(DP)\dstruct.d \
 	$(DP)\target.d $(DP)\dtemplate.d $(DP)\traits.d $(DP)\dunittest.d \
-	$(DP)\utf.d $(DP)\dversion.d $(DP)\visitor.d \
+	$(DP)\utf.d $(DP)\dversion.d $(DP)\visitor.d $(DP)\lib.d \
 	$(RP)\file.d $(RP)\filename.d $(RP)\speller.d
 
 DM=manual
 RM=manual\root
 MANUALSRC= \
 	$(DM)\intrange.d $(DM)\complex.d $(DM)\longdouble.d \
-	$(DM)\lib.d $(DM)\libomf.d $(DM)\scanomf.d \
+	$(DM)\libomf.d $(DM)\scanomf.d \
 	$(DM)\libmscoff.d $(DM)\scanmscoff.d \
 	$(DM)\entity.d \
 	$(RM)\aav.d $(RM)\array.d \
@@ -42,7 +42,7 @@ MANUALSRC= \
 
 COPYSRC= \
 	$(DP)\intrange.d $(DP)\complex.d $(DP)\longdouble.d \
-	$(DP)\lib.d $(DP)\libomf.d $(DP)\scanomf.d \
+	$(DP)\libomf.d $(DP)\scanomf.d \
 	$(DP)\libmscoff.d $(DP)\scanmscoff.d \
 	$(DP)\entity.d \
 	$(RP)\aav.d $(RP)\array.d \

@@ -179,7 +179,6 @@ void main(string[] args)
     auto manualsrc =
     [
         "intrange.d", "complex.d", "longdouble.d",
-        "lib.d",
         "libomf.d", "scanomf.d",
         "libmscoff.d", "scanmscoff.d",
         "libelf.d", "scanelf.d",
