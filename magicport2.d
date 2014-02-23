@@ -182,6 +182,7 @@ void main(string[] args)
         "libomf.d", "scanomf.d",
         "libmscoff.d", "scanmscoff.d",
         "libelf.d", "scanelf.d",
+        "libmach.d", "scanmach.d",
         "entity.d"
     ];
     foreach(fn; manualsrc)

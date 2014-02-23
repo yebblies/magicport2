@@ -26,6 +26,8 @@ import core.stdc.time;
 import root.file, root.filename, root.outbuffer, root.stringtable;
 import defs, mars, lib, scanmscoff;
 
+static if (TARGET_WINDOS):
+
 enum LOG = false;
 
 struct ObjSymbol

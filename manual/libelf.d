@@ -10,9 +10,18 @@
 
 module libelf;
 
-import core.stdc.stdlib, core.sys.posix.sys.types, core.sys.posix.unistd;
+import core.stdc.stdio;
+import core.stdc.stdlib;
+import core.stdc.string;
+import core.stdc.time;
+
+import core.sys.posix.sys.types;
+import core.sys.posix.unistd;
+
 import root.file, root.filename, root.outbuffer, root.stringtable;
 import defs, mars, lib, scanelf;
+
+static if (TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS):
 
 enum LOG = false;
 

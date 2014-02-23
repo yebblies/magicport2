@@ -20,6 +20,8 @@ import core.stdc.string;
 import root.outbuffer;
 import arraytypes, defs, mars;
 
+static if (TARGET_WINDOS):
+
 enum LOG = 0;
 
 /**************************

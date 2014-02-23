@@ -11,7 +11,9 @@
 module scanelf;
 
 import core.stdc.string, core.sys.linux.elf;
-import mars, lib;
+import defs, mars, lib;
+
+static if (TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS):
 
 enum LOG = 0;
 

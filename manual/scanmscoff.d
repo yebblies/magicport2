@@ -20,6 +20,8 @@ module scanmscoff;
 import core.stdc.string;
 import defs, mars, lib;
 
+static if (TARGET_WINDOS):
+
 enum LOG = 0;
 
 /*****************************************

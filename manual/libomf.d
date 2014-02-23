@@ -22,6 +22,8 @@ import core.stdc.string;
 import root.file, root.filename, root.outbuffer, root.stringtable;
 import defs, lib, mars, scanomf;
 
+static if (TARGET_WINDOS):
+
 enum LOG = false;
 
 struct ObjSymbol

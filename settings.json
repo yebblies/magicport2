@@ -2711,7 +2711,11 @@
             "imports" :
             [
                 "defs",
-                "mars"
+                "mars",
+                "libelf",
+                "libomf",
+                "libmach",
+                "libmscoff"
             ],
             "members" : [
                 "struct Library"

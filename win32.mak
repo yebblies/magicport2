@@ -35,6 +35,8 @@ MANUALSRC= \
 	$(DM)\intrange.d $(DM)\complex.d $(DM)\longdouble.d \
 	$(DM)\libomf.d $(DM)\scanomf.d \
 	$(DM)\libmscoff.d $(DM)\scanmscoff.d \
+	$(DM)\libelf.d $(DM)\scanelf.d \
+	$(DM)\libmach.d $(DM)\scanmach.d \
 	$(DM)\entity.d \
 	$(RM)\aav.d $(RM)\array.d \
 	$(RM)\man.d $(RM)\rootobject.d $(RM)\outbuffer.d $(RM)\port.d \
@@ -44,6 +46,8 @@ COPYSRC= \
 	$(DP)\intrange.d $(DP)\complex.d $(DP)\longdouble.d \
 	$(DP)\libomf.d $(DP)\scanomf.d \
 	$(DP)\libmscoff.d $(DP)\scanmscoff.d \
+	$(DP)\libelf.d $(DP)\scanelf.d \
+	$(DP)\libmach.d $(DP)\scanmach.d \
 	$(DP)\entity.d \
 	$(RP)\aav.d $(RP)\array.d \
 	$(RP)\man.d $(RP)\rootobject.d $(RP)\outbuffer.d $(RP)\port.d \

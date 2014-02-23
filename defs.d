@@ -71,10 +71,6 @@ extern extern(C++) dt_t** Expression_toDt(Expression e, dt_t** pdt);
 extern extern(C++) elem* toElem(Expression e, IRState *irs);
 extern extern(C++) RET retStyle(TypeFunction tf);
 extern extern(C++) Statement asmSemantic(AsmStatement s, Scope *sc);
-extern extern(C++) Library LibMSCoff_factory();
-extern extern(C++) Library LibOMF_factory();
-extern extern(C++) Library LibElf_factory();
-extern extern(C++) Library LibMach_factory();
 
 uint rol(uint x, uint n)
 {
