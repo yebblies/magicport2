@@ -1,8 +1,4 @@
 
-// c library
-
-private import core.memory;
-
 // generated source
 
 import mars;
@@ -92,7 +88,6 @@ uint ror(uint x, uint n)
 int main(string[] args)
 {
     scope(failure) tracedepth = -1;
-    GC.disable();
 
     int argc = cast(int)args.length;
     auto argv = (new const(char)*[](argc)).ptr;
