@@ -1039,6 +1039,7 @@
             "imports" :
             [
                 "arraytypes",
+                "core.stdc.math",
                 "defs",
                 "dmangle",
                 "expression",
