@@ -2173,6 +2173,7 @@
                 "core.stdc.errno",
                 "core.stdc.limits",
                 "core.stdc.stdarg",
+                "core.stdc.stdint",
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
                 "defs",
