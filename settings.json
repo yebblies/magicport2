@@ -639,7 +639,9 @@
             "package" : "root",
             "imports" :
             [
+                "core.stdc.errno",
                 "core.stdc.stdlib",
+                "core.stdc.stdio",
                 "core.stdc.string",
                 "defs",
                 "root.array",

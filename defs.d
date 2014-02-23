@@ -26,6 +26,7 @@ version(Windows)
 }
 else version(Posix)
 {
+    import core.stdc.stdio;
     public import core.sys.posix.sys.stat : stat_t, stat, S_ISDIR;
     public import core.sys.posix.fcntl : fstat, open, O_RDONLY, O_CREAT, O_WRONLY, O_TRUNC;
     public import core.sys.posix.unistd : read, close, write, pid_t, fork, dup2, STDERR_FILENO, execvp, execv;
