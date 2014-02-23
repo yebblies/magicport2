@@ -1,7 +1,6 @@
 
 // c library
 
-public import core.stdc.stdarg;
 public import core.stdc.stdio : printf, sprintf, fprintf, vprintf, fputs, fwrite, putchar, remove, fflush, stdout, stderr, FILE, fread, ferror, feof, L_tmpnam, perror;
 public import core.stdc.stdlib : alloca, exit, EXIT_FAILURE, EXIT_SUCCESS, strtol, strtoull, getenv, malloc, calloc, free;
 public import core.stdc.ctype : isspace, isdigit, isalnum, isprint, isalpha, isxdigit, islower, tolower, toupper;

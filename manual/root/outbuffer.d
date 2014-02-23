@@ -1,6 +1,8 @@
 
 module root.outbuffer;
 
+import core.stdc.stdarg;
+
 import root.rootobject;
 import defs;
 
