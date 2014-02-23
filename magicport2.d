@@ -119,6 +119,13 @@ void main(string[] args)
         if (m.imports.length)
             f.writeln();
 
+        foreach(e; m.extra)
+        {
+            f.writeln(e);
+        }
+        if (m.extra.length)
+            f.writeln();
+
         auto printer = new DPrinter((string s) { f.write(s); }, scan);
         foreach(d; m.members)
         {
@@ -231,6 +238,7 @@ struct M
     string p;
     string[] imports;
     string[] members;
+    string[] extra;
 }
 
 auto loadMapping(JSONValue[] modules)
@@ -240,11 +248,15 @@ auto loadMapping(JSONValue[] modules)
     {
         auto imports = j.object["imports"].array.map!"a.str"().array;
         sort(imports);
+        string[] extra;
+        if ("extra" in j.object)
+            extra = j.object["extra"].array.map!"a.str"().array;
         r ~= M(
             j.object["module"].str,
             j.object["package"].str,
             imports,
-            j.object["members"].array.map!"a.str"().array
+            j.object["members"].array.map!"a.str"().array,
+            extra
         );
     }
     return r;

@@ -50,28 +50,6 @@ extern(C) int spawnlp(int, const char*, const char*, const char*, const char*);
 extern(C) int spawnl(int, const char*, const char*, const char*, const char*);
 extern(C) int spawnv(int, const char*, const char**);
 
-// Backend
-
-struct Symbol;
-struct TYPE;
-alias TYPE type;
-struct elem;
-struct code;
-struct block;
-struct dt_t;
-struct IRState;
-
-extern extern(C++) void backend_init();
-extern extern(C++) void backend_term();
-extern extern(C++) void obj_start(char *srcfile);
-extern extern(C++) void obj_end(Library library, File* objfile);
-extern extern(C++) void obj_write_deferred(Library library);
-extern extern(C++) Expression createTypeInfoArray(Scope* sc, Expression *args, size_t dim);
-extern extern(C++) dt_t** Expression_toDt(Expression e, dt_t** pdt);
-extern extern(C++) elem* toElem(Expression e, IRState *irs);
-extern extern(C++) RET retStyle(TypeFunction tf);
-extern extern(C++) Statement asmSemantic(AsmStatement s, Scope *sc);
-
 uint rol(uint x, uint n)
 {
     return (x << n) | (x >> (32-n));
