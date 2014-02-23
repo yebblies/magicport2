@@ -1191,6 +1191,7 @@
             "imports" :
             [
                 "core.stdc.ctype",
+                "core.stdc.errno",
                 "core.stdc.stdlib",
                 "defs",
                 "root.array",
@@ -1917,6 +1918,7 @@
             "imports" :
             [
                 "core.stdc.ctype",
+                "core.stdc.errno",
                 "core.stdc.stdarg",
                 "core.stdc.stdio",
                 "defs",
@@ -2166,6 +2168,7 @@
                 "builtin",
                 "cond",
                 "core.stdc.ctype",
+                "core.stdc.errno",
                 "core.stdc.stdarg",
                 "core.stdc.stdio",
                 "core.stdc.stdlib",

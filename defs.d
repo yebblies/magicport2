@@ -1,7 +1,6 @@
 
 // c library
 
-public import core.stdc.errno : errno, EEXIST, ERANGE;
 public import core.stdc.limits : INT_MAX;
 public import core.stdc.math : sinl, cosl, tanl, sqrtl, fabsl;
 public import core.stdc.time : time_t, ctime, time;
