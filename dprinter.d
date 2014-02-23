@@ -1531,6 +1531,12 @@ class DPrinter : Visitor
             println("enum SYSCONFDIR = \"/etc/dmd.conf\";");
             return;
         }
+        ie = cast(IdentExpr)ast.cond[0];
+        if (ie && ie.id == "DDMD")
+        {
+            visitX(ast.members[0]);
+            return;
+        }
         versionCommon(ast);
     }
 

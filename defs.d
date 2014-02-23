@@ -160,8 +160,6 @@ template xversion(string s)
     enum xversion = mixin("{ version(" ~ s ~ ") return true; else return false; }")();
 }
 
-enum DDMD = true;
-
 enum __linux__ = xversion!"linux";
 enum linux = xversion!"linux";
 enum __APPLE__ = xversion!"OSX";
