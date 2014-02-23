@@ -865,7 +865,7 @@ func:
             bool hasbody;
             if (t.text == "=")
             {
-                assert(stc & STCvirtual);
+                // assert(stc & STCvirtual);
                 nextToken();
                 check("0");
                 check(";");
