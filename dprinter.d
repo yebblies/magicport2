@@ -374,8 +374,8 @@ class DPrinter : Visitor
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
         if (ast.comment)
             printComment(ast.comment);
-        bool virtual = (ast.stc & STCvirtual) != 0;
-        // if (!virtual && ast.id == "visit")
+        bool isvirtual = (ast.stc & STCvirtual) != 0;
+        // if (!isvirtual && ast.id == "visit")
         // {
             // print("override ");
         // }
@@ -387,12 +387,14 @@ class DPrinter : Visitor
             else if ((m[0] is null || P && m[0] == P.id) &&
                      (m[1] is null || m[1] == ast.id))
             {
-                virtual = true;
+                isvirtual = true;
                 break;
             }
         }
         auto nonfinalclass = P && nonfinalclasses.canFind(P.id);
-        if (!virtual && !(ast.stc & STCabstract) && nonfinalclass)
+        if (ast.stc & STCvirtual)
+            print("virtual ");
+        if (!isvirtual && !(ast.stc & STCabstract) && nonfinalclass)
             print("final ");
         if (!inexternc && (!P || !classTypes.lookup(P.id)) && ast.type.id != ast.id)
             print("extern(C++) ");
