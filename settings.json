@@ -1417,6 +1417,7 @@
                 "variable STCnodefaultctor",
                 "variable STCtemp",
                 "variable STCrvalue",
+                "variable STCvirtual",
                 "variable STCStorageClass",
                 "struct Match",
                 "enum Semantic",
@@ -2319,7 +2320,6 @@
                 "function escapePath",
                 "function parse_arch",
                 "function Dsymbols_create",
-                "function Parameters_create",
                 "function Symbols_create",
                 "function VarDeclarations_create",
                 "function Blocks_create",
@@ -2394,7 +2394,6 @@
             ],
             "extra" :
             [
-                "extern extern(C++) Expression createTypeInfoArray(Scope* sc, Expression *args, size_t dim);",
                 "extern extern(C++) dt_t** Expression_toDt(Expression e, dt_t** pdt);",
                 "extern extern(C++) elem* toElem(Expression e, IRState *irs);"
             ],
@@ -2555,7 +2554,8 @@
                 "struct LineInitExp",
                 "struct ModuleInitExp",
                 "struct FuncInitExp",
-                "struct PrettyFuncInitExp"
+                "struct PrettyFuncInitExp",
+                "function createTypeInfoArray"
             ]
         },
         {
@@ -2856,7 +2856,6 @@
         "va_list",
         "Match",
         "type",
-        "Blockx",
         "code",
         "block",
         "InlineDoState",
