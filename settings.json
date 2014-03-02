@@ -647,11 +647,15 @@
                 "root.array",
                 "root.filename",
                 "root.rmem",
-                "core.sys.windows.windows"
+                "core.sys.windows.windows",
+                "core.sys.posix.sys.types",
+                "core.sys.posix.utime",
+                "core.sys.posix.unistd",
+                "core.sys.posix.fcntl"
             ],
             "extra" :
             [
-                "alias WIN32_FIND_DATAA = WIN32_FIND_DATA;"
+                "version(Windows) alias WIN32_FIND_DATAA = WIN32_FIND_DATA;"
             ],
             "members" :
             [
@@ -1222,12 +1226,14 @@
                 "root.outbuffer",
                 "root.rmem",
                 "root.rootobject",
-                "core.sys.windows.windows"
+                "core.sys.windows.windows",
+                "core.sys.posix.sys.stat"
             ],
             "extra" :
             [
-                "extern(C) int mkdir(const char*);",
-                "alias _mkdir = mkdir;"
+                "version(Windows) extern(C) int mkdir(const char*);",
+                "alias _mkdir = mkdir;",
+                "version(Posix) extern(C) char *canonicalize_file_name(const char*);"
             ],
             "members" :
             [
@@ -1532,7 +1538,8 @@
                 "root.filename",
                 "root.outbuffer",
                 "root.port",
-                "core.sys.windows.windows"
+                "core.sys.windows.windows",
+                "core.sys.posix.stdlib"
             ],
             "members" :
             [
@@ -1781,7 +1788,15 @@
                 "root.file",
                 "root.filename",
                 "root.outbuffer",
-                "root.rmem"
+                "root.rmem",
+                "core.sys.posix.sys.wait",
+                "core.sys.posix.stdlib",
+                "core.sys.posix.stdio",
+                "core.sys.posix.unistd"
+            ],
+            "extra" :
+            [
+                "version(Posix) extern(C) int pipe(int *);"
             ],
             "members" :
             [
