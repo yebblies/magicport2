@@ -13,13 +13,9 @@ import statement;
 
 version(Windows)
 {
-    public import core.sys.windows.windows;
-    alias GetModuleFileNameA GetModuleFileName;
-    alias CreateFileA CreateFile;
-    alias CreateFileMappingA CreateFileMapping;
-    alias WIN32_FIND_DATA WIN32_FIND_DATAA;
+    private import core.sys.windows.windows;
     extern(Windows) DWORD GetFullPathNameA(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR *lpFilePart);
-    alias GetFullPathNameA GetFullPathName;
+    alias WIN32_FIND_DATA WIN32_FIND_DATAA;
 
     extern(C) int mkdir(const char*);
     alias mkdir _mkdir;
