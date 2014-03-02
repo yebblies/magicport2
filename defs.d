@@ -60,14 +60,11 @@ uint ror(uint x, uint n)
     return (x >> n) | (x << (32-n));
 }
 
-int main(string[] args)
+int main()
 {
-    int argc = cast(int)args.length;
-    auto argv = (new const(char)*[](argc)).ptr;
-    foreach(i, a; args)
-        argv[i] = (a ~ '\0').ptr;
-
-    return tryMain(argc, argv);
+    import core.runtime;
+    auto args = Runtime.cArgs();
+    return tryMain(args.argc, cast(const(char)**)args.argv);
 }
 
 // Preprocessor symbols (sometimes used as values)
