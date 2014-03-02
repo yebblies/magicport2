@@ -649,6 +649,10 @@
                 "root.rmem",
                 "core.sys.windows.windows"
             ],
+            "extra" :
+            [
+                "alias WIN32_FIND_DATAA = WIN32_FIND_DATA;"
+            ],
             "members" :
             [
                 "struct File"
@@ -1219,6 +1223,11 @@
                 "root.rmem",
                 "root.rootobject",
                 "core.sys.windows.windows"
+            ],
+            "extra" :
+            [
+                "extern(C) int mkdir(const char*);",
+                "alias _mkdir = mkdir;"
             ],
             "members" :
             [

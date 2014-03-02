@@ -2,25 +2,8 @@
 // generated source
 
 import mars;
-import lib;
-import root.file;
-import expression;
-import dscope;
-import mtype;
-import statement;
 
-// win32
-
-version(Windows)
-{
-    private import core.sys.windows.windows;
-    extern(Windows) DWORD GetFullPathNameA(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR *lpFilePart);
-    alias WIN32_FIND_DATA WIN32_FIND_DATAA;
-
-    extern(C) int mkdir(const char*);
-    alias mkdir _mkdir;
-}
-else version(Posix)
+version(Posix)
 {
     import core.stdc.stdio;
     public import core.sys.posix.sys.stat : stat_t, stat, S_ISDIR;
@@ -37,8 +20,6 @@ else version(Posix)
     extern(C) FILE* fdopen(int, const char*);
     extern(C) int pipe(int *);
 }
-else
-    static assert(0);
 
 // Not defined for some reason
 extern(C) int stricmp(const char*, const char*);
