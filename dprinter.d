@@ -419,7 +419,7 @@ class DPrinter : Visitor
             println("");
             println("{");
             indent++;
-            println("mixin(dmd_trace_code);");
+            // println("mixin(dmd_trace_code);");
             if (ast.initlist.length == 1 && classTypes.lookup((cast(IdentExpr)ast.initlist[0].func).id))
             {
                 print("super(");
@@ -449,7 +449,7 @@ class DPrinter : Visitor
             println("");
             println("{");
             indent++;
-            println("mixin(dmd_trace_code);");
+            // println("mixin(dmd_trace_code);");
             foreach(s; ast.fbody)
                 visitX(s);
             indent--;

@@ -62,71 +62,12 @@ uint ror(uint x, uint n)
 
 int main(string[] args)
 {
-    scope(failure) tracedepth = -1;
-
     int argc = cast(int)args.length;
     auto argv = (new const(char)*[](argc)).ptr;
     foreach(i, a; args)
         argv[i] = (a ~ '\0').ptr;
 
     return tryMain(argc, argv);
-}
-
-__gshared int tracedepth;
-
-// version=trace;
-// version=fulltrace;
-
-version(trace)
-{
-    enum dmd_trace_code = "tracein(); scope(success) traceout(); scope(failure) traceerr();";
-    void trace(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__)
-    {
-        printf("%.*s:%d\n", pretty.length, pretty.ptr, line);
-    }
-    void tracein(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__)
-    {
-        if (tracedepth < 0)
-            return;
-        version(fulltrace)
-        {
-            foreach(i; 0..tracedepth*2)
-                putchar(' ');
-            printf("+ %.*s:%d\n", pretty.length, pretty.ptr, line);
-        }
-        tracedepth++;
-    }
-
-    void traceout(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__)
-    {
-        if (tracedepth < 0)
-            return;
-        tracedepth--;
-        version(fulltrace)
-        {
-            foreach(i; 0..tracedepth*2)
-                putchar(' ');
-            printf("- %.*s:%d\n", pretty.length, pretty.ptr, line);
-        }
-    }
-
-    void traceerr(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__)
-    {
-        if (tracedepth < 0)
-            return;
-        tracedepth--;
-        foreach(i; 0..tracedepth*2)
-            putchar(' ');
-        printf("! %.*s:%d\n", pretty.length, pretty.ptr, line);
-    }
-}
-else
-{
-    enum dmd_trace_code = "";
-    void trace(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__) {}
-    void tracein(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__) {}
-    void traceout(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__) {}
-    void traceerr(string pretty = __PRETTY_FUNCTION__, size_t line = __LINE__) {}
 }
 
 // Preprocessor symbols (sometimes used as values)
@@ -160,4 +101,4 @@ enum TARGET_OSX = xversion!"OSX";
 enum TARGET_FREEBSD = xversion!"FreeBSD";
 enum TARGET_OPENBSD = xversion!"OpenBSD";
 enum TARGET_SOLARIS = xversion!"Solaris";
-enum TARGET_WINDOS = xversion!"Windows";;
+enum TARGET_WINDOS = xversion!"Windows";

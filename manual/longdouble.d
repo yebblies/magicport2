@@ -9,10 +9,6 @@ real ldouble(T)(T x) { return cast(real)x; }
 
 size_t ld_sprint(char* str, int fmt, real x)
 {
-    tracein("ld_sprint");
-    scope(success) traceout("ld_sprint");
-    scope(failure) traceerr("ld_sprint");
-
     if ((cast(real)cast(ulong)x) == x)
     {   // ((1.5 -> 1 -> 1.0) == 1.5) is false
         // ((1.0 -> 1 -> 1.0) == 1.0) is true
