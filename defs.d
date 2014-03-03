@@ -17,18 +17,13 @@ template xversion(string s)
 }
 
 enum __linux__ = xversion!"linux";
-enum linux = xversion!"linux";
 enum __APPLE__ = xversion!"OSX";
 enum __FreeBSD__ = xversion!"FreeBSD";
 enum __OpenBSD__ = xversion!"OpenBSD";
 enum __sun = xversion!"Solaris";
 
 enum IN_GCC = xversion!"GNU";
-enum __DMC__ = xversion!"DigitalMars";
 enum _MSC_VER = false;
-enum __clang__ = false;
-enum __GNUC__ = false;
-enum __MINGW32__ = false;
 enum __GLIBC__ = xversion!"linux";
 
 enum TARGET_LINUX = xversion!"linux";
