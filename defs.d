@@ -3,16 +3,6 @@
 
 import mars;
 
-// Not defined for some reason
-version(Windows)
-{
-    extern(C) int stricmp(const char*, const char*);
-    extern(C) int putenv(const char*);
-    extern(C) int spawnlp(int, const char*, const char*, const char*, const char*);
-    extern(C) int spawnl(int, const char*, const char*, const char*, const char*);
-    extern(C) int spawnv(int, const char*, const char**);
-}
-
 int main()
 {
     import core.runtime;
