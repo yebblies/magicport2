@@ -54,6 +54,10 @@
                 "utf",
                 "visitor"
             ],
+            "extra" :
+            [
+                "private enum LOG = false;"
+            ],
             "members" :
             [
                 "variable LOGASSIGN",
@@ -289,6 +293,11 @@
                 "dtemplate",
                 "visitor"
             ],
+            "extra" :
+            [
+                "private enum LOG = false;",
+                "enum CANINLINE_LOG = false;"
+            ],
             "members" :
             [
                 "variable COST_MAX",
@@ -495,6 +504,10 @@
                 "lexer",
                 "mars",
                 "mtype"
+            ],
+            "extra" :
+            [
+                "private enum LOG = false;"
             ],
             "members" :
             [
@@ -1012,6 +1025,10 @@
                 "root.outbuffer",
                 "root.rootobject",
                 "visitor"
+            ],
+            "extra" :
+            [
+                "private enum LOG = false;"
             ],
             "members" :
             [
@@ -1544,7 +1561,8 @@
             ],
             "extra" :
             [
-                "version(Windows) extern(C) int putenv(const char*);"
+                "version(Windows) extern(C) int putenv(const char*);",
+                "private enum LOG = false;"
             ],
             "members" :
             [
@@ -1848,6 +1866,10 @@
                 "root.aav",
                 "root.rootobject"
             ],
+            "extra" :
+            [
+                "enum LOGSEMANTIC = false;"
+            ],
             "members" :
             [
                 "struct Ptrait",
@@ -2126,6 +2148,10 @@
                 "sideeffect",
                 "utf"
             ],
+            "extra" :
+            [
+                "private enum LOG = false;"
+            ],
             "members" :
             [
                 "function expType",
@@ -2294,7 +2320,8 @@
                 "extern extern(C++) void backend_term();",
                 "extern extern(C++) void obj_start(char *srcfile);",
                 "extern extern(C++) void obj_end(Library library, File* objfile);",
-                "extern extern(C++) void obj_write_deferred(Library library);"
+                "extern extern(C++) void obj_write_deferred(Library library);",
+                "enum ASYNCREAD = false;"
             ],
             "members" :
             [
@@ -2431,7 +2458,8 @@
             "extra" :
             [
                 "extern extern(C++) dt_t** Expression_toDt(Expression e, dt_t** pdt);",
-                "extern extern(C++) elem* toElem(Expression e, IRState *irs);"
+                "extern extern(C++) elem* toElem(Expression e, IRState *irs);",
+                "enum LOGSEMANTIC = false;"
             ],
             "members" :
             [

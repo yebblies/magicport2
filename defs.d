@@ -31,11 +31,6 @@ enum __GNUC__ = false;
 enum __MINGW32__ = false;
 enum __GLIBC__ = xversion!"linux";
 
-enum LOG = false;
-enum ASYNCREAD = false;
-enum CANINLINE_LOG = false;
-enum LOGSEMANTIC = false;
-
 enum TARGET_LINUX = xversion!"linux";
 enum TARGET_OSX = xversion!"OSX";
 enum TARGET_FREEBSD = xversion!"FreeBSD";
