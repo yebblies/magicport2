@@ -13,15 +13,6 @@ version(Windows)
     extern(C) int spawnv(int, const char*, const char**);
 }
 
-uint rol(uint x, uint n)
-{
-    return (x << n) | (x >> (32-n));
-}
-uint ror(uint x, uint n)
-{
-    return (x >> n) | (x << (32-n));
-}
-
 int main()
 {
     import core.runtime;

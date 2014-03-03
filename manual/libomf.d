@@ -24,6 +24,9 @@ import defs, lib, mars, scanomf;
 
 static if (TARGET_WINDOS):
 
+extern extern(C) uint _rotl(uint, int);
+extern extern(C) uint _rotr(uint, int);
+
 enum LOG = false;
 
 struct ObjSymbol
@@ -603,10 +606,10 @@ static int EnterDict(ubyte* bucketsP, ushort ndicpages, ubyte* entry, uint entry
     auto u = entrylen;
     while ( u-- )
     {
-        uStartPage  = cast(ushort)(rol(uStartPage,  2) ^ (*aP   | 0x20));
-        uStep       = cast(ushort)(ror(uStep,       2) ^ (*aP++ | 0x20));
-        uStartIndex = cast(ushort)(ror(uStartIndex, 2) ^ (*zP   | 0x20));
-        uPageStep   = cast(ushort)(rol(uPageStep,   2) ^ (*zP-- | 0x20));
+        uStartPage  = cast(ushort)(_rotl(uStartPage,  2) ^ (*aP   | 0x20));
+        uStep       = cast(ushort)(_rotr(uStep,       2) ^ (*aP++ | 0x20));
+        uStartIndex = cast(ushort)(_rotr(uStartIndex, 2) ^ (*zP   | 0x20));
+        uPageStep   = cast(ushort)(_rotl(uPageStep,   2) ^ (*zP-- | 0x20));
     }
 
     uStartPage %= ndicpages;
