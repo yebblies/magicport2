@@ -64,13 +64,13 @@ $(GENSRC) $(COPYSRC): magicport2 $(MANUALSRC) settings.json
 	./magicport2 ../dmd/src/
 
 build1: port/dmd
-port/dmd: $(DSRC) defs.d $(LIBS)
-	$(COMPILER) $(DSRC) defs -c -ofport/dmd.o $(FLAGS)
+port/dmd: $(DSRC) $(LIBS)
+	$(COMPILER) $(DSRC) -c -ofport/dmd.o $(FLAGS)
 	g++ -oport/dmd port/dmd.o $(LIBS) -L$(PHOBOSLIB32) -L$(PHOBOSLIB64) -lphobos2
 
 build2: port/dmdx
-port/dmdx: $(DSRC) defs.d port/dmd $(LIBS)
-	LD_LIBRARY_PATH=$(PHOBOSLIB32):$(PHOBOSLIB64) port/dmd $(DSRC) defs -c -ofport/dmdx.o $(FLAGS)
+port/dmdx: $(DSRC) port/dmd $(LIBS)
+	LD_LIBRARY_PATH=$(PHOBOSLIB32):$(PHOBOSLIB64) port/dmd $(DSRC) -c -ofport/dmdx.o $(FLAGS)
 	g++ -oport/dmdx port/dmdx.o $(LIBS) -L$(PHOBOSLIB32) -L$(PHOBOSLIB64) -lphobos2
 
 magicport2 : $(SRC)

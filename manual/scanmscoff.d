@@ -18,7 +18,7 @@
 module scanmscoff;
 
 import core.stdc.string;
-import defs, mars, lib;
+import mars, lib;
 
 static if (TARGET_WINDOS):
 

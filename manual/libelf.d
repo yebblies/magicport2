@@ -20,7 +20,7 @@ import core.sys.posix.unistd;
 import core.sys.posix.sys.stat;
 
 import root.file, root.filename, root.outbuffer, root.stringtable;
-import defs, mars, lib, scanelf;
+import mars, lib, scanelf;
 
 static if (TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS):
 

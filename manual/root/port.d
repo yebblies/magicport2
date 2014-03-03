@@ -4,7 +4,6 @@ module root.port;
 import core.stdc.ctype;
 import core.stdc.string;
 
-import defs;
 import target;
 
 version(Windows)

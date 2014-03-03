@@ -10,6 +10,6 @@
 
 module libmach;
 
-import defs, mars;
+import mars;
 
 static if (TARGET_OSX):

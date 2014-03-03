@@ -367,7 +367,19 @@ class DPrinter : Visitor
         fd = ast;
         buffers = null;
         if (ast.id == "operator new") return;
-        if (ast.id == "main") return;
+        if (ast.id == "main")
+        {
+            println("int main()");
+            println("{");
+            indent++;
+            println("import core.runtime;");
+            println("auto args = Runtime.cArgs();");
+            println("return tryMain(args.argc, cast(const(char)**)args.argv);");
+            indent--;
+            println("}");
+            println("");
+            return;
+        }
         if (!P && !ast.hasbody && ast.skip) return;
         auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue", "OutBuffer", "Scope", "DocComment"];
         if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))

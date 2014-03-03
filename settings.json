@@ -37,7 +37,6 @@
                 "ctfeexpr",
                 "dclass",
                 "declaration",
-                "defs",
                 "dstruct",
                 "dsymbol",
                 "dtemplate",
@@ -104,7 +103,6 @@
                 "clone",
                 "core.stdc.string",
                 "declaration",
-                "defs",
                 "dmodule",
                 "doc",
                 "dscope",
@@ -147,7 +145,6 @@
                 "core.stdc.string",
                 "dclass",
                 "declaration",
-                "defs",
                 "dstruct",
                 "dtemplate",
                 "expression",
@@ -233,7 +230,6 @@
                 "arraytypes",
                 "clone",
                 "declaration",
-                "defs",
                 "dmodule",
                 "doc",
                 "dscope",
@@ -276,7 +272,6 @@
                 "core.stdc.stdio",
                 "core.stdc.string",
                 "declaration",
-                "defs",
                 "dscope",
                 "dstruct",
                 "dsymbol",
@@ -323,7 +318,6 @@
             [
                 "declaration",
                 "declaration",
-                "defs",
                 "dmodule",
                 "doc",
                 "dscope",
@@ -350,7 +344,6 @@
             "package" : "",
             "imports" :
             [
-                "defs",
                 "mars",
                 "mtype"
             ],
@@ -365,7 +358,6 @@
             "imports" :
             [
                 "arraytypes",
-                "defs",
                 "expression",
                 "visitor"
             ],
@@ -383,7 +375,6 @@
                 "aggregate",
                 "arraytypes",
                 "declaration",
-                "defs",
                 "dscope",
                 "dstruct",
                 "dsymbol",
@@ -422,7 +413,6 @@
                 "aggregate",
                 "arraytypes",
                 "declaration",
-                "defs",
                 "dscope",
                 "dstruct",
                 "dsymbol",
@@ -462,7 +452,6 @@
             [
                 "arraytypes",
                 "core.stdc.string",
-                "defs",
                 "dmodule",
                 "dmodule",
                 "dscope",
@@ -494,7 +483,6 @@
                 "aggregate",
                 "dclass",
                 "declaration",
-                "defs",
                 "dmodule",
                 "dscope",
                 "dstruct",
@@ -527,7 +515,6 @@
             [
                 "core.stdc.stdio",
                 "declaration",
-                "defs",
                 "mars",
                 "mtype",
                 "visitor"
@@ -549,7 +536,6 @@
                 "core.stdc.string",
                 "dclass",
                 "declaration",
-                "defs",
                 "dmodule",
                 "doc",
                 "dsymbol",
@@ -606,7 +592,6 @@
                 "core.stdc.string",
                 "ctfeexpr",
                 "declaration",
-                "defs",
                 "doc",
                 "dscope",
                 "dsymbol",
@@ -656,7 +641,6 @@
                 "core.stdc.stdlib",
                 "core.stdc.stdio",
                 "core.stdc.string",
-                "defs",
                 "root.array",
                 "root.filename",
                 "root.rmem",
@@ -682,7 +666,6 @@
             [
                 "arraytypes",
                 "declaration",
-                "defs",
                 "dscope",
                 "dsymbol",
                 "expression",
@@ -718,7 +701,6 @@
                 "arraytypes",
                 "clone",
                 "declaration",
-                "defs",
                 "doc",
                 "dscope",
                 "dstruct",
@@ -755,7 +737,6 @@
                 "ctfeexpr",
                 "dclass",
                 "declaration",
-                "defs",
                 "denum",
                 "dimport",
                 "dmodule",
@@ -781,7 +762,6 @@
             "package" : "",
             "imports" :
             [
-                "defs"
             ],
             "members" :
             [
@@ -823,7 +803,6 @@
                 "aggregate",
                 "dclass",
                 "declaration",
-                "defs",
                 "dmodule",
                 "dsymbol",
                 "dtemplate",
@@ -892,7 +871,6 @@
                 "dcast",
                 "dclass",
                 "declaration",
-                "defs",
                 "denum",
                 "dimport",
                 "dmangle",
@@ -1004,7 +982,6 @@
                 "dcast",
                 "dclass",
                 "declaration",
-                "defs",
                 "dmangle",
                 "dmodule",
                 "doc",
@@ -1079,7 +1056,6 @@
                 "arraytypes",
                 "core.stdc.math",
                 "core.stdc.string",
-                "defs",
                 "dmangle",
                 "expression",
                 "func",
@@ -1120,7 +1096,6 @@
                 "core.stdc.string",
                 "dclass",
                 "declaration",
-                "defs",
                 "denum",
                 "dimport",
                 "dmodule",
@@ -1152,7 +1127,6 @@
                 "core.stdc.string",
                 "dclass",
                 "declaration",
-                "defs",
                 "dscope",
                 "dstruct",
                 "dsymbol",
@@ -1194,8 +1168,7 @@
             "package" : "",
             "imports" :
             [
-                "core.stdc.string",
-                "defs"
+                "core.stdc.string"
             ],
             "members" :
             [
@@ -1211,7 +1184,6 @@
                 "constfold",
                 "dclass",
                 "declaration",
-                "defs",
                 "expression",
                 "init",
                 "lexer",
@@ -1237,7 +1209,6 @@
                 "core.stdc.errno",
                 "core.stdc.stdlib",
                 "core.stdc.string",
-                "defs",
                 "root.array",
                 "root.file",
                 "root.outbuffer",
@@ -1266,8 +1237,7 @@
             "imports" :
             [
                 "core.stdc.stdlib",
-                "core.stdc.string",
-                "defs"
+                "core.stdc.string"
             ],
             "members" :
             [
@@ -1293,7 +1263,6 @@
                 "ctfeexpr",
                 "dclass",
                 "declaration",
-                "defs",
                 "dmodule",
                 "doc",
                 "dscope",
@@ -1358,7 +1327,6 @@
             "package" : "",
             "imports" :
             [
-                "defs"
             ],
             "members" :
             [
@@ -1378,7 +1346,6 @@
                 "ctfeexpr",
                 "dclass",
                 "declaration",
-                "defs",
                 "dmangle",
                 "doc",
                 "dscope",
@@ -1494,7 +1461,6 @@
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
                 "core.stdc.string",
-                "defs",
                 "dimport",
                 "dmacro",
                 "doc",
@@ -1531,7 +1497,6 @@
             "imports" :
             [
                 "apply",
-                "defs",
                 "expression",
                 "lexer",
                 "mtype",
@@ -1551,7 +1516,6 @@
                 "core.stdc.ctype",
                 "core.stdc.stdlib",
                 "core.stdc.string",
-                "defs",
                 "mars",
                 "root.file",
                 "root.filename",
@@ -1576,7 +1540,6 @@
             "package" : "",
             "imports" :
             [
-                "defs",
                 "identifier",
                 "lexer"
             ],
@@ -1592,7 +1555,6 @@
             [
                 "core.stdc.stdio",
                 "core.stdc.string",
-                "defs",
                 "id",
                 "lexer",
                 "mars",
@@ -1620,7 +1582,6 @@
                 "ctfeexpr",
                 "dclass",
                 "declaration",
-                "defs",
                 "denum",
                 "dimport",
                 "dscope",
@@ -1707,7 +1668,6 @@
             "package" : "",
             "imports" :
             [
-                "defs",
                 "statement",
                 "visitor"
             ],
@@ -1732,7 +1692,6 @@
                 "dclass",
                 "declaration",
                 "declaration",
-                "defs",
                 "denum",
                 "dimport",
                 "dmodule",
@@ -1785,7 +1744,6 @@
             [
                 "core.stdc.ctype",
                 "core.stdc.string",
-                "defs",
                 "doc",
                 "root.outbuffer",
                 "root.rmem",
@@ -1807,7 +1765,6 @@
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
                 "core.stdc.string",
-                "defs",
                 "mars",
                 "root.file",
                 "root.filename",
@@ -1850,7 +1807,6 @@
                 "core.stdc.string",
                 "declaration",
                 "dclass",
-                "defs",
                 "denum",
                 "dimport",
                 "dscope",
@@ -1912,7 +1868,6 @@
                 "core.stdc.string",
                 "dclass",
                 "declaration",
-                "defs",
                 "dmodule",
                 "dscope",
                 "dstruct",
@@ -1958,7 +1913,6 @@
                 "attrib",
                 "apply",
                 "declaration",
-                "defs",
                 "dstruct",
                 "dsymbol",
                 "dtemplate",
@@ -1988,7 +1942,6 @@
                 "declaration",
                 "cppmangle",
                 "dclass",
-                "defs",
                 "dmodule",
                 "dsymbol",
                 "dstruct",
@@ -2020,7 +1973,6 @@
                 "core.stdc.stdio",
                 "core.stdc.string",
                 "core.stdc.time",
-                "defs",
                 "dmodule",
                 "entity",
                 "id",
@@ -2069,7 +2021,6 @@
                 "core.stdc.string",
                 "dclass",
                 "declaration",
-                "defs",
                 "denum",
                 "dimport",
                 "dmodule",
@@ -2109,7 +2060,6 @@
             "package" : "",
             "imports" :
             [
-                "defs",
                 "dscope",
                 "dsymbol",
                 "expression",
@@ -2136,7 +2086,6 @@
                 "complex",
                 "core.stdc.string",
                 "declaration",
-                "defs",
                 "dstruct",
                 "expression",
                 "func",
@@ -2196,7 +2145,6 @@
             [
                 "arraytypes",
                 "cond",
-                "defs",
                 "dmodule",
                 "dmodule",
                 "dscope",
@@ -2222,7 +2170,6 @@
                 "attrib",
                 "core.stdc.string",
                 "declaration",
-                "defs",
                 "dmodule",
                 "dscope",
                 "dsymbol",
@@ -2246,7 +2193,6 @@
             [
                 "aggregate",
                 "declaration",
-                "defs",
                 "dscope",
                 "dsymbol",
                 "expression",
@@ -2281,7 +2227,6 @@
                 "core.stdc.stdio",
                 "core.stdc.stdlib",
                 "core.stdc.string",
-                "defs",
                 "doc",
                 "dinifile",
                 "dmodule",
@@ -2439,7 +2384,6 @@
                 "dclass",
                 "declaration",
                 "declaration",
-                "defs",
                 "delegatize",
                 "denum",
                 "dimport",
@@ -2654,7 +2598,6 @@
             [
                 "apply",
                 "declaration",
-                "defs",
                 "dscope",
                 "expression",
                 "func",
@@ -2682,7 +2625,6 @@
                 "core.stdc.string",
                 "declaration",
                 "dclass",
-                "defs",
                 "dscope",
                 "dstruct",
                 "dsymbol",
@@ -2729,7 +2671,6 @@
                 "core.stdc.time",
                 "dclass",
                 "declaration",
-                "defs",
                 "denum",
                 "dmacro",
                 "dmodule",
@@ -2807,7 +2748,6 @@
                 "arraytypes",
                 "core.stdc.string",
                 "declaration",
-                "defs",
                 "dstruct",
                 "dsymbol",
                 "dtemplate",
@@ -2831,7 +2771,6 @@
             "package" : "",
             "imports" :
             [
-                "defs",
                 "mars",
                 "libelf",
                 "libomf",

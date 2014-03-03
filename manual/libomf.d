@@ -20,7 +20,7 @@ import core.stdc.stdlib;
 import core.stdc.string;
 
 import root.file, root.filename, root.outbuffer, root.stringtable;
-import defs, lib, mars, scanomf;
+import lib, mars, scanomf;
 
 static if (TARGET_WINDOS):
 

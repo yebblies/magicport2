@@ -11,7 +11,7 @@
 module scanelf;
 
 import core.stdc.string, core.sys.linux.elf;
-import defs, mars, lib;
+import mars, lib;
 
 static if (TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS):
 

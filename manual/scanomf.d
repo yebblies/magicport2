@@ -18,7 +18,7 @@ import core.stdc.stdlib;
 import core.stdc.string;
 
 import root.outbuffer;
-import arraytypes, defs, mars;
+import arraytypes, mars;
 
 static if (TARGET_WINDOS):
 

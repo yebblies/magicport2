@@ -2,7 +2,6 @@
 module root.aav;
 
 import root.rootobject;
-import defs;
 
 struct AA;
 

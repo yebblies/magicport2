@@ -6,7 +6,6 @@ import core.stdc.stdio;
 import mars;
 import mtype;
 import expression;
-import defs;
 
 enum UINT64_MAX = 0xFFFFFFFFFFFFFFFFUL;
 

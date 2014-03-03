@@ -24,7 +24,7 @@ import core.stdc.string;
 import core.stdc.time;
 
 import root.file, root.filename, root.outbuffer, root.stringtable;
-import defs, mars, lib, scanmscoff;
+import mars, lib, scanmscoff;
 
 static if (TARGET_WINDOS):
 
