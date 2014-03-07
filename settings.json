@@ -1222,7 +1222,8 @@
                 "version(Windows) extern(C) int mkdir(const char*);",
                 "alias _mkdir = mkdir;",
                 "version(Posix) extern(C) char *canonicalize_file_name(const char*);",
-                "version(Windows) extern(C) int stricmp(const char*, const char*);"
+                "version(Windows) extern(C) int stricmp(const char*, const char*);",
+                "extern(Windows) DWORD GetFullPathNameA(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR *lpFilePart);"
             ],
             "members" :
             [
