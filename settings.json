@@ -597,6 +597,7 @@
                 "dsymbol",
                 "expression",
                 "identifier",
+                "id",
                 "init",
                 "lexer",
                 "longdouble",
