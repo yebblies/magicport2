@@ -1501,6 +1501,7 @@
                 "apply",
                 "expression",
                 "lexer",
+                "mars",
                 "mtype",
                 "visitor"
             ],
@@ -1938,6 +1939,7 @@
             "imports" :
             [
                 "aggregate",
+                "arraytypes",
                 "core.stdc.ctype",
                 "core.stdc.stdio",
                 "core.stdc.string",
@@ -1958,6 +1960,8 @@
             ],
             "members" :
             [
+                "function mangleFunc",
+                "function mangleParent",
                 "function mangleDecl",
                 "struct Mangler",
                 "function mangle",
@@ -2471,8 +2475,8 @@
                 "function opAssignToOp",
                 "function needDirectEq",
                 "function extractOpDollarSideEffect",
-                "function resolveOpDollarScope*ArrayExp*",
-                "function resolveOpDollarScope*SliceExp*",
+                "function resolveOpDollarScope*ArrayExp*Expression**",
+                "function resolveOpDollarScope*SliceExp*Expression**",
                 "enum CtfeGoal",
                 "variable WANTflags",
                 "variable WANTvalue",
@@ -2544,6 +2548,7 @@
                 "struct ArrayExp",
                 "struct DotExp",
                 "struct CommaExp",
+                "struct IntervalExp",
                 "struct IndexExp",
                 "struct PostExp",
                 "struct PreExp",
@@ -3180,6 +3185,7 @@
         "ConstructExp",
         "SliceExp",
         "DeleteExp",
+        "IntervalExp",
         "IndexExp",
         "CatExp",
         "DotTemplateExp",

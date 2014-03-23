@@ -166,7 +166,7 @@ void main(string[] args)
     {
         if (d.count == 0)
         {
-            assert(d.d);
+            assert(d.d, id);
             writeln("unreferenced: ", d.d.getName);
             failed = true;
         }
