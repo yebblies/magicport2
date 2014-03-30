@@ -69,7 +69,7 @@ $(RCOPYSRC) : $(RMANUALSRC)
 	copy $(RM)\* $(RP)
 
 $(GENSRC) : magicport2.exe settings.json
-	magicport2 ..\dmdgit\src
+	magicport2 ..\dmdgit\src port
 
 build1: port\dmd.exe
 port\dmd.exe: $(DSRC) $(LIBS)

@@ -18,6 +18,9 @@ void main(string[] args)
 {
     Module[] asts;
 
+    auto srcdir = args[1];
+    auto destdir = args[2];
+
     auto settings = parseJSON(readText("settings.json")).object;
     auto src = settings["src"].array.map!"a.str"().array;
     auto mapping = settings["mapping"].array.loadMapping();
@@ -31,7 +34,7 @@ void main(string[] args)
     auto scan = new Scanner();
     foreach(xfn; src)
     {
-        auto fn = buildPath(args[1], xfn);
+        auto fn = buildPath(srcdir, xfn);
         writeln("loading -- ", fn);
         assert(fn.exists(), fn ~ " does not exist");
         auto pp = cast(string)read(fn);
@@ -56,10 +59,10 @@ void main(string[] args)
     auto longmap = buildLongMap(superast);
 
     bool failed;
-    try { mkdir("port"); } catch {}
+    try { mkdir(destdir); } catch {}
     foreach(m; mapping)
     {
-        auto dir = buildPath("port", m.p);
+        auto dir = buildPath(destdir, m.p);
         if (m.p.length)
             try { mkdir(dir); } catch {}
 

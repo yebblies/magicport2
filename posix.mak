@@ -72,7 +72,7 @@ $(RCOPYSRC) : $(RMANUALSRC)
 	cp $(RM)/* $(RP)
 
 $(GENSRC) : magicport2 settings.json
-	./magicport2 ../dmd/src/
+	./magicport2 ../dmd/src/ port
 
 build1: port/dmd
 port/dmd: $(DSRC) $(LIBS)
