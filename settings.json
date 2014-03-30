@@ -16,7 +16,7 @@
         "arrayop.c", "aliasthis.h", "aliasthis.c", "json.h", "json.c",
         "unittests.c", "imphint.c", "argtypes.c", "apply.c", "sapply.c", "sideeffect.c",
         "ctfe.h", "canthrow.c", "target.c", "target.h", "id.c", "id.h",
-        "impcnvtab.c", "visitor.h", "lib.h",
+        "impcnvtab.c", "visitor.h", "lib.h", "nogc.c",
         "root/filename.h", "root/filename.c",
         "root/file.h", "root/file.c",
         "root/speller.h", "root/speller.c"
@@ -949,6 +949,7 @@
                 "struct TypeReference",
                 "enum RET",
                 "enum TRUST",
+                "enum GCUSE",
                 "enum PURE",
                 "struct TypeFunction",
                 "struct TypeDelegate",
@@ -1281,6 +1282,7 @@
                 "lexer",
                 "mars",
                 "mtype",
+                "nogc",
                 "opover",
                 "root.filename",
                 "root.outbuffer",
@@ -2788,6 +2790,31 @@
             "members" : [
                 "struct Library"
             ]
+        },
+        {
+            "module" : "nogc",
+            "package" : "",
+            "imports" :
+            [
+                "apply",
+                "declaration",
+                "expression",
+                "func",
+                "id",
+                "identifier",
+                "init",
+                "lexer",
+                "mars",
+                "mtype",
+                "sapply",
+                "statement",
+                "visitor"
+            ],
+            "members" :
+            [
+                "struct NOGCVisitor",
+                "function checkGC"
+            ]
         }
     ],
     "basicTypes" :
@@ -2871,7 +2898,8 @@
         "PURE",
         "TRUST",
         "RET",
-        "PKG"
+        "PKG",
+        "GCUSE"
     ],
     "structTypes" :
     [
@@ -3315,6 +3343,7 @@
         "InferType",
         "EmitComment",
         "ToDocBuffer",
-        "Mangler"
+        "Mangler",
+        "NOGCVisitor"
     ]
 }

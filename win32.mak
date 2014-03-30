@@ -27,6 +27,7 @@ GENSRC=$(DP)\access.d $(DP)\aggregate.d $(DP)\aliasthis.d $(DP)\apply.d \
 	$(DP)\statement.d $(DP)\staticassert.d $(DP)\dstruct.d \
 	$(DP)\target.d $(DP)\dtemplate.d $(DP)\traits.d $(DP)\dunittest.d \
 	$(DP)\utf.d $(DP)\dversion.d $(DP)\visitor.d $(DP)\lib.d \
+	$(DP)\nogc.d \
 	$(RP)\file.d $(RP)\filename.d $(RP)\speller.d
 
 DM=manual
