@@ -41,7 +41,9 @@ MANUALSRC= \
 	$(DM)/libmscoff.d $(DM)/scanmscoff.d \
 	$(DM)/libelf.d $(DM)/scanelf.d \
 	$(DM)/libmach.d $(DM)/scanmach.d \
-	$(DM)/entity.d \
+	$(DM)/entity.d
+
+RMANUALSRC= \
 	$(RM)/aav.d $(RM)/array.d \
 	$(RM)/man.d $(RM)/rootobject.d $(RM)/outbuffer.d $(RM)/port.d \
 	$(RM)/response.d $(RM)/rmem.d  $(RM)/stringtable.d
@@ -52,16 +54,24 @@ COPYSRC= \
 	$(DP)/libmscoff.d $(DP)/scanmscoff.d \
 	$(DP)/libelf.d $(DP)/scanelf.d \
 	$(DP)/libmach.d $(DP)/scanmach.d \
-	$(DP)/entity.d \
+	$(DP)/entity.d
+
+RCOPYSRC= \
 	$(RP)/aav.d $(RP)/array.d \
 	$(RP)/man.d $(RP)/rootobject.d $(RP)/outbuffer.d $(RP)/port.d \
 	$(RP)/response.d $(RP)/rmem.d  $(RP)/stringtable.d
 
-DSRC= $(GENSRC) $(COPYSRC)
+DSRC= $(GENSRC) $(COPYSRC) $(RCOPYSRC)
 
 default: build1 build2
 
-$(GENSRC) $(COPYSRC): magicport2 $(MANUALSRC) settings.json
+$(COPYSRC) : $(MANUALSRC)
+	cp $(DM)/* $(DP)
+
+$(RCOPYSRC) : $(RMANUALSRC)
+	cp $(RM)/* $(RP)
+
+$(GENSRC) : magicport2 settings.json
 	./magicport2 ../dmd/src/
 
 build1: port/dmd

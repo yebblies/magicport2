@@ -183,19 +183,6 @@ void main(string[] args)
             writeln("duplicate: ", d.d.getName);
         }
     }
-    auto manualsrc =
-    [
-        "intrange.d", "complex.d", "longdouble.d",
-        "libomf.d", "scanomf.d",
-        "libmscoff.d", "scanmscoff.d",
-        "libelf.d", "scanelf.d",
-        "libmach.d", "scanmach.d",
-        "entity.d"
-    ];
-    foreach(fn; manualsrc)
-        std.file.write(buildPath("port", fn), buildPath("manual", fn).read());
-    foreach(fn; ["aav.d", "array.d", "man.d", "rootobject.d", "outbuffer.d", "port.d", "response.d", "rmem.d", "stringtable.d"])
-        std.file.write(buildPath("port", "root", fn), buildPath("manual", "root", fn).read());
     if (failed)
         assert(0);
 }
