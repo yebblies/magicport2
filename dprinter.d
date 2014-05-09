@@ -308,6 +308,8 @@ class DPrinter : Visitor
         ["VarDeclaration", "toSymbol"],
         [null, "accept"],
         [null, "visit"],
+        ["AttribDeclaration", "setScope"],
+        ["AttribDeclaration", "importAll"],
     ];
 
     auto nonfinalclasses =
