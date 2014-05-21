@@ -32,6 +32,8 @@ void main(string[] args)
         classTypes[t] = false;
     foreach(t; settings["rootclasses"].array.map!"a.str")
         rootClasses[t] = false;
+    foreach(t; settings["overriddenfuncs"].array.map!(j => j.array.map!("a.str").array))
+        overridenFuncs ~= t;
 
     auto scan = new Scanner();
     foreach(xfn; src)
