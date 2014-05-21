@@ -166,54 +166,6 @@ class DPrinter : Visitor
         }
     }
 
-    auto nonfinalclasses =
-    [
-        "AggregateDeclaration",
-        "AssignExp",
-        "AttribDeclaration",
-        "BinAssignExp",
-        "BinExp",
-        "ClassDeclaration",
-        "CompoundStatement",
-        "Condition",
-        "ConditionalDeclaration",
-        "Declaration",
-        "DefaultInitExp",
-        "Dsymbol",
-        "DVCondition",
-        "Expression",
-        "ExpStatement",
-        "FuncDeclaration",
-        "IdentifierExp",
-        "Initializer",
-        "Lexer",
-        "Library",
-        "Package",
-        "ScopeDsymbol",
-        "Section",
-        "Statement",
-        "StatementRewriteWalker",
-        "StaticCtorDeclaration",
-        "StaticDtorDeclaration",
-        "StoppableVisitor",
-        "StorageClassDeclaration",
-        "StructDeclaration",
-        "SymbolExp",
-        "TemplateInstance",
-        "TemplateTypeParameter",
-        "TemplateParameter",
-        "ThisExp",
-        "TypeArray",
-        "Type",
-        "TypeInfoDeclaration",
-        "TypeNext",
-        "TypeQualified",
-        "Type",
-        "UnaExp",
-        "VarDeclaration",
-        "Visitor",
-    ];
-
     override void visit(FuncDeclaration ast)
     {
         auto stackclassessave = stackclasses;
@@ -259,7 +211,7 @@ class DPrinter : Visitor
                 break;
             }
         }
-        auto nonfinalclass = P && nonfinalclasses.canFind(P.id);
+        auto nonfinalclass = P && nonFinalClasses.canFind(P.id);
         if (ast.stc & STCvirtual)
             print("virtual ");
         if (!isvirtual && !(ast.stc & STCabstract) && nonfinalclass)
@@ -648,7 +600,7 @@ class DPrinter : Visitor
         if (isclass)
         {
             print("extern(C++) ");
-            if (!nonfinalclasses.canFind(ast.id))
+            if (!nonFinalClasses.canFind(ast.id))
                 print("final ");
             print("class");
         }
