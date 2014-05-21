@@ -30,6 +30,8 @@ void main(string[] args)
         structTypes[t] = false;
     foreach(t; settings["classTypes"].array.map!"a.str")
         classTypes[t] = false;
+    foreach(t; settings["rootclasses"].array.map!"a.str")
+        rootClasses[t] = false;
 
     auto scan = new Scanner();
     foreach(xfn; src)

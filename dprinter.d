@@ -11,8 +11,6 @@ import visitor;
 import scanner;
 import typenames;
 
-auto parentlessclasses = ["Section", "Condition", "TemplateParameter", "Lexer", "RootObject", "Library", "Visitor"];
-
 class DPrinter : Visitor
 {
     void delegate(string) target;
@@ -639,7 +637,7 @@ class DPrinter : Visitor
                     return true;
                 }
             }
-            if (parentlessclasses.canFind(id))
+            if (rootClasses.lookup(id))
                 return true;
         }
         return false;
@@ -789,7 +787,7 @@ class DPrinter : Visitor
         bool isclass;
         if (ast.comment)
             printComment(ast.comment);
-        if (ast.superid || parentlessclasses.canFind(ast.id))
+        if (ast.superid || rootClasses.lookup(ast.id))
             isclass = true;
         if (isclass)
         {
