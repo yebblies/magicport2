@@ -10,6 +10,7 @@ import ast;
 import visitor;
 import scanner;
 import typenames;
+import namer;
 
 class DPrinter : Visitor
 {
@@ -180,6 +181,8 @@ class DPrinter : Visitor
             println("int main()");
             println("{");
             indent++;
+            println("import core.memory;");
+            println("GC.disable();");
             println("import core.runtime;");
             println("auto args = Runtime.cArgs();");
             println("return tryMain(args.argc, cast(const(char)**)args.argv);");
@@ -189,7 +192,7 @@ class DPrinter : Visitor
             return;
         }
         if (!P && !ast.hasbody && ast.skip) return;
-        auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue", "OutBuffer", "Scope", "DocComment"];
+        auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue", "OutBuffer", "Scope", "DocComment", "PrefixAttributes"];
         if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
         if (ast.comment)
@@ -212,8 +215,8 @@ class DPrinter : Visitor
             }
         }
         auto nonfinalclass = P && nonFinalClasses.canFind(P.id);
-        if (ast.stc & STCvirtual)
-            print("virtual ");
+        // if (ast.stc & STCvirtual)
+            // print("virtual ");
         if (!isvirtual && !(ast.stc & STCabstract) && nonfinalclass)
             print("final ");
         if (!inexternc && (!P || !classTypes.lookup(P.id)) && ast.type.id != ast.id)
@@ -532,6 +535,19 @@ class DPrinter : Visitor
     {
         if (ast.comment)
             printComment(ast.comment);
+        if (ast.getName() == "version typedef dinteger_t")
+        {
+            println("");
+            println("// Be careful not to care about sign when using dinteger_t");
+            println("// use this instead of integer_t to");
+            println("// avoid conflicts with system #include's");
+            println("alias dinteger_t = ulong;");
+            println("// Signed and unsigned variants");
+            println("alias sinteger_t = long;");
+            println("alias uinteger_t = ulong;");
+            println("");
+            return;
+        }
         versionCommon(ast);
     }
 

@@ -28,8 +28,6 @@ void main(string[] args)
         basicTypes[t] = false;
     foreach(t; settings["structTypes"].array.map!"a.str")
         structTypes[t] = false;
-    foreach(t; settings["classTypes"].array.map!"a.str")
-        classTypes[t] = false;
     foreach(t; settings["rootclasses"].array.map!"a.str")
         rootClasses[t] = false;
     foreach(t; settings["overriddenfuncs"].array.map!(j => j.array.map!("a.str").array))
@@ -37,7 +35,7 @@ void main(string[] args)
     foreach(t; settings["nonfinalclasses"].array.map!"a.str")
         nonFinalClasses ~= t;
 
-    auto scan = new Scanner();
+    Token[][string] toks;
     foreach(xfn; src)
     {
         auto fn = buildPath(srcdir, xfn);
@@ -45,7 +43,52 @@ void main(string[] args)
         assert(fn.exists(), fn ~ " does not exist");
         auto pp = cast(string)read(fn);
         pp = pp.replace("\"v\"\n#include \"verstr.h\"\n    ;", "__IMPORT__;");
-        asts ~= parse(Lexer(pp, fn), fn);
+        auto tx = Lexer(pp, fn).array;
+        toks[fn] = tx;
+        foreach(i, t; tx)
+        {
+            string[] matchSeq(string[] strs...)
+            {
+                string[] res;
+                foreach(j, s; strs)
+                {
+                    if (i + j > tx.length)
+                        return null;
+                    if (s == null)
+                    {
+                        res ~= tx[i + j].text;
+                        continue;
+                    }
+                    if (s != tx[i + j].text)
+                        return null;
+                }
+                return res;
+            }
+            if (auto v = matchSeq("class", null, ";"))
+                classTypes[v[0]] = false;
+            if (auto v = matchSeq("class", null, "{"))
+                classTypes[v[0]] = false;
+            if (auto v = matchSeq("class", null, ":"))
+                classTypes[v[0]] = false;
+            if (auto v = matchSeq("struct", null, ";"))
+                structTypes[v[0]] = false;
+            if (auto v = matchSeq("struct", null, "{"))
+                structTypes[v[0]] = false;
+            if (auto v = matchSeq("typedef", "Array", "<", "class", null, "*", ">", null, ";"))
+            {
+                structTypes[v[1]] = false;
+            }
+            if (auto v = matchSeq("typedef", "Array", "<", "struct", null, "*", ">", null, ";"))
+            {
+                structTypes[v[1]] = false;
+            }
+        }
+    }
+
+    auto scan = new Scanner();
+    foreach(fn, tx; toks)
+    {
+        asts ~= parse(tx, fn);
         asts[$-1].visit(scan);
     }
 

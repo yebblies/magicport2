@@ -2,13 +2,14 @@
 import core.stdc.stdlib;
 
 import std.conv;
+import std.array;
 import std.algorithm;
 import std.stdio;
 
 import tokens;
 import ast;
 
-Lexer tx;
+Token[] tx;
 Token t;
 string currentfile;
 void error(size_t line = __LINE__, T...)(string format, T args)
@@ -28,7 +29,7 @@ string check(string s, size_t line = __LINE__)
         error("'%s' expected, not '%s'", s, t.text);
     return nextToken();
 }
-string nextToken() { auto l = t.text; t = tx.front; tx.popFront(); return l; }
+string nextToken() { auto l = t.text; if (tx.empty) t = Token("__file__", 0, null, TOKeof); else { t = tx.front; tx.popFront(); } return l; }
 // void skipComment(size_t line = __LINE__)
 // {
     // while(t.type == TOKcomment)
@@ -52,7 +53,7 @@ void exit(string s, size_t line = __LINE__) { check(s, line); level--; marker = 
 
 int inFunc;
 
-Module parse(Lexer tokens, string fn)
+Module parse(Token[] tokens, string fn)
 {
     tx = tokens;
     currentfile = fn;
@@ -73,7 +74,7 @@ Module parse(Lexer tokens, string fn)
         {
         case "":
             assert(t.type == TOKeof);
-            return new Module(tokens.file, decls);
+            return new Module(fn, decls);
         default:
             decls ~= parseDecl();
             break;
