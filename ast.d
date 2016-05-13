@@ -479,7 +479,8 @@ class NewExpr : Expression
     Type t;
     Expression[] args;
     Expression dim;
-    this(Type t, Expression[] args, Expression dim) { this.t = t; this.args = args; this.dim = dim; }
+    Expression placement;
+    this(Type t, Expression[] args, Expression dim, Expression placement) { this.t = t; this.args = args; this.dim = dim; this.placement = placement; }
     mixin(visitor_str);
 }
 
@@ -659,7 +660,8 @@ class IfStatement : Statement
     Statement sbody;
     Statement selse;
     string trailingcomment;
-    this(Expression e, Statement sbody, Statement selse, string trailingcomment) { this.e = e; this.sbody = sbody; this.selse = selse; this.trailingcomment = trailingcomment; }
+    string elsecomment;
+    this(Expression e, Statement sbody, Statement selse, string trailingcomment, string elsecomment) { this.e = e; this.sbody = sbody; this.selse = selse; this.trailingcomment = trailingcomment; this.elsecomment = elsecomment; }
     mixin(visitor_str);
 }
 
@@ -667,7 +669,8 @@ class ForStatement : Statement
 {
     Expression xinit, cond, inc;
     Statement sbody;
-    this(Expression xinit, Expression cond, Expression inc, Statement sbody) { this.xinit = xinit; this.cond = cond; this.inc = inc; this.sbody = sbody; }
+    string trailingcomment;
+    this(Expression xinit, Expression cond, Expression inc, Statement sbody, string trailingcomment) { this.xinit = xinit; this.cond = cond; this.inc = inc; this.sbody = sbody; this.trailingcomment = trailingcomment; }
     mixin(visitor_str);
 }
 
@@ -709,7 +712,8 @@ class WhileStatement : Statement
 {
     Expression e;
     Statement sbody;
-    this(Expression e, Statement sbody) { this.e = e; this.sbody = sbody; }
+    string trailingcomment;
+    this(Expression e, Statement sbody, string trailingcomment) { this.e = e; this.sbody = sbody; this.trailingcomment = trailingcomment; }
     mixin(visitor_str);
 }
 
@@ -717,7 +721,8 @@ class DoWhileStatement : Statement
 {
     Expression e;
     Statement sbody;
-    this(Statement sbody, Expression e) { this.e = e; this.sbody = sbody; }
+    string trailingcomment;
+    this(Statement sbody, Expression e, string trailingcomment) { this.e = e; this.sbody = sbody; this.trailingcomment = trailingcomment; }
     mixin(visitor_str);
 }
 
@@ -763,6 +768,8 @@ bool typeMatch(Type t1, Type t2)
         foreach(i; 0..tf1.params.length)
         {
             m = tf1.params[i].t is tf2.params[i].t;
+            if (!m && (tf1.params[i].id == "..." || tf2.params[i].id == "..."))
+                return tf1.params[i].id == "..." && tf2.params[i].id == "...";
             if (!m)
                 m = typeMatch(tf1.params[i].t, tf2.params[i].t);
             if (!m) return false;

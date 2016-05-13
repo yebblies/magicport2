@@ -9,7 +9,7 @@ import tokens;
 import ast;
 import visitor;
 import dprinter;
-
+import typenames;
 
 class Scanner : Visitor
 {
@@ -20,7 +20,6 @@ class Scanner : Visitor
     StructDeclaration[] structDeclarations;
     StaticMemberVarDeclaration[] staticMemberVarDeclarations;
     CallExpr[] callExprs;
-    NewExpr[] newExprs;
     ConstructDeclaration[] constructDeclarations;
     string agg;
     StructDeclaration scopedecl;
@@ -37,7 +36,7 @@ class Scanner : Visitor
         assert(ast);
         ast.visit(this);
     }
-    
+
     ////////////////////////////////////
 
     override void visit(Module ast)
@@ -348,7 +347,8 @@ class Scanner : Visitor
 
     override void visit(NewExpr ast)
     {
-        newExprs ~= ast;
+        if (ast.placement)
+            visit(ast.placement);
         if (ast.dim)
             visit(ast.dim);
         visit(ast.t);
@@ -540,10 +540,10 @@ Module collapse(Module[] mods, Scanner scan)
 
     foreach(mod; mods)
         decls ~= resolveVersions(mod.decls);
-    
+
     decls = removeDuplicates(decls);
     findProto(decls, scan);
-    
+
     funcBodies(scan);
     staticMemberInit(scan);
 
@@ -631,7 +631,8 @@ void staticMemberInit(Scanner scan)
                     {
                         if (vd.id == vd1.id2)
                         {
-                            assert(!(vd.comment && vd1.comment), vd.id);
+                            if (vd.comment && vd1.comment)
+                                writeln("Warning: both prototype and definition have comments - ", vd.id);
                             if (vd1.comment) vd.comment = vd1.comment;
                             assert(!(vd.trailingcomment && vd1.trailingcomment) || vd.trailingcomment == vd1.trailingcomment, vd.id);
                             if (vd1.trailingcomment) vd.trailingcomment = vd1.trailingcomment;
@@ -749,7 +750,7 @@ void scopeCtor(Scanner scan)
     }
 }
 
-Declaration[] stripDead(Declaration[] decls)
+Declaration[] stripDead(Declaration[] decls, bool inclass = false)
 {
     Declaration[] r;
     foreach(d; decls)
@@ -779,7 +780,9 @@ Declaration[] stripDead(Declaration[] decls)
         }
         if (auto fd = cast(FuncDeclaration)d)
         {
-            if (!fd.fbody.length)
+            if (!inclass && !fd.fbody.length)
+                continue;
+            if (inclass && fd.type.id == fd.id && fd.params.length == 0 && dropdefaultctor.canFind(fd.id))
                 continue;
         }
         if (auto cd = cast(ExternCDeclaration)d)
@@ -817,6 +820,10 @@ Declaration[] stripDead(Declaration[] decls)
         {
             if (md.id == "assert")
                 continue;
+        }
+        if (auto sd = cast(StructDeclaration)d)
+        {
+            sd.decls = sd.decls.stripDead(true);
         }
         r ~= d;
     }

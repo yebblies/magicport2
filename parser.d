@@ -27,9 +27,42 @@ string check(string s, size_t line = __LINE__)
 {
     if (t.text != s)
         error("'%s' expected, not '%s'", s, t.text);
+    // if (s == "(" || s == "[" || s == "{")
+    // {
+        // level++;
+        // marker ~= s;
+    // }
+    // else if (s == ")" || s == "]" || s == "}")
+    // {
+        // if (!level)
+            // writeln(line);
+        // level--;
+        // marker = marker[0..$-1];
+    // }
     return nextToken();
 }
-string nextToken() { auto l = t.text; if (tx.empty) t = Token("__file__", 0, null, TOKeof); else { t = tx.front; tx.popFront(); } return l; }
+string nextToken()
+{
+    auto l = t.text;
+    if (tx.empty)
+        t = Token("__file__", 0, null, TOKeof);
+    else
+    {
+        t = tx.front;
+        tx.popFront();
+    }
+    if (l == "(" || l == "[" || l == "{")
+    {
+        level++;
+        marker ~= l;
+    }
+    else if (l == ")" || l == "]" || l == "}")
+    {
+        level--;
+        marker = marker[0..$-1];
+    }
+    return l;
+}
 // void skipComment(size_t line = __LINE__)
 // {
     // while(t.type == TOKcomment)
@@ -48,8 +81,10 @@ string trailingComment(string s = ";")
 
 int level;
 string[] marker;
-void enter(string s, size_t line = __LINE__) { check(s, line); level++; marker ~= s; }
-void exit(string s, size_t line = __LINE__) { check(s, line); level--; marker = marker[0..$-1]; }
+// void enter(string s, size_t line = __LINE__) { check(s, line); level++; marker ~= s; }
+// void exit(string s, size_t line = __LINE__) { check(s, line); level--; marker = marker[0..$-1]; }
+void enter(string s, size_t line = __LINE__) { check(s, line); }
+void exit(string s, size_t line = __LINE__) { check(s, line); }
 
 int inFunc;
 
@@ -58,7 +93,7 @@ Module parse(Token[] tokens, string fn)
     tx = tokens;
     currentfile = fn;
     Declaration[] decls;
-    
+
     nextToken();
 
     if (t.type == TOKcomment)
@@ -347,6 +382,13 @@ Expression parseUnaryExpr()
         return new NotExpr(parseUnaryExpr());
     case "new":
         nextToken();
+        Expression placement;
+        if (t.text == "(")
+        {
+            nextToken();
+            placement = parseAssignExpr();
+            check(")");
+        }
         auto type = parseType();
         Expression dim;
         if (t.text == "[")
@@ -359,7 +401,7 @@ Expression parseUnaryExpr()
         Expression[] args;
         if (t.text == "(")
             args = parseArgs();
-        return new NewExpr(type, args, dim);
+        return new NewExpr(type, args, dim, placement);
     case "&":
         nextToken();
         return new AddrExpr(parseUnaryExpr());
@@ -577,7 +619,7 @@ Declaration parseDecl(Type tx = null, bool inExpr = false)
     bool destructor;
     string comment;
     bool hascomment;
-    scope(exit) assert(!hascomment);
+    scope(exit) assert(!hascomment, text(t.line));
     if (t.type == TOKcomment)
     {
         comment = parseComment();
@@ -1159,10 +1201,10 @@ Param[] parseParams()
     debug(PARSE) writeln("parseParams");
     Param[] p;
     enter("(");
-    
+
     while(t.text != ")")
         p ~= parseParam();
-    
+
     exit(")");
     return p;
 }
@@ -1332,9 +1374,9 @@ Statement parseForStatement()
     check(";");
     if (t.text != ")")
         inc = parseExpr();
-    exit(")");
+    auto tc = trailingComment(")");
     auto sbody = parseStatement();
-    return new ForStatement(init, cond, inc, sbody);
+    return new ForStatement(init, cond, inc, sbody, tc);
 }
 
 Statement parseIfStatement()
@@ -1346,12 +1388,13 @@ Statement parseIfStatement()
     auto comment = trailingComment(")");
     auto sbody = parseStatement();
     Statement selse;
+    string ec;
     if (t.text == "else")
     {
-        nextToken();
+        ec = trailingComment("else");
         selse = parseStatement();
     }
-    return new IfStatement(e, sbody, selse, comment);
+    return new IfStatement(e, sbody, selse, comment, ec);
 }
 
 Statement parseDoWhileStatement()
@@ -1363,7 +1406,8 @@ Statement parseDoWhileStatement()
     enter("(");
     auto e = parseExpr();
     exit(")");
-    return new DoWhileStatement(sbody, e);
+    auto tc = trailingComment(";");
+    return new DoWhileStatement(sbody, e, tc);
 }
 
 Statement parseExpressionStatement()
@@ -1405,9 +1449,9 @@ Statement parseWhileStatement()
     check("while");
     enter("(");
     auto e = parseExpr();
-    exit(")");
+    auto tc = trailingComment(")");
     auto sbody = parseStatement();
-    return new WhileStatement(e, sbody);
+    return new WhileStatement(e, sbody, tc);
 }
 
 Statement parseCaseStatement()

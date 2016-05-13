@@ -21,7 +21,7 @@ void main(string[] args)
     auto srcdir = args[1];
     auto destdir = args[2];
 
-    auto settings = parseJSON(readText("settings.json")).object;
+    auto settings = parseJSON(readText("magicport.json")).object;
     auto src = settings["src"].array.map!"a.str"().array;
     auto mapping = settings["mapping"].array.loadMapping();
     foreach(t; settings["basicTypes"].array.map!"a.str")
@@ -42,7 +42,7 @@ void main(string[] args)
         writeln("loading -- ", fn);
         assert(fn.exists(), fn ~ " does not exist");
         auto pp = cast(string)read(fn);
-        pp = pp.replace("\"v\"\n#include \"verstr.h\"\n    ;", "__IMPORT__;");
+        pp = pp.replace("\"v\"\n#include \"verstr.h\"\n    ;", "__VERSTR__;");
         auto tx = Lexer(pp, fn).array;
         toks[fn] = tx;
         foreach(i, t; tx)
@@ -73,6 +73,8 @@ void main(string[] args)
             if (auto v = matchSeq("struct", null, ";"))
                 structTypes[v[0]] = false;
             if (auto v = matchSeq("struct", null, "{"))
+                structTypes[v[0]] = false;
+            if (auto v = matchSeq("union", null, "{"))
                 structTypes[v[0]] = false;
             if (auto v = matchSeq("typedef", "Array", "<", "class", null, "*", ">", null, ";"))
             {
@@ -121,53 +123,37 @@ void main(string[] args)
 
         f.writeln(
 "// Compiler implementation of the D programming language
-// Copyright (c) 1999-2014 by Digital Mars
+// Copyright (c) 1999-2015 by Digital Mars
 // All Rights Reserved
 // written by Walter Bright
 // http://www.digitalmars.com
-// License for redistribution is by either the Artistic License
-// in artistic.txt, or the GNU General Public License in gnu.txt.
-// See the included readme.txt for details.");
+// Distributed under the Boost Software License, Version 1.0.
+// http://www.boost.org/LICENSE_1_0.txt");
 
         f.writeln();
         if (m.p.length)
-            f.writefln("module %s.%s;", m.p, m.m);
+            f.writefln("module ddmd.%s.%s;", m.p, m.m);
         else
-            f.writefln("module %s;", m.m);
+            f.writefln("module ddmd.%s;", m.m);
         f.writeln();
 
+        void importList(R)(R imports)
         {
             bool found;
-            foreach(i; m.imports)
+            foreach(i; imports)
             {
-                if (i.startsWith("root."))
-                {
-                    if (!found)
-                        f.writef("import %s", i);
-                    else
-                        f.writef(", %s", i);
-                    found = true;
-                }
+                if (!found)
+                    f.writef("import %s", i);
+                else
+                    f.writef(", %s", i);
+                found = true;
             }
             if (found)
                 f.writeln(";");
         }
-        {
-            bool found;
-            foreach(i; m.imports)
-            {
-                if (!i.startsWith("root."))
-                {
-                    if (!found)
-                        f.writef("import %s", i);
-                    else
-                        f.writef(", %s", i);
-                    found = true;
-                }
-            }
-            if (found)
-                f.writeln(";");
-        }
+        importList(m.imports.filter!(i => i.startsWith("core.")));
+        importList(m.imports.filter!(i => i.startsWith("root.")));
+        importList(m.imports.filter!(i => !i.startsWith("core.", "root.")));
         if (m.imports.length)
             f.writeln();
 
@@ -179,6 +165,7 @@ void main(string[] args)
             f.writeln();
 
         auto printer = new DPrinter((string s) { f.write(s); }, scan);
+        Declaration prev;
         foreach(d; m.members)
         {
             if (auto p = d in map)
@@ -196,6 +183,18 @@ void main(string[] args)
                 }
                 else
                 {
+                    if (prev)
+                    {
+                        if (cast(TypedefDeclaration)prev && cast(TypedefDeclaration)p.d)
+                        {
+                        }
+                        else if (cast(VarDeclaration)prev && cast(VarDeclaration)p.d)
+                        {
+                        }
+                        else
+                            printer.println("");
+                    }
+                    prev = p.d;
                     printer.visitX(p.d);
                     p.count++;
                 }
@@ -204,6 +203,18 @@ void main(string[] args)
             {
                 assert(p.d);
                 map[p.d.getName].count++;
+                if (prev)
+                {
+                    if (cast(TypedefDeclaration)prev && cast(TypedefDeclaration)p.d)
+                    {
+                    }
+                    else if (cast(VarDeclaration)prev && cast(VarDeclaration)p.d)
+                    {
+                    }
+                    else
+                        printer.println("");
+                }
+                prev = p.d;
                 printer.visitX(p.d);
                 p.count++;
             }
@@ -287,6 +298,9 @@ auto loadMapping(JSONValue[] modules)
     {
         auto imports = j.object["imports"].array.map!"a.str"().array;
         sort(imports);
+        foreach(ref i; imports)
+            if (!i.startsWith("core"))
+                i = "ddmd." ~ i;
         string[] extra;
         if ("extra" in j.object)
             extra = j.object["extra"].array.map!"a.str"().array;

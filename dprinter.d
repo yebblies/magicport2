@@ -94,7 +94,7 @@ class DPrinter : Visitor
     }
     void visitX()(int stc)
     {
-        static immutable names = ["static", "enum", "extern", "extern(C)", "virtual", "__cdecl", "abstract", "__inline", "register"];
+        static immutable names = ["static", "enum", "extern", "extern (C)", "virtual", "__cdecl", "abstract", "__inline", "register"];
         bool one;
         assert(!(stc & STCconst));
         /*if (!(stc & STCvirtual))
@@ -134,7 +134,7 @@ class DPrinter : Visitor
         }
 
         ast.visit(this);
-        
+
         P = saveP;
         E = saveE;
         D = saveD;
@@ -147,13 +147,14 @@ class DPrinter : Visitor
     }
 
     /////////////////////////////////////////////////////////////////////
-    
+
     void visitIdent(string s)
     {
         switch(s)
         {
         case "NULL": print("null"); return;
-        case "__IMPORT__": print("\"v\" ~ import(\"VERSION\")[0..$-1]"); return;
+        case "__VERSTR__": print("('v' ~ stripRight(import(\"verstr.h\"))[1 .. $-1] ~ '\\0').ptr"); return;
+        case "operator ==": print("opEquals"); return;
         case "import", "module", "version", "ref", "scope",
             "body", "alias", "is",
             "delegate", "cast", "mangleof",
@@ -182,17 +183,23 @@ class DPrinter : Visitor
             println("{");
             indent++;
             println("import core.memory;");
-            println("GC.disable();");
             println("import core.runtime;");
+            println("");
+            println("version (GC)");
+            println("{");
+            println("}");
+            println("else");
+            println("{");
+            println("    GC.disable();");
+            println("}");
+            println("");
             println("auto args = Runtime.cArgs();");
             println("return tryMain(args.argc, cast(const(char)**)args.argv);");
             indent--;
             println("}");
-            println("");
             return;
         }
         if (!P && !ast.hasbody && ast.skip) return;
-        auto dropdefaultctor = ["Loc", "Token", "HdrGenState", "CtfeStack", "InterState", "BaseClass", "Mem", "StringValue", "OutBuffer", "Scope", "DocComment", "PrefixAttributes"];
         if (ast.type.id == ast.id && ast.params.length == 0 && dropdefaultctor.canFind(ast.id))
             return; // Can't have no-args ctor, and Loc/Token doesn't need one
         if (ast.comment)
@@ -220,11 +227,11 @@ class DPrinter : Visitor
         if (!isvirtual && !(ast.stc & STCabstract) && nonfinalclass)
             print("final ");
         if (!inexternc && (!P || !classTypes.lookup(P.id)) && ast.type.id != ast.id)
-            print("extern(C++) ");
+            print("extern (C++) ");
         visitX(ast.stc);
         if (ast.type.id == ast.id)
         {
-            print("extern(D) this");
+            print("extern (D) this");
         } else if (ast.id[0] == '~')
         {
             print("~this");
@@ -280,7 +287,6 @@ class DPrinter : Visitor
         } else {
             println(";");
         }
-        println("");
     }
 
     override void visit(FuncBodyDeclaration ast)
@@ -294,7 +300,11 @@ class DPrinter : Visitor
     override void visit(VarDeclaration ast)
     {
         if (ast.stc & STCextern) return;
-        if (ast.id == "ASYNCREAD") return;
+        if (ast.id == "ASYNCREAD")
+        {
+            print("enum ASYNCREAD = false");
+            return;
+        }
         bool manifest;
         auto at = cast(ArrayType)ast.type;
         if (!D2)
@@ -322,6 +332,16 @@ class DPrinter : Visitor
             buffers ~= ast.id;
             return;
         }
+        if (!ast.xinit && at && !at.dim && !realarray && cast(StructDeclaration)P && !E)
+        {
+            visitX((ast.stc & STCstatic) | STCvirtual);
+            visitX(at.next);
+            print("[0] ");
+            print(ast.id);
+            assert(!ast.trailingcomment);
+            println(";");
+            return;
+        }
         bool gshared;
         if ((ast.stc & STCstatic) && !cast(FuncDeclaration)D2 && P)
         {
@@ -333,7 +353,7 @@ class DPrinter : Visitor
                     // ast.xinit = vd.xinit;
                 // }
             // }
-            if (!manifest) print("extern(C++) ");
+            if (!manifest) print("extern (C++) ");
             if (!manifest) gshared = true;
         }
         else if (ast.stc & STCstatic)
@@ -342,7 +362,7 @@ class DPrinter : Visitor
         }
         else if (!P && !fd && !manifest)
         {
-            print("extern(C++) ");
+            print("extern (C++) ");
             gshared = true;
         }
         if (manifest)
@@ -353,10 +373,14 @@ class DPrinter : Visitor
             if (gshared)
                 print("__gshared");
         }
+        if (isClass(ast.type) && !ast.xinit)
+        {
+            print("scope ");
+        }
         ExprInit ei = ast.xinit ? cast(ExprInit)ast.xinit : null;
         NewExpr ne = ei ? cast(NewExpr)ei.e : null;
         PointerType pt = ast.type ? cast(PointerType)ast.type : null;
-        if (pt && ne && ne.t.id == pt.next.id)
+        if (pt && ne && ne.t.id == pt.next.id && !ne.dim)
         {
             if (manifest || gshared || (ast.stc & (STCstatic | STCconst | STCexternc)))
                 print(" ");
@@ -380,7 +404,11 @@ class DPrinter : Visitor
         visitIdent(ast.id);
         if (ast.xinit)
         {
-            print(" = ");
+            auto ai = cast(ArrayInit)ast.xinit;
+            if (ai && ai.xinit.length >= 10)
+                print(" =");
+            else
+                print(" = ");
             this.inittype = ast.type;
             visitX(ast.xinit);
             inittype = null;
@@ -408,13 +436,13 @@ class DPrinter : Visitor
 
     override void visit(MultiVarDeclaration ast)
     {
-        assert(fd && E);
+        assert(fd && E, text(ast.ids));
         foreach(t; ast.types[0..$])
             assert(t && typeMatch(t, ast.types[0]));
         foreach(i; 0..ast.types.length)
         {
             if (i)
-                println(", ");
+                print(", ");
             else
             {
                 visitX(ast.stc | STCvirtual);
@@ -456,15 +484,29 @@ class DPrinter : Visitor
 
     override void visit(ConstructDeclaration ast)
     {
-        stackclasses ~= ast.id;
-        visitX(new PointerType(ast.type));
-        print(" ");
-        visitIdent(ast.id);
-        print(" = new ");
-        visitX(ast.type);
-        print("(");
-        printArgs(ast.args);
-        print(")");
+        if (isClass(ast.type))
+        {
+            stackclasses ~= ast.id;
+            print("scope ");
+            visitX(new PointerType(ast.type));
+            print(" ");
+            visitIdent(ast.id);
+            print(" = new ");
+            visitX(ast.type);
+            print("(");
+            printArgs(ast.args);
+            print(")");
+        }
+        else
+        {
+            print("auto ");
+            visitIdent(ast.id);
+            print(" = ");
+            visitX(ast.type);
+            print("(");
+            printArgs(ast.args);
+            print(")");
+        }
     }
 
     void versionCommon(T)(T ast)
@@ -482,21 +524,20 @@ class DPrinter : Visitor
                     switch(ie.id)
                     {
                     case "DEBUG":          println("debug"); break;
-                    case "UNITTEST":       println("version(unittest)"); break;
+                    case "UNITTEST":       println("version (unittest)"); break;
 
-                    case "_WIN32":         println("version(Windows)"); break;
-                    case "POSIX":          println("version(Posix)"); break;
-                    case "__linux__":      println("version(linux)"); break;
+                    case "_WIN32":         println("version (Windows)"); break;
+                    case "POSIX":          println("version (Posix)"); break;
+                    case "__linux__":      println("version (linux)"); break;
                     case "__APPLE__":
-                    case "MACINTOSH":      println("version(OSX)"); break;
-                    case "__FreeBSD__":    println("version(FreeBSD)"); break;
-                    case "__OpenBSD__":    println("version(OpenBSD)"); break;
-                    case "__sun":          println("version(Solaris)"); break;
+                    case "MACINTOSH":      println("version (OSX)"); break;
+                    case "__FreeBSD__":    println("version (FreeBSD)"); break;
+                    case "__OpenBSD__":    println("version (OpenBSD)"); break;
+                    case "__sun":          println("version (Solaris)"); break;
 
-                    case "IN_GCC":         println("version(GNU)"); break;
+                    case "IN_GCC":         println("version (IN_GCC)"); break;
 
-                    case "DMDV1":          println("version(DMDV1)"); break;
-                    case "DMDV2":          println("version(DMDV2)"); break;
+                    case "_MSC_VER":       println("version (CRuntime_Microsoft)"); break;
 
                     default:               println("static if (" ~ ie.id ~ ")"); break;
                     }
@@ -505,8 +546,8 @@ class DPrinter : Visitor
                 {
                     switch(le.val)
                     {
-                    case "0": println("version(none)"); break;
-                    case "1": println("version(all)"); break;
+                    case "0": println("version (none)"); break;
+                    case "1": println("version (all)"); break;
                     default:  assert(0);
                     }
                 }
@@ -525,7 +566,21 @@ class DPrinter : Visitor
             }
             println("{");
             indent++;
-            visitX(ast.members[i]);
+            foreach(j, m; ast.members[i])
+            {
+                static if (is(T == VersionDeclaration))
+                {
+                    if (j)
+                    {
+                        if (cast(VarDeclaration)ast.members[i][j-1] && cast(VarDeclaration)m)
+                        {
+                        }
+                        else
+                            println("");
+                    }
+                }
+                visitX(m);
+            }
             indent--;
             println("}");
         }
@@ -545,7 +600,6 @@ class DPrinter : Visitor
             println("// Signed and unsigned variants");
             println("alias sinteger_t = long;");
             println("alias uinteger_t = ulong;");
-            println("");
             return;
         }
         versionCommon(ast);
@@ -558,16 +612,16 @@ class DPrinter : Visitor
         if (auto ft = cast(FunctionType)ast.t)
         {
             if (ft.cdecl)
-                print("extern(C) ");
+                print("extern (C) ");
             else
-                print("extern(C++) ");
+                print("extern (C++) ");
         }
         if (ast.id == "utf8_t")
             return;
         print("alias ");
-        visitX(ast.t);
-        print(" ");
         visitIdent(ast.id);
+        print(" = ");
+        visitX(ast.t);
         println(";");
     }
 
@@ -597,9 +651,14 @@ class DPrinter : Visitor
             if (i != ast.params.length - 1)
                 print(", ");
         }
-        print(") { return ");
+        println(")");
+        println("{");
+        indent++;
+        print("return ");
         visitX(ast.e);
-        println("; }");
+        println(";");
+        indent--;
+        println("}");
     }
 
     override void visit(MacroUnDeclaration ast)
@@ -615,7 +674,7 @@ class DPrinter : Visitor
             isclass = true;
         if (isclass)
         {
-            print("extern(C++) ");
+            print("extern (C++) ");
             if (!nonFinalClasses.canFind(ast.id))
                 print("final ");
             print("class");
@@ -639,11 +698,24 @@ class DPrinter : Visitor
             // base class aliasing rules are different in C++
             println("alias visit = super.visit;");
         }
-        foreach(d; ast.decls)
+        foreach(i, d; ast.decls)
+        {
+            if (i)
+            {
+                auto prev = ast.decls[i-1];
+                if (cast(ProtDeclaration)prev)
+                {
+                }
+                else if (cast(VarDeclaration)prev && cast(VarDeclaration)d)
+                {
+                }
+                else
+                    println("");
+            }
             visitX(d);
+        }
         indent--;
         println("}");
-        println("");
     }
 
     override void visit(AnonStructDeclaration ast)
@@ -657,27 +729,40 @@ class DPrinter : Visitor
         } else
             println("");
         println("{");
-        foreach(d; ast.decls)
+        indent++;
+        foreach(i, d; ast.decls)
+        {
+            if (i)
+            {
+                if (cast(VarDeclaration)d && cast(VarDeclaration)ast.decls[i-1])
+                {
+                }
+                else
+                    println("");
+            }
             visitX(d);
+        }
+        indent--;
         if (ast.id)
         {
-            println("};");
+            println("}");
+            println("");
             print("__AnonStruct__");
             visitIdent(ast.id);
             print(" ");
             visitIdent(ast.id);
+            if (!E)
+                println(";");
         } else {
             println("}");
         }
-        if (!E)
-            println(";");
     }
 
     override void visit(ExternCDeclaration ast)
     {
         if (ast.comment)
             printComment(ast.comment);
-        println("extern(C) {");
+        println("extern (C) {");
         inexternc++;
         foreach(d; ast.decls)
             visitX(d);
@@ -687,8 +772,12 @@ class DPrinter : Visitor
 
     override void visit(EnumDeclaration ast)
     {
-        print("enum ");
-        visitIdent(ast.id);
+        print("enum");
+        if (ast.id.length)
+        {
+            print(" ");
+            visitIdent(ast.id);
+        }
         println(" : int");
         println("{");
         indent++;
@@ -719,6 +808,7 @@ class DPrinter : Visitor
         println("}");
         if (ast.id)
         {
+            println("");
             foreach(m; ast.members)
             {
                 if (!m.id)
@@ -732,7 +822,6 @@ class DPrinter : Visitor
                 println(";");
             }
         }
-        println("");
     }
 
     override void visit(ErrorDeclaration ast)
@@ -794,16 +883,6 @@ class DPrinter : Visitor
         {
             assert(ast.args.length == 1);
             visitX(ast.args[0]);
-            return;
-        }
-        else if (ie && ie.id == "va_start")
-        {
-            assert(ast.args.length == 2);
-            print("version(X86_64) va_start(");
-            visitX(ast.args[0]);
-            print(", __va_argsave); else va_start(");
-            printArgs(ast.args);
-            print(")");
             return;
         }
         if (ie && ie.id == "memcmp")
@@ -995,7 +1074,6 @@ class DPrinter : Visitor
 
     override void visit(DeleteExpr ast)
     {
-        print("/*delete*/");
     }
 
     override void visit(NotExpr ast)
@@ -1042,6 +1120,8 @@ class DPrinter : Visitor
         if (ast.dim)
         {
             assert(!ast.args.length);
+            assert(!ast.placement);
+            print("(");
             lparen(ast);
             print("new ");
             visitX(ast.t);
@@ -1049,6 +1129,21 @@ class DPrinter : Visitor
             visitX(ast.dim);
             print(")");
             rparen(ast);
+            print(").ptr");
+        }
+        else if (ast.placement)
+        {
+            assert(!ast.hasParens);
+            print("emplaceExp!(");
+            visitX(ast.t);
+            print(")(");
+            visitX(ast.placement);
+            if (ast.args.length)
+            {
+                print(", ");
+                printArgs(ast.args);
+            }
+            print(")");
         }
         else
         {
@@ -1084,6 +1179,17 @@ class DPrinter : Visitor
             print("__traits(classInstanceSize, ");
             visitX(ast.t);
             print(")");
+        }
+        else if (ast.t && (cast(BasicType)ast.t || cast(EnumType)ast.t || cast(ClassType)ast.t ||
+            (cast(PointerType)ast.t && isClass((cast(PointerType)ast.t).next))))
+        {
+            visitX(ast.t);
+            print(".sizeof");
+        }
+        else if (ast.e && cast(IdentExpr)ast.e)
+        {
+            visitX(ast.e);
+            print(".sizeof");
         }
         else
         {
@@ -1122,14 +1228,14 @@ class DPrinter : Visitor
             inittype = at.next;
             if (ast.xinit.length < 10)
             {
-                print("[ ");
+                print("[");
                 foreach(i, v; ast.xinit)
                 {
                     if (i)
                         print(", ");
                     visitX(v);
                 }
-                print(" ]");
+                print("]");
             }
             else
             {
@@ -1145,7 +1251,7 @@ class DPrinter : Visitor
                 }
                 println("");
                 indent--;
-                println("]");
+                print("]");
             }
         }
     }
@@ -1154,7 +1260,7 @@ class DPrinter : Visitor
     {
         if (ast.isConst)
             print("const(");
-        
+
         auto map =
         [
             "unsigned char" : "ubyte",
@@ -1172,8 +1278,10 @@ class DPrinter : Visitor
             "_Complex long double" : "creal",
             "volatile char" : "char",
             "utf8_t" : "char",
+            "volatile float" : "float",
+            "volatile double" : "double",
         ];
-        
+
         if (ast.id in map)
         {
             print(map[ast.id]);
@@ -1202,7 +1310,7 @@ class DPrinter : Visitor
             assert(ast.id[6..$] != "stat");
             visitIdent(ast.id[6..$]);
         }
-        else 
+        else
         {
             visitIdent(ast.id);
         }
@@ -1256,9 +1364,11 @@ class DPrinter : Visitor
         else
         {
             visitX(ast.t);
-            print(" ");
             if (ast.id)
+            {
+                print(" ");
                 visitIdent(ast.id);
+            }
             // else
                 // assert(!ast.def);
             if (ast.def)
@@ -1341,12 +1451,33 @@ class DPrinter : Visitor
     {
         if (ast.e)
         {
+            bool skipsemi;
+            bool skipnl;
+            if (auto de = cast(DeclarationExpr)ast.e)
+            {
+                if (cast(StructDeclaration)de.d ||
+                    cast(MacroDeclaration)de.d)
+                    skipsemi = true;
+                if (cast(MacroUnDeclaration)de.d)
+                    skipnl = true;
+            }
+            if (auto de = cast(DeleteExpr)ast.e)
+            {
+                skipsemi = true;
+                skipnl = true;
+            }
             visitX(ast.e);
             if (ast.trailingcomment)
             {
+                assert(!skipsemi);
                 print("; ");
                 println(ast.trailingcomment.strip);
             }
+            else if (skipnl)
+            {
+            }
+            else if (skipsemi)
+                println("");
             else
                 println(";");
         } else {
@@ -1393,7 +1524,22 @@ class DPrinter : Visitor
         }
         if (!cast(CompoundStatement)ast.sbody)
             indent++;
-        visitX(ast.sbody);
+        auto es = cast(ExpressionStatement)ast.sbody;
+        if (es && !es.e)
+        {
+            indent--;
+            println("{");
+            if (es.trailingcomment)
+            {
+                indent++;
+                println(es.trailingcomment);
+                indent--;
+            }
+            println("}");
+            indent++;
+        }
+        else
+            visitX(ast.sbody);
         if (!cast(CompoundStatement)ast.sbody)
             indent--;
         if (ast.selse)
@@ -1402,11 +1548,31 @@ class DPrinter : Visitor
             auto elseisif = cast(IfStatement)ast.selse !is null;
             if (elseisif)
                 print(" ");
+            else if (ast.elsecomment)
+            {
+                print(" ");
+                println(ast.elsecomment);
+            }
             else
                 println("");
             if (!cast(CompoundStatement)ast.selse && !elseisif)
                 indent++;
-            visitX(ast.selse);
+            es = cast(ExpressionStatement)ast.selse;
+            if (es && !es.e)
+            {
+                indent--;
+                println("{");
+                if (es.trailingcomment)
+                {
+                    indent++;
+                    println(es.trailingcomment);
+                    indent--;
+                }
+                println("}");
+                indent++;
+            }
+            else
+                visitX(ast.selse);
             if (!cast(CompoundStatement)ast.selse && !elseisif)
                 indent--;
         }
@@ -1429,12 +1595,34 @@ class DPrinter : Visitor
             print(" ");
             visitX(ast.inc);
         }
-        println(")");
-        if (!cast(CompoundStatement)ast.sbody)
-            indent++;
-        visitX(ast.sbody);
-        if (!cast(CompoundStatement)ast.sbody)
-            indent--;
+    Lclose:
+        if (ast.trailingcomment)
+        {
+            print(") ");
+            println(ast.trailingcomment);
+        }
+        else
+            println(")");
+        auto es = cast(ExpressionStatement)ast.sbody;
+        if (es && !es.e)
+        {
+            println("{");
+            if (es.trailingcomment)
+            {
+                indent++;
+                println(es.trailingcomment);
+                indent--;
+            }
+            println("}");
+        }
+        else
+        {
+            if (!cast(CompoundStatement)ast.sbody)
+                indent++;
+            visitX(ast.sbody);
+            if (!cast(CompoundStatement)ast.sbody)
+                indent--;
+        }
     }
 
     override void visit(SwitchStatement ast)
@@ -1492,12 +1680,33 @@ class DPrinter : Visitor
     {
         print("while (");
         visitX(ast.e);
-        println(")");
-        if (!cast(CompoundStatement)ast.sbody)
-            indent++;
-        visitX(ast.sbody);
-        if (!cast(CompoundStatement)ast.sbody)
-            indent--;
+        if (ast.trailingcomment)
+        {
+            print(") ");
+            println(ast.trailingcomment);
+        }
+        else
+            println(")");
+        auto es = cast(ExpressionStatement)ast.sbody;
+        if (es && !es.e)
+        {
+            println("{");
+            if (es.trailingcomment)
+            {
+                indent++;
+                println(es.trailingcomment);
+                indent--;
+            }
+            println("}");
+        }
+        else
+        {
+            if (!cast(CompoundStatement)ast.sbody)
+                indent++;
+            visitX(ast.sbody);
+            if (!cast(CompoundStatement)ast.sbody)
+                indent--;
+        }
     }
 
     override void visit(DoWhileStatement ast)
@@ -1510,7 +1719,13 @@ class DPrinter : Visitor
             indent--;
         print("while (");
         visitX(ast.e);
-        println(");");
+        if (ast.trailingcomment)
+        {
+            print("); ");
+            println(ast.trailingcomment);
+        }
+        else
+            println(");");
     }
 
     override void visit(GotoStatement ast)
